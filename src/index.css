@@ -1,9 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .font-nunito {
+        font-family: "Nunito", sans-serif;
+    }
+
+    .text-stroke-1 {
+        -webkit-text-stroke: 4px black;
+    }
+}
+
 @layer base {
+    html,
+    body,
+    #mount {
+        @apply h-full w-full;
+    }
+
+    #root {
+        @apply h-full w-full flex flex-col items-center;
+    }
+
     body {
-        @apply bg-black text-white;
+        @apply bg-gray-900 text-white font-nunito;
     }
 }
