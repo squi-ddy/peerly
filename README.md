@@ -10,4 +10,5 @@ Otherwise, use the npm package `serve`. Run `npx serve ./dist -l 8080 -s`, which
 ## Credits
 
 This project uses [`React`](https://react.dev/), [`React Router`](https://reactrouter.com/), [`Tailwind CSS`](https://tailwindcss.com/) and [`Framer Motion`](https://www.framer.com/motion) for the frontend.\
+Icons are from [`React Icons`](https://react-icons.github.io/react-icons/).\
 [`Faker.js`](https://fakerjs.dev/) is used to generate fake data for the tables.
