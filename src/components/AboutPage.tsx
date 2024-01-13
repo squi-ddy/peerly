@@ -1,4 +1,5 @@
 import { motion } from "framer-motion"
+import SetTitle from "./SetTitle"
 
 function AboutPage() {
     const itemVariants = {
@@ -9,6 +10,7 @@ function AboutPage() {
 
     return (
         <>
+            <SetTitle title="About" />
             <motion.h1 className="text-5xl font-bold" variants={itemVariants}>
                 About
             </motion.h1>
@@ -140,7 +142,7 @@ function AboutPage() {
                 </a>
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
-                15 React components, 1569 lines of code
+                15 React components, 1570 lines of code
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
                 Created in 2 days + some help (autocomplete) from{" "}
