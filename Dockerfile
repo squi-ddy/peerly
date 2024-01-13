@@ -1,13 +1,12 @@
-FROM node:alpine AS base
+FROM oven/bun:alpine AS base
 
-RUN npm i -g pnpm
 RUN apk --no-cache add --virtual build-deps build-base python3
 
 FROM base AS dependencies
 
 WORKDIR /app/
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm i -P
+COPY package.json bun.lockb ./
+RUN bun i -p
 RUN apk del build-deps
 
 FROM base AS build
@@ -15,7 +14,7 @@ FROM base AS build
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-RUN pnpm run build
+RUN bun run build
 
 FROM nginx:alpine-slim AS deploy
 
