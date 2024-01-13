@@ -1,96 +1,84 @@
-import { AnimatePresence, motion } from "framer-motion"
-import React, { useEffect, useState } from "react"
-import Spacer from "./Spacer"
-import MotionLink from "./MotionNavButton"
+import { motion } from "framer-motion"
 import MotionNavButton from "./MotionNavButton"
+import MotionLink from "./MotionLink"
 
-function BasePage(props: { title: string; children?: React.ReactNode }) {
-    useEffect(() => {
-        document.title = props.title
-    }, [])
-
+function BasePage(props: { children?: React.ReactNode }) {
     const topBarVariants = {
         visible: {
-            opacity: 1,
-            y: "-10px",
+            transform: "translateY(-20px)",
             transition: {
-                when: "beforeChildren",
                 staggerChildren: 0.2,
             },
         },
         hidden: {
-            opacity: 0,
-            y: "-100%",
+            transform: "translateY(-100%)",
+        },
+        exit: {
+            transform: "translateY(-100%)",
         },
     }
 
     const itemVariants = {
         visible: {
             opacity: 1,
-            y: 0,
+            transform: "translateY(0px)",
         },
         hidden: {
             opacity: 0,
-            y: "-20px",
+            transform: "translateY(-20px)",
+        },
+        exit: {
+            opacity: 0,
+            transform: "translateY(-20px)",
         },
     }
 
-    const baseVariants = {
-        hidden: {},
-        visible: {},
-        exit: {},
-    }
-
     return (
-        <motion.div
-            variants={baseVariants}
-            initial={"hidden"}
-            animate={"visible"}
-            exit={"exit"}
-            transition={{ duration: 0 }}
-            id="root"
-        >
+        <div id="root">
             <motion.div
                 variants={topBarVariants}
+                initial={"hidden"}
+                animate={"visible"}
+                exit={"exit"}
                 id="header"
-                className="pt-[10px] bg-gradient-to-r from-sky-700 to-sky-600 w-full"
+                className="pt-[20px] bg-gradient-to-r from-sky-700 to-sky-600 w-full mb-[-20px]"
             >
                 <div className="px-5 flex items-center justify-items-center p-2 gap-2">
-                    <motion.a
-                        href="/"
+                    <MotionLink
+                        to="/"
                         variants={itemVariants}
                         key="title"
                         transition={{ duration: 0.3 }}
                         className="text-5xl justify-self-start my-1 font-bold text-orange-400 drop-shadow-md"
                     >
                         Peerly
-                    </motion.a>
+                    </MotionLink>
 
-                    <div className="flex-grow" />
+                    <div className="grow" />
 
                     <MotionNavButton
-                        to="login"
+                        to="/tutors"
                         text="Tutors"
                         variants={itemVariants}
                         key="tutors"
                     />
 
                     <MotionNavButton
-                        to="login"
+                        to="/learners"
                         text="Learners"
                         variants={itemVariants}
-                        key="students"
+                        key="learners"
                     />
 
                     <MotionNavButton
-                        to="login"
+                        to="lessons"
                         text="Lessons"
                         variants={itemVariants}
-                        key="students"
+                        key="lessons"
                     />
 
                     <MotionNavButton
-                        to="login"
+                        to="auth"
                         text="Login"
                         variants={itemVariants}
                         key="login"
@@ -106,7 +94,7 @@ function BasePage(props: { title: string; children?: React.ReactNode }) {
             </motion.div>
 
             {props.children}
-        </motion.div>
+        </div>
     )
 }
 

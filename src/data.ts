@@ -1,6 +1,4 @@
-import { Faker, en_GB } from "@faker-js/faker"
-
-const faker = new Faker({ locale: [en_GB] })
+import { faker } from "@faker-js/faker"
 
 const subjects = [
     "English",
@@ -14,11 +12,16 @@ const subjects = [
     "Computer Science",
 ]
 
-const tutors: {name: string, subjects: string[], year: number}[] = []
+const tutors: { name: string; subjects: string[]; year: number }[] = []
 
-const learners: {name: string, subjects: string[], year: number}[] = []
+const learners: { name: string; subjects: string[]; year: number }[] = []
 
-const lessons: {tutor: string, learner: string, subject: string, date: Date}[] = []
+const lessons: {
+    tutor: string
+    learner: string
+    subject: string
+    date: Date
+}[] = []
 
 // populate both
 for (let i = 0; i < 50; i++) {
@@ -42,7 +45,7 @@ for (let i = 0; i < 100; i++) {
     const tutor = faker.helpers.arrayElement(tutors)
     const learner = faker.helpers.arrayElement(learners)
     const subject = faker.helpers.arrayElement(tutor.subjects)
-    const date = faker.date.between({from: "2024-01-01", to: "2024-02-10"})
+    const date = faker.date.between({ from: "2024-01-01", to: "2024-02-10" })
     lessons.push({
         tutor: tutor.name,
         learner: learner.name,

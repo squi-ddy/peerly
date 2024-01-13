@@ -1,15 +1,22 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import { FaChalkboardTeacher, FaGraduationCap, FaPeopleCarry } from "react-icons/fa"
+import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
+import MotionButton from "./MotionButton"
+import { useNavigate } from "react-router"
+import SetTitle from "./SetTitle"
 
 function MainPage() {
     const [index, setIndex] = useState(0)
+    const navigate = useNavigate()
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setIndex((index + 1) % texts.length)
-        }, (index === texts.length - 1 ? 1500 : 3000))
+        const interval = setInterval(
+            () => {
+                setIndex((index + 1) % texts.length)
+            },
+            index === texts.length - 1 ? 1500 : 3000,
+        )
 
         return () => clearInterval(interval)
     }, [index])
@@ -26,11 +33,24 @@ function MainPage() {
     const textElements = texts.map((text, index) => {
         return (
             <motion.h1
-                initial={{ opacity: 0, x: (index === 0 ? 0 : "40px") }}
-                animate={{ opacity: ((index === texts.length - 1) ? 0 : 1), x: 0 }}
-                exit={{ opacity: 0, x: ((index === texts.length - 2) ? 0: "-40px") }}
+                initial={{
+                    opacity: 0,
+                    transform:
+                        index === 0 ? "translateX(0)" : "translateX(40px)",
+                }}
+                animate={{
+                    opacity: index === texts.length - 1 ? 0 : 1,
+                    transform: "translateX(0)",
+                }}
+                exit={{
+                    opacity: 0,
+                    transform:
+                        index === texts.length - 2
+                            ? "translateX(0)"
+                            : "translateX(-40px)",
+                }}
                 transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                className="text-8xl text-orange-400"
+                className="text-8xl text-orange-400 font-bold"
                 key={index}
             >
                 {text}
@@ -38,92 +58,100 @@ function MainPage() {
         )
     })
 
-    const mainVariants = {
-        hidden: {
-            opacity: 0,
-        },
-        visible: {
-            opacity: 1,
-            transition: {
-                delay: 0.5,
-                when: "beforeChildren",
-                staggerChildren: 0.3,
-            },
-        },
-    }
-
     const itemVariants = {
-        hidden: { y: "-20px", opacity: 0 },
-        visible: { y: 0, opacity: 1 },
+        hidden: { transform: "translateY(-20px)", opacity: 0 },
+        visible: { transform: "translateY(0)", opacity: 1 },
         exit: { opacity: 0 },
     }
 
     return (
         <>
-            <motion.div
-                variants={mainVariants}
-                className="flex-grow flex flex-col gap-4 justify-center items-center w-full"
-            >
-                <div className="flex-grow grow-[3]" />
-                <motion.h1 variants={itemVariants} className="text-8xl">
-                    A place for
-                </motion.h1>
-                <motion.div variants={itemVariants}>
-                    <AnimatePresence mode="wait">
-                        {textElements[index]}
-                    </AnimatePresence>
-                </motion.div>
-
-                <div className="flex-grow grow-[3]" />
-
-                <motion.h1 className="text-4xl" variants={itemVariants}>
-                    Peerly is a place for students to{" "}
-                    <span className="text-orange-400">collaborate</span> and{" "}
-                    <span className="text-orange-400">learn</span> together.
-                </motion.h1>
-                <motion.h1 className="text-4xl" variants={itemVariants}>
-                    Students can <span className="text-orange-400">mentor</span>{" "}
-                    each other, and{" "}
-                    <span className="text-orange-400">bond</span> with each
-                    other.
-                </motion.h1>
-                <div className="flex-grow" />
-                <div className="flex gap-4 w-full justify-center">
-                    <motion.div
-                        variants={itemVariants}
-                        className="border-2 rounded-xl p-4 w-1/5 aspect-square h-full flex flex-col items-center gap-2">
-                            <div className="flex-grow" />
-                            <FaChalkboardTeacher size={250} />
-                            <h1 className="text-4xl text-orange-400">Mentorship</h1>
-                            <p className="text-xl text-center">
-                                Students can mentor each other, learning from others, but also reinforcing their own knowledge.</p>
-                            <div className="flex-grow" />
-                    </motion.div>
-                    <motion.div
-                        variants={itemVariants}
-                        className="border-2 rounded-xl p-4 w-1/5 aspect-square h-full flex flex-col items-center gap-2">
-                            <div className="flex-grow" />
-                            <FaPeopleCarry size={250} />
-                            <h1 className="text-4xl text-orange-400">Bonding</h1>
-                            <p className="text-xl text-center">
-                                Tutoring helps students bond with each other, and form friendships that last a lifetime.
-                            </p>
-                            <div className="flex-grow" />
-                    </motion.div>
-                    <motion.div
-                        variants={itemVariants}
-                        className="border-2 rounded-xl p-4 w-1/5 aspect-square h-full flex flex-col items-center gap-2">
-                            <div className="flex-grow" />
-                            <FaPerson size={250} />
-                            <h1 className="text-4xl text-orange-400">Personal</h1>
-                            <p className="text-xl text-center">
-                                Peerly assigns 1-on-1 tutoring sessions, so that students can get the most out of their time.
-                            </p>
-                            <div className="flex-grow" />
-                    </motion.div>
-                </div>
-                <div className="flex-grow grow-[2]" />
+            <SetTitle title="Peerly" />
+            <div className="grow-[2]" />
+            <motion.h1 variants={itemVariants} className="text-8xl">
+                A place for
+            </motion.h1>
+            <motion.div variants={itemVariants}>
+                <AnimatePresence mode="wait">
+                    {textElements[index]}
+                </AnimatePresence>
             </motion.div>
+
+            <div className="grow-[3]" />
+
+            <motion.h1 className="text-4xl" variants={itemVariants}>
+                Peerly is a place for students to{" "}
+                <span className="text-orange-400">collaborate</span> and{" "}
+                <span className="text-orange-400">learn</span> together.
+            </motion.h1>
+            <motion.h1 className="text-4xl" variants={itemVariants}>
+                Students can <span className="text-orange-400">mentor</span>{" "}
+                each other, and <span className="text-orange-400">bond</span>{" "}
+                with each other.
+            </motion.h1>
+            <div className="flex gap-2 w-full justify-center">
+                <MotionButton
+                    variants={itemVariants}
+                    whileHover={{ transform: "translateY(-5px)" }}
+                    text="Join Peerly"
+                    textSize="text-2xl"
+                    emphasis
+                    onClick={() => {
+                        navigate("/auth/register")
+                    }}
+                />
+                <MotionButton
+                    variants={itemVariants}
+                    text="See Tutors"
+                    textSize="text-2xl"
+                    onClick={() => {
+                        navigate("/tutors")
+                    }}
+                />
+            </div>
+            <div className="grow" />
+            <div className="flex gap-4 w-full justify-center">
+                <motion.div
+                    variants={itemVariants}
+                    className="border-2 rounded-xl p-4 w-1/5 aspect-square h-auto flex flex-col items-center justify-center gap-2"
+                >
+                    <FaChalkboardTeacher className="grow aspect-square w-auto max-h-[40%]" />
+                    <h1 className="text-4xl text-orange-400 font-bold">
+                        Mentorship
+                    </h1>
+                    <p className="text-xl text-center">
+                        Students can mentor each other, learning from others,
+                        but also reinforcing their own knowledge.
+                    </p>
+                </motion.div>
+                <motion.div
+                    variants={itemVariants}
+                    className="border-2 rounded-xl p-4 w-1/5 aspect-square h-auto flex flex-col items-center justify-center gap-2"
+                >
+                    <FaPeopleCarry className="grow aspect-square w-auto max-h-[40%]" />
+                    <h1 className="text-4xl text-orange-400 font-bold">
+                        Bonding
+                    </h1>
+                    <p className="text-xl text-center">
+                        Tutoring helps students bond with each other, and form
+                        friendships that last a lifetime.
+                    </p>
+                </motion.div>
+                <motion.div
+                    variants={itemVariants}
+                    className="border-2 rounded-xl p-4 w-1/5 aspect-square h-auto flex flex-col items-center justify-center gap-2"
+                >
+                    <FaPerson className="grow aspect-square w-auto max-h-[40%]" />
+                    <h1 className="text-4xl text-orange-400 font-bold">
+                        Personal
+                    </h1>
+                    <p className="text-xl text-center">
+                        Peerly assigns 1-on-1 tutoring sessions, so that
+                        students can get the most out of their time.
+                    </p>
+                </motion.div>
+            </div>
+            <div className="grow-[2]" />
         </>
     )
 }
