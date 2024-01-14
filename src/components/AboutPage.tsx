@@ -142,7 +142,7 @@ function AboutPage() {
                 </a>
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
-                15 React components, 1570 lines of code
+                15 React components, ~1600 lines of code
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
                 Created in 2 days + some help (autocomplete) from{" "}
