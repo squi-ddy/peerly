@@ -5,8 +5,8 @@ import SetTitle from "./SetTitle"
 
 function Page404() {
     const itemVariants = {
-        hidden: { y: "-20px", opacity: 0 },
-        visible: { y: 0, opacity: 1 },
+        hidden: { transform: "translateY(-20px)", opacity: 0 },
+        visible: { transform: "translateY(0)", opacity: 1 },
         exit: { opacity: 0 },
     }
 
