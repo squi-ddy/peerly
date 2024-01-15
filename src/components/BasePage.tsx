@@ -41,7 +41,7 @@ function BasePage(props: { children?: React.ReactNode }) {
                 animate={"visible"}
                 exit={"exit"}
                 id="header"
-                className="pt-[20px] bg-gradient-to-r from-sky-700 to-sky-600 w-full mb-[-20px]"
+                className="pt-[20px] bg-gradient-to-r from-sky-900 to-sky-800 w-full mb-[-20px]"
             >
                 <div className="px-5 flex items-center justify-items-center p-2 gap-2">
                     <MotionLink

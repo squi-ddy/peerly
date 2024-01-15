@@ -11,7 +11,7 @@ const NavButton = forwardRef(
             <NavLink
                 to={props.to}
                 ref={ref}
-                className="text-l text-white py-1 px-3 rounded-md border border-sky-100 hover:bg-sky-100 hover:text-sky-600 transition-colors duration-300 nav-button"
+                className="text-xl text-white py-1 px-3 rounded-md border border-sky-100 hover:bg-sky-100 hover:text-sky-600 transition-colors duration-300 nav-button"
             >
                 {props.text}
             </NavLink>

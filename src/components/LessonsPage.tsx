@@ -17,6 +17,7 @@ function LessonsPage() {
     const [visibleLessons, setVisibleLessons] = useState(lessonsStringDate)
     const fuse = new Fuse(lessonsStringDate, {
         keys: ["tutor", "learner", "subject", "date"],
+        threshold: 0.1
     })
 
     const itemVariants = {

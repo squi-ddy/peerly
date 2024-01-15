@@ -6,7 +6,7 @@ import Fuse from "fuse.js"
 
 function TutorsPage() {
     const [visibleTutors, setVisibleTutors] = useState(tutors)
-    const fuse = new Fuse(tutors, { keys: ["name", "subjects", "year"] })
+    const fuse = new Fuse(tutors, { keys: ["name", "subjects", "year"], threshold: 0.1 })
 
     const itemVariants = {
         hidden: { transform: "translateY(-20px)", opacity: 0 },
