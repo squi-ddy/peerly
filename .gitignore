@@ -28,4 +28,4 @@ coverage
 *.sw?
 
 db-data
-opts.json
+secrets.json

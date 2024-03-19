@@ -1,9 +1,10 @@
-import options from 'opts.json'
+import secrets from 'secrets.json'
 
 const settings = {
     PORT: 3001,
     DOMAIN: "localhost",
-    ...options
+    SESSION_SECRET: secrets.SESSION_SECRET,
+    MEMCACHED_SECRET: secrets.MEMCACHED_SECRET,
 }
 
 export { settings }
