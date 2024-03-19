@@ -37,6 +37,14 @@ function App() {
             ),
         },
         {
+            path: "/:name",
+            element: (
+                <MotionBase delay={baseRouteDelayMap[renderState]}>
+                    <MainPage />
+                </MotionBase>
+            ),
+        },
+        {
             path: "/tutors",
             element: (
                 <MotionBase delay={baseRouteDelayMap[renderState]}>

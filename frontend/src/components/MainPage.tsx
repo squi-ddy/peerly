@@ -5,10 +5,13 @@ import { FaPerson } from "react-icons/fa6"
 import MotionButton from "./MotionButton"
 import { useNavigate } from "react-router"
 import SetTitle from "./SetTitle"
+import { useParams } from "react-router-dom"
 
 function MainPage() {
     const [index, setIndex] = useState(0)
     const navigate = useNavigate()
+
+    const { name } = useParams()
 
     useEffect(() => {
         const interval = setInterval(
@@ -67,6 +70,7 @@ function MainPage() {
     return (
         <>
             <SetTitle title="Peerly" />
+            {name ? <div>Hi <b>{name}</b>!</div> : null}
             <div className="grow-[2]" />
             <motion.h1 variants={itemVariants} className="text-8xl">
                 A place for

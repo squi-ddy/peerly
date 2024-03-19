@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:8000"
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+      - memcached
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: peerly
+      MYSQL_PASSWORD: peerly
+      MYSQL_DATABASE: peerly
+    volumes:
+      - ./db-data:/var/lib/mysql
+      - ./db-setup:/docker-entrypoint-initdb.d
+  memcached:
+    image: memcached:latest-alpine
+    command: memcached -m 64
+

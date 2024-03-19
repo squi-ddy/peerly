@@ -19,5 +19,5 @@ RUN bun run build
 FROM nginx:alpine-slim AS deploy
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /data/www
+COPY --from=build /app/dist /data/www/peerly
 
