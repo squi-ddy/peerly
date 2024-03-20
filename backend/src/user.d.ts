@@ -1,6 +1,4 @@
 declare namespace Express {
-    export interface User {
-        id: number
-        username: string
-    }
+    type IUser = import("./types/user").IUser
+    export interface User extends IUser {}
 }

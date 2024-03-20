@@ -17,7 +17,7 @@ function LessonsPage() {
     const [visibleLessons, setVisibleLessons] = useState(lessonsStringDate)
     const fuse = new Fuse(lessonsStringDate, {
         keys: ["tutor", "learner", "subject", "date"],
-        threshold: 0.1
+        threshold: 0.1,
     })
 
     const itemVariants = {
@@ -57,8 +57,12 @@ function LessonsPage() {
                     placeholder="Search..."
                     className="border-2 rounded-xl bg-transparent text-2xl w-5/6 p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none"
                     onInput={async (e) => {
-                        const target: any = e.target
-                        if ("value" in e.target && target.value.length > 0) {
+                        const target = e.target
+                        if (
+                            "value" in target &&
+                            typeof target.value === "string" &&
+                            target.value.length > 0
+                        ) {
                             const value = target.value
                             const res = await fuse.search(value)
                             res.sort((a, b) => a.refIndex - b.refIndex)

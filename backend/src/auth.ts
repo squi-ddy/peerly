@@ -1,59 +1,72 @@
-import passport from 'passport';
-import { connection as conn } from 'db';
-import { Strategy as LocalStrategy } from 'passport-local';
-import bcrypt from 'bcrypt';
+import passport from "passport"
+import { connection as conn } from "db"
+import { Strategy as LocalStrategy } from "passport-local"
+import bcrypt from "bcryptjs"
+import { isUser } from "checkers"
+import { SerialisedUser } from "types/user"
 
-passport.use('local', new LocalStrategy({
-    usernameField: 'username',
-    passwordField: 'password'
-}, async (username, password, callback) => {
-    let res, fields
-    try {
-        [res, fields] = await conn.query('SELECT * FROM users WHERE username = ?', [username])
-    } catch (error) {
-        return callback(error)
-    }
+passport.use(
+    "local",
+    new LocalStrategy(
+        {
+            usernameField: "username",
+            passwordField: "password",
+        },
+        async (username, password, callback) => {
+            let res, _fields
+            try {
+                [res, _fields] = await conn.query(
+                    "SELECT * FROM users WHERE username = ?",
+                    [username],
+                )
+            } catch (error) {
+                return callback(error)
+            }
 
-    if (!Array.isArray(res) || res.length === 0) {
-        return callback(null, false, { message: 'Invalid username or password' })
-    }
+            if (!Array.isArray(res) || res.length === 0) {
+                return callback(null, false, { message: "Invalid username" })
+            }
 
-    const user: any = res[0]
+            const user = res[0]
 
-    if (!('password' in user) || typeof user.password !== 'string') {
-        return callback(null, false, { message: 'Internal server error (password field non-existent)' })
-    }
+            if (!isUser(user)) {
+                return callback(null, false, {
+                    message: "Internal server error (user object incorrect)",
+                })
+            }
 
-    if (!(user satisfies Express.User)) {
-        return callback(null, false, { message: 'Internal server error (user object incorrect)' })
-    }
+            if (!("password" in user) || typeof user.password !== "string") {
+                return callback(null, false, {
+                    message:
+                        "Internal server error (password field non-existent)",
+                })
+            }
 
-    bcrypt.compare(password, user.password, (error, result) => {
-        if (error) {
-            return callback(error)
-        }
+            bcrypt.compare(password, user.password, (error, result) => {
+                if (error) {
+                    return callback(error)
+                }
 
-        if (!result) {
-            return callback(null, false, { message: 'Invalid username or password' })
-        }
+                if (!result) {
+                    return callback(null, false, {
+                        message: "Invalid password",
+                    })
+                }
 
-        return callback(null, user)
+                return callback(null, user)
+            })
+        },
+    ),
+)
+
+passport.serializeUser<SerialisedUser>(function (user, cb) {
+    process.nextTick(function () {
+        cb(null, { id: user.id, username: user.username })
     })
-}));
+})
 
-type SerialisedUser = {
-    id: number
-    username: string
-}
-
-passport.serializeUser<SerialisedUser>(function(user, cb) {
-    process.nextTick(function() {
-        cb(null, { id: user.id, username: user.username });
-    });
-});
-
-passport.deserializeUser(function(user: SerialisedUser, cb) {
-    process.nextTick(function() {
-        return cb(null, user);
-    });
-});
+passport.deserializeUser(function (user: SerialisedUser, cb) {
+    process.nextTick(function () {
+        return cb(null, user)
+    })
+})

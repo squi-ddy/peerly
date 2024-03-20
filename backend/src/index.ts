@@ -8,6 +8,7 @@ import cors from "cors"
 import session from "express-session"
 import ConnectMemcachedSession from "connect-memcached"
 import passport from "passport"
+import "auth" // set up 'local' strategy for passport
 
 const app = express()
 const port = settings.PORT
@@ -20,15 +21,17 @@ app.use(cors())
 app.use(helmet())
 app.use(compression())
 app.use(express.json({ limit: "50mb" }))
-app.use(session({
-    secret: settings.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: new MemcachedStore({
-        hosts: ['memcached:11211'],
-        secret: settings.MEMCACHED_SECRET
-    })
-}))
+app.use(
+    session({
+        secret: settings.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: new MemcachedStore({
+            hosts: ["memcached:11211"],
+            secret: settings.MEMCACHED_SECRET,
+        }),
+    }),
+)
 app.use(passport.session())
 
 app.use("/", apiRouter)

@@ -1,15 +1,13 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+import { screens } from "tailwindcss/defaultTheme"
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-    theme: {
-        screens: {
-            ...defaultTheme.screens,
-            '3xl': '1920px',
-            '4xl': '2560px',
-        },
-        extend: {},
+export const content = ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"]
+export const theme = {
+    screens: {
+        ...screens,
+        "3xl": "1920px",
+        "4xl": "2560px",
     },
-    plugins: [],
+    extend: {},
 }
+export const plugins = []

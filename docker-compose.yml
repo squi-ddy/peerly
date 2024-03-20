@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   frontend:
     build: ./frontend
@@ -23,6 +21,6 @@ services:
       - ./db-data:/var/lib/mysql
       - ./db-setup:/docker-entrypoint-initdb.d
   memcached:
-    image: memcached:latest-alpine
+    image: memcached:alpine
     command: memcached -m 64
 

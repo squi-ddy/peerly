@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion"
 import MotionButton from "./MotionButton"
 import { useEffect, useState, cloneElement } from "react"
-import { Outlet, useLocation, useNavigate, useOutlet } from "react-router-dom"
+import { useLocation, useNavigate, useOutlet } from "react-router-dom"
 
 function LoginRegister() {
     const location = useLocation()
     const [registering, setRegistering] = useState(
-        location.pathname === "/auth/register",
+        location.pathname === "/auth/register"
     )
     const navigate = useNavigate()
 

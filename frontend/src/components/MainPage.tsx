@@ -3,9 +3,8 @@ import { useEffect, useState } from "react"
 import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
 import MotionButton from "./MotionButton"
-import { useNavigate } from "react-router"
 import SetTitle from "./SetTitle"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 
 function MainPage() {
     const [index, setIndex] = useState(0)
@@ -18,7 +17,7 @@ function MainPage() {
             () => {
                 setIndex((index + 1) % texts.length)
             },
-            index === texts.length - 1 ? 1500 : 3000,
+            index === texts.length - 1 ? 1500 : 3000
         )
 
         return () => clearInterval(interval)
@@ -70,7 +69,11 @@ function MainPage() {
     return (
         <>
             <SetTitle title="Peerly" />
-            {name ? <div>Hi <b>{name}</b>!</div> : null}
+            {name ? (
+                <div>
+                    Hi <b>{name}</b>!
+                </div>
+            ) : null}
             <div className="grow-[2]" />
             <motion.h1 variants={itemVariants} className="text-8xl">
                 A place for

@@ -1,4 +1,4 @@
-import secrets from 'secrets.json'
+import secrets from "secrets.json"
 
 const settings = {
     PORT: 3001,

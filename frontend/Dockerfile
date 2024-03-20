@@ -7,7 +7,6 @@ FROM base AS dependencies
 WORKDIR /app/
 COPY package.json bun.lockb ./
 RUN bun i -p
-RUN apk del build-deps
 
 FROM base AS build
 

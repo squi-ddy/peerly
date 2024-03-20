@@ -6,7 +6,10 @@ import Fuse from "fuse.js"
 
 function LearnersPage() {
     const [visibleLearners, setVisibleLearners] = useState(learners)
-    const fuse = new Fuse(learners, { keys: ["name", "subjects", "year"], threshold: 0.1 })
+    const fuse = new Fuse(learners, {
+        keys: ["name", "subjects", "year"],
+        threshold: 0.1,
+    })
 
     const itemVariants = {
         hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -45,8 +48,12 @@ function LearnersPage() {
                     placeholder="Search..."
                     className="border-2 rounded-xl bg-transparent text-2xl w-5/6 p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none"
                     onInput={async (e) => {
-                        const target: any = e.target
-                        if ("value" in e.target && target.value.length > 0) {
+                        const target = e.target
+                        if (
+                            "value" in target &&
+                            typeof target.value === "string" &&
+                            target.value.length > 0
+                        ) {
                             const value = target.value
                             const res = await fuse.search(value)
                             res.sort((a, b) => a.refIndex - b.refIndex)

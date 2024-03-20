@@ -27,6 +27,7 @@ function AboutPage() {
                         href="https://react.dev/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         React
                     </a>{" "}
@@ -37,6 +38,7 @@ function AboutPage() {
                         href="https://vitejs.dev/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         Vite
                     </a>{" "}
@@ -47,6 +49,7 @@ function AboutPage() {
                         href="https://www.typescriptlang.org/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         TypeScript
                     </a>{" "}
@@ -57,6 +60,7 @@ function AboutPage() {
                         href="https://reactrouter.com/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         React Router
                     </a>{" "}
@@ -67,6 +71,7 @@ function AboutPage() {
                         href="https://tailwindcss.com/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         TailwindCSS
                     </a>{" "}
@@ -77,6 +82,7 @@ function AboutPage() {
                         href="https://react-icons.github.io/react-icons/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         React Icons
                     </a>{" "}
@@ -87,6 +93,7 @@ function AboutPage() {
                         href="https://www.framer.com/motion"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         Framer Motion
                     </a>{" "}
@@ -97,6 +104,7 @@ function AboutPage() {
                         href="https://fakerjs.dev/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         Faker.js
                     </a>{" "}
@@ -107,6 +115,7 @@ function AboutPage() {
                         href="https://www.fusejs.io/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
                     >
                         Fuse.js
                     </a>{" "}
@@ -119,6 +128,7 @@ function AboutPage() {
                     href="https://prettier.io/"
                     target="_blank"
                     className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                    rel="noreferrer"
                 >
                     Prettier
                 </a>
@@ -129,6 +139,7 @@ function AboutPage() {
                     href="https://fonts.google.com/specimen/Nunito"
                     target="_blank"
                     className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                    rel="noreferrer"
                 >
                     Nunito
                 </a>{" "}
@@ -137,6 +148,7 @@ function AboutPage() {
                     href="https://fonts.google.com/"
                     target="_blank"
                     className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                    rel="noreferrer"
                 >
                     Google Fonts
                 </a>
@@ -150,6 +162,7 @@ function AboutPage() {
                     href="https://github.com/features/copilot"
                     target="_blank"
                     className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                    rel="noreferrer"
                 >
                     Copilot
                 </a>

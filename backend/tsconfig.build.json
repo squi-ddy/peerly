@@ -5,10 +5,11 @@
         "target": "es2017",
         "moduleResolution": "node",
         "sourceMap": true,
+        "outDir": "dist",
         "resolveJsonModule": true,
-        "baseUrl": "src",
+        "baseUrl": "generated",
         "strict": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["generated/**/*.ts"],
     "lib": ["es2015"]
 }
