@@ -4,7 +4,8 @@ _The peer tutoring platform_
 
 ## Getting Started
 
-If `docker` is available, simply build and run the `Dockerfile`. The website will be exposed on inner port `8000`.\
+Ensure `docker compose` is available.\
+Run `docker compose -f docker-compose.dev.yml up` to start the frontend (at `http://localhost:3000`) and backend (at `http://localhost:3001`).
 
 ## Credits
 
