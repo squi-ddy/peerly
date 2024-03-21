@@ -1,16 +1,16 @@
 services:
-  frontend:
+  peerly-frontend:
     build: ./frontend
     ports:
       - "3000:8000"
-  backend:
+  peerly-backend:
     build: ./backend
     ports:
       - "3001:3001"
     depends_on:
-      - db
-      - memcached
-  db:
+      - peerly-db
+      - peerly-memcached
+  peerly-db:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: admin
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./db-data:/var/lib/mysql
       - ./db-setup:/docker-entrypoint-initdb.d
-  memcached:
+  peerly-memcached:
     image: memcached:alpine
     command: memcached -m 64
 

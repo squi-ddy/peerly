@@ -32,7 +32,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         store: new MemcachedStore({
-            hosts: ["memcached:11211"],
+            hosts: ["peerly-memcached:11211"],
             secret: settings.MEMCACHED_SECRET,
         }),
     }),
