@@ -1,12 +1,8 @@
 services:
   peerly-frontend:
     build: ./frontend
-    ports:
-      - "3000:8000"
   peerly-backend:
     build: ./backend
-    ports:
-      - "3001:3001"
     depends_on:
       - peerly-db
       - peerly-memcached
