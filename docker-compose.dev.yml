@@ -5,14 +5,19 @@ services:
       service: peerly-frontend
     ports:
       - "3000:3000"
-    args:
-      - API_URL: http://localhost:3001
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://localhost:3001
   peerly-backend:
     extends:
       file: docker-compose.yml
       service: peerly-backend
     ports:
       - "3001:3001"
+    depends_on:
+      - peerly-db
+      - peerly-memcached
   peerly-db:
     extends:
       file: docker-compose.yml

@@ -11,7 +11,7 @@ export async function login(username: string, password: string) {
     try {
         const resp = {
             success: true,
-            response: await axios.post(`${settings.API_HOST}/acct/login`, {
+            response: await axios.post(`${settings.API_URL}/acct/login`, {
                 username,
                 password,
             }),
@@ -34,7 +34,7 @@ export async function register(
     try {
         const resp = {
             success: true,
-            response: await axios.post(`${settings.API_HOST}/acct/signup`, {
+            response: await axios.post(`${settings.API_URL}/acct/signup`, {
                 username,
                 password,
                 year,
@@ -54,7 +54,7 @@ export async function logout() {
     try {
         const resp = {
             success: true,
-            response: await axios.post(`${settings.API_HOST}/acct/logout`),
+            response: await axios.post(`${settings.API_URL}/acct/logout`),
         }
         currentUser = null
         return resp
@@ -71,7 +71,7 @@ export async function getCurrentSession(): Promise<IUser | null> {
         return currentUser
     }
     try {
-        const response = await axios.get(`${settings.API_HOST}/acct/session`)
+        const response = await axios.get(`${settings.API_URL}/acct/session`)
         const data = response.data
         if (!isUser(data)) {
             throw new Error("Invalid user data")
@@ -89,7 +89,7 @@ export async function getCurrentSession(): Promise<IUser | null> {
 
 export async function getCurrentProfile(): Promise<IUserFull | null> {
     try {
-        const response = await axios.get(`${settings.API_HOST}/acct/me`)
+        const response = await axios.get(`${settings.API_URL}/acct/me`)
         const data = response.data
         if (!isFullUser(data)) {
             throw new Error("Invalid user data")
