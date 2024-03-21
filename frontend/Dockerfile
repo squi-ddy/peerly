@@ -4,7 +4,7 @@ FROM base AS dependencies
 
 WORKDIR /app/
 COPY package.json bun.lockb ./
-RUN bun i --frozen-lockfile
+RUN bun i --frozen-lockfile --verbose
 
 FROM base AS build
 
