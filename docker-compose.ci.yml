@@ -1,0 +1,31 @@
+services:
+  peerly-frontend:
+    extends:
+      file: docker-compose.yml
+      service: peerly-frontend
+    ports:
+      - "3000:3000"
+    build:
+      context: ./peerly/frontend
+      args:
+        API_URL: https://squiddy.me/peerly-api
+  peerly-backend:
+    extends:
+      file: docker-compose.yml
+      service: peerly-backend
+    ports:
+      - "3001:3001"
+    build:
+      context: ./peerly/backend
+    depends_on:
+      - peerly-db
+      - peerly-memcached
+  peerly-db:
+    extends:
+      file: docker-compose.yml
+      service: peerly-db
+  peerly-memcached:
+    extends:
+      file: docker-compose.yml
+      service: peerly-memcached
+
