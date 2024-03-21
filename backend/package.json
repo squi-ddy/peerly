@@ -8,7 +8,7 @@
         "typia": "bunx typia generate --input src/ --output generated/ --project tsconfig.json",
         "build-tsconfig": "mv tsconfig.json tsconfig.dev.json && mv tsconfig.build.json tsconfig.json",
         "dev-tsconfig": "mv tsconfig.json tsconfig.build.json && mv tsconfig.dev.json tsconfig.json",
-        "ncc": "ncc build generated/index.ts -o dist -m -t",
+        "ncc": "ncc build generated/index.ts -o dist -t",
         "build": "bun run typia && bun run build-tsconfig && bun run ncc && bun run dev-tsconfig",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "typecheck": "tsc --noemit",
