@@ -4,7 +4,7 @@ import { NavLink, To } from "react-router-dom"
 
 const NavButton = forwardRef(function NavButton(
     props: { to: To; text: string },
-    ref: React.ForwardedRef<HTMLAnchorElement>
+    ref: React.ForwardedRef<HTMLAnchorElement>,
 ) {
     return (
         <NavLink

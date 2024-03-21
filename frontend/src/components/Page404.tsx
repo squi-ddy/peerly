@@ -3,13 +3,13 @@ import { Link } from "react-router-dom"
 import { TbMoodSad } from "react-icons/tb"
 import SetTitle from "./SetTitle"
 
-function Page404() {
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
 
+function Page404() {
     return (
         <>
             <SetTitle title="404" />

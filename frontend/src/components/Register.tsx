@@ -1,10 +1,23 @@
 import { AnimatePresence, motion } from "framer-motion"
 import SetTitle from "./SetTitle"
-import { useRef, useState } from "react"
+import { useContext, useRef, useState } from "react"
 import { BiShow, BiHide } from "react-icons/bi"
 import MotionButton from "./MotionButton"
 import { register } from "../api"
 import { useNavigate } from "react-router-dom"
+import { UserContext } from "./BasePage"
+
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
+
+const showIconVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
+}
 
 function Register() {
     const [showPassword, setShowPassword] = useState(false)
@@ -21,17 +34,7 @@ function Register() {
 
     const navigate = useNavigate()
 
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
-
-    const showIconVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 },
-        exit: { opacity: 0 },
-    }
+    const { updateUser } = useContext(UserContext)
 
     return (
         <>
@@ -226,6 +229,7 @@ function Register() {
                         }
                         setErrorText(message)
                     } else {
+                        updateUser()
                         navigate("/")
                     }
                 }}

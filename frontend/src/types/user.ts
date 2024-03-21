@@ -3,11 +3,6 @@ export interface IUser {
     username: string
 }
 
-export type SerialisedUser = {
-    id: number
-    username: string
-}
-
 export interface IUserFull extends IUser {
     year: number
 }

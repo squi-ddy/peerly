@@ -1,38 +1,46 @@
 import { AnimatePresence, motion } from "framer-motion"
 import MotionButton from "./MotionButton"
-import { useEffect, useState, cloneElement } from "react"
+import { useEffect, useState, cloneElement, useContext } from "react"
 import { useLocation, useNavigate, useOutlet } from "react-router-dom"
+import { UserContext } from "./BasePage"
+
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
+
+const mainVariants = {
+    hidden: { opacity: 0, transform: "translateY(-20px)" },
+    visible: {
+        opacity: 1,
+        transform: "translateY(0)",
+        transition: { when: "beforeChildren", staggerChildren: 0.3 },
+    },
+    exit: {
+        opacity: 0,
+        transition: { when: "afterChildren", staggerChildren: 0.05 },
+    },
+}
 
 function LoginRegister() {
     const location = useLocation()
     const [registering, setRegistering] = useState(
-        location.pathname === "/auth/register"
+        location.pathname === "/auth/register",
     )
     const navigate = useNavigate()
+    const { user } = useContext(UserContext)
+
+    useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [user])
 
     useEffect(() => {
         if (location.pathname.startsWith("/auth"))
             setRegistering(location.pathname === "/auth/register")
     }, [location])
-
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
-
-    const mainVariants = {
-        hidden: { opacity: 0, transform: "translateY(-20px)" },
-        visible: {
-            opacity: 1,
-            transform: "translateY(0)",
-            transition: { when: "beforeChildren", staggerChildren: 0.3 },
-        },
-        exit: {
-            opacity: 0,
-            transition: { when: "afterChildren", staggerChildren: 0.05 },
-        },
-    }
 
     const child = useOutlet()!
 

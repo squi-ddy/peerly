@@ -9,5 +9,5 @@ createRoot(document.getElementById("mount") as HTMLElement).render(
         <BrowserRouter basename="/peerly">
             <App />
         </BrowserRouter>
-    </StrictMode>
+    </StrictMode>,
 )

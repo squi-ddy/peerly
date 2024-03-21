@@ -1,13 +1,13 @@
 import { motion } from "framer-motion"
 import SetTitle from "./SetTitle"
 
-function AboutPage() {
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
 
+function AboutPage() {
     return (
         <>
             <SetTitle title="About" />

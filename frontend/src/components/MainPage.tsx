@@ -4,33 +4,37 @@ import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
 import MotionButton from "./MotionButton"
 import SetTitle from "./SetTitle"
-import { useParams, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+
+const texts = [
+    "mentorship",
+    "knowledge",
+    "collaboration",
+    "learning",
+    "bonding",
+    "a",
+]
+
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
 
 function MainPage() {
     const [index, setIndex] = useState(0)
     const navigate = useNavigate()
-
-    const { name } = useParams()
 
     useEffect(() => {
         const interval = setInterval(
             () => {
                 setIndex((index + 1) % texts.length)
             },
-            index === texts.length - 1 ? 1500 : 3000
+            index === texts.length - 1 ? 1500 : 3000,
         )
 
         return () => clearInterval(interval)
     }, [index])
-
-    const texts = [
-        "mentorship",
-        "knowledge",
-        "collaboration",
-        "learning",
-        "bonding",
-        "a",
-    ]
 
     const textElements = texts.map((text, index) => {
         return (
@@ -60,20 +64,9 @@ function MainPage() {
         )
     })
 
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
-
     return (
         <>
             <SetTitle title="Peerly" />
-            {name ? (
-                <div>
-                    Hi <b>{name}</b>!
-                </div>
-            ) : null}
             <div className="grow-[2]" />
             <motion.h1 variants={itemVariants} className="text-8xl">
                 A place for

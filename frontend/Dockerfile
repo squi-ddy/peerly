@@ -6,13 +6,14 @@ FROM base AS dependencies
 
 WORKDIR /app/
 COPY package.json bun.lockb ./
-RUN bun i -p
+RUN bun i
 
 FROM base AS build
 
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
+ENV NODE_ENV production
 RUN bun run build
 
 FROM nginx:alpine-slim AS deploy

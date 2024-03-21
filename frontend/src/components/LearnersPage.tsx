@@ -4,31 +4,32 @@ import { learners } from "../data"
 import { useState } from "react"
 import Fuse from "fuse.js"
 
+const fuse = new Fuse(learners, {
+    keys: ["name", "subjects", "year"],
+    threshold: 0.1,
+})
+
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
+
+const mainVariants = {
+    hidden: { opacity: 0, transform: "translateY(-20px)" },
+    visible: {
+        opacity: 1,
+        transform: "translateY(0)",
+        transition: { when: "beforeChildren", staggerChildren: 0.05 },
+    },
+    exit: {
+        opacity: 0,
+        transition: { when: "afterChildren", staggerChildren: 0.005 },
+    },
+}
+
 function LearnersPage() {
     const [visibleLearners, setVisibleLearners] = useState(learners)
-    const fuse = new Fuse(learners, {
-        keys: ["name", "subjects", "year"],
-        threshold: 0.1,
-    })
-
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
-
-    const mainVariants = {
-        hidden: { opacity: 0, transform: "translateY(-20px)" },
-        visible: {
-            opacity: 1,
-            transform: "translateY(0)",
-            transition: { when: "beforeChildren", staggerChildren: 0.05 },
-        },
-        exit: {
-            opacity: 0,
-            transition: { when: "afterChildren", staggerChildren: 0.005 },
-        },
-    }
 
     return (
         <>

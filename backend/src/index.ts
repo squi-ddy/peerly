@@ -17,7 +17,12 @@ const server = http.createServer(app)
 
 const MemcachedStore = ConnectMemcachedSession(session)
 
-app.use(cors())
+const allowedOrigins = ["http://localhost:3000", "https://squiddy.me"]
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}))
 app.use(helmet())
 app.use(compression())
 app.use(express.json({ limit: "50mb" }))

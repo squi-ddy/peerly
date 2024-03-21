@@ -16,7 +16,7 @@ passport.use(
             let res, _fields
             try {
                 [res, _fields] = await conn.query(
-                    "SELECT * FROM users WHERE username = ?",
+                    "SELECT id, username, password FROM users WHERE username = ?",
                     [username],
                 )
             } catch (error) {
@@ -52,6 +52,8 @@ passport.use(
                         message: "Invalid password",
                     })
                 }
+
+                delete user.password
 
                 return callback(null, user)
             })

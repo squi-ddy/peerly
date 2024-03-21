@@ -2,6 +2,7 @@ import express from "express"
 import passport from "passport"
 import bcrypt from "bcryptjs"
 import { connection as conn } from "db"
+import { isFullUser } from "checkers"
 
 const acctRouter = express.Router()
 
@@ -117,13 +118,18 @@ acctRouter.get("/session", (req, res) => {
 acctRouter.get("/me", async (req, res) => {
     if (req.isAuthenticated()) {
         const [result, _fields] = await conn.query(
-            "SELECT * FROM users WHERE id = ?",
+            "SELECT username, id, year FROM users WHERE id = ?",
             [req.user.id],
         )
         if (!Array.isArray(result) || result.length !== 1) {
             return res
                 .status(500)
                 .json({ message: "Internal server error (user not found)" })
+        }
+        if (!isFullUser(result[0])) {
+            return res
+                .status(500)
+                .json({ message: "Internal server error (user object incorrect)" })
         }
         res.json(result[0])
     } else {

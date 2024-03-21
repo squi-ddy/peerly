@@ -12,6 +12,7 @@ import TutorsPage from "./components/TutorsPage"
 import LearnersPage from "./components/LearnersPage"
 import LessonsPage from "./components/LessonsPage"
 import AboutPage from "./components/AboutPage"
+import ProfilePage from "./components/ProfilePage"
 
 function App() {
     const [renderState, setRenderState] = useState("0")
@@ -73,6 +74,14 @@ function App() {
             element: (
                 <MotionBase delay={baseRouteDelayMap[renderState]}>
                     <LessonsPage />
+                </MotionBase>
+            ),
+        },
+        {
+            path: "/me",
+            element: (
+                <MotionBase delay={baseRouteDelayMap[renderState]}>
+                    <ProfilePage />
                 </MotionBase>
             ),
         },

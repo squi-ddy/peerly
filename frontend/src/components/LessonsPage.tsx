@@ -4,40 +4,42 @@ import { lessons } from "../data"
 import { useState } from "react"
 import Fuse from "fuse.js"
 
+const lessonsStringDate: {
+    tutor: string
+    learner: string
+    subject: string
+    date: string
+}[] = lessons.map((lesson) => ({
+    ...lesson,
+    date: lesson.date.toLocaleString(),
+}))
+
+const fuse = new Fuse(lessonsStringDate, {
+    keys: ["tutor", "learner", "subject", "date"],
+    threshold: 0.1,
+})
+
+const itemVariants = {
+    hidden: { transform: "translateY(-20px)", opacity: 0 },
+    visible: { transform: "translateY(0)", opacity: 1 },
+    exit: { opacity: 0 },
+}
+
+const mainVariants = {
+    hidden: { opacity: 0, transform: "translateY(-20px)" },
+    visible: {
+        opacity: 1,
+        transform: "translateY(0)",
+        transition: { when: "beforeChildren", staggerChildren: 0.05 },
+    },
+    exit: {
+        opacity: 0,
+        transition: { when: "afterChildren", staggerChildren: 0.005 },
+    },
+}
+
 function LessonsPage() {
-    const lessonsStringDate: {
-        tutor: string
-        learner: string
-        subject: string
-        date: string
-    }[] = lessons.map((lesson) => ({
-        ...lesson,
-        date: lesson.date.toLocaleString(),
-    }))
     const [visibleLessons, setVisibleLessons] = useState(lessonsStringDate)
-    const fuse = new Fuse(lessonsStringDate, {
-        keys: ["tutor", "learner", "subject", "date"],
-        threshold: 0.1,
-    })
-
-    const itemVariants = {
-        hidden: { transform: "translateY(-20px)", opacity: 0 },
-        visible: { transform: "translateY(0)", opacity: 1 },
-        exit: { opacity: 0 },
-    }
-
-    const mainVariants = {
-        hidden: { opacity: 0, transform: "translateY(-20px)" },
-        visible: {
-            opacity: 1,
-            transform: "translateY(0)",
-            transition: { when: "beforeChildren", staggerChildren: 0.05 },
-        },
-        exit: {
-            opacity: 0,
-            transition: { when: "afterChildren", staggerChildren: 0.005 },
-        },
-    }
 
     return (
         <>

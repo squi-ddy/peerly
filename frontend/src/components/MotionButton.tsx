@@ -7,7 +7,7 @@ const Button = forwardRef(function Button(
         textSize?: string
         emphasis?: boolean
     } & HTMLAttributes<HTMLButtonElement>,
-    ref: React.ForwardedRef<HTMLButtonElement>
+    ref: React.ForwardedRef<HTMLButtonElement>,
 ) {
     const textSize = props.textSize || "text-l"
     const emphasis = props.emphasis || false
