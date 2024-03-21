@@ -1,12 +1,10 @@
 FROM oven/bun:alpine AS base
 
-RUN apk --no-cache add --virtual build-deps build-base python3
-
 FROM base AS dependencies
 
 WORKDIR /app/
 COPY package.json bun.lockb ./
-RUN bun i
+RUN bun i --frozen-lockfile
 
 FROM base AS build
 
