@@ -4,13 +4,13 @@ FROM base AS dependencies
 
 WORKDIR /app/
 COPY package.json bun.lockb ./
-RUN bun i --frozen-lockfile
+RUN bun i --frozen-lockfile --verbose
 
 FROM base AS build
 
 ARG API_URL=https://squiddy.me/peerly-api
 ENV VITE_API_URL=$API_URL
-ENV NODE_ENV production
+ENV NODE_ENV=production
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
