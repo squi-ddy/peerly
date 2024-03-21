@@ -3,8 +3,6 @@ services:
     extends:
       file: docker-compose.yml
       service: peerly-frontend
-    ports:
-      - "3000:3000"
     build:
       context: ./frontend
       args:
@@ -13,10 +11,6 @@ services:
     extends:
       file: docker-compose.yml
       service: peerly-backend
-    ports:
-      - "3001:3001"
-    build:
-      context: ./backend
     depends_on:
       - peerly-db
       - peerly-memcached
