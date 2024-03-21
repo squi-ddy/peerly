@@ -1,13 +1,16 @@
 services:
   peerly-frontend:
     build: ./frontend
+    restart: unless-stopped
   peerly-backend:
     build: ./backend
+    restart: unless-stopped
     depends_on:
       - peerly-db
       - peerly-memcached
   peerly-db:
     image: mysql:latest
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_USER: peerly
@@ -18,5 +21,6 @@ services:
       - ./db-setup:/docker-entrypoint-initdb.d
   peerly-memcached:
     image: memcached:alpine
+    restart: unless-stopped
     command: memcached -m 64
 

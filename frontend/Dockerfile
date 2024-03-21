@@ -8,8 +8,8 @@ RUN bun i --frozen-lockfile
 
 FROM base AS build
 
-ARG API_URL https://squiddy.me/peerly-api
-ENV VITE_API_URL $API_URL
+ARG API_URL=https://squiddy.me/peerly-api
+ENV VITE_API_URL=$API_URL
 ENV NODE_ENV production
 WORKDIR /app/
 COPY . .
