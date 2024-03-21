@@ -85,12 +85,7 @@ function BasePage(props: { children?: React.ReactNode }) {
                 Hi <b>{currentUser.username}</b>!
             </motion.p>,
 
-            <MotionNavButton
-                to="me"
-                text="Profile"
-                key="profile"
-                layout
-            />,
+            <MotionNavButton to="me" text="Profile" key="profile" layout />,
         ]
     }
 

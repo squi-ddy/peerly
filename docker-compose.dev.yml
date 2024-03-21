@@ -5,6 +5,8 @@ services:
       service: peerly-frontend
     ports:
       - "3000:3000"
+    args:
+      - API_URL: http://localhost:3001
   peerly-backend:
     extends:
       file: docker-compose.yml

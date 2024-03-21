@@ -1,7 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion"
-import MotionButton from "./MotionButton"
-import { useEffect, useState, cloneElement, useContext } from "react"
-import { useLocation, useNavigate, useOutlet } from "react-router-dom"
+import { motion } from "framer-motion"
+import { useEffect, useState, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 import { UserContext } from "./BasePage"
 import { IUserFull } from "../types/user"
 import { getCurrentProfile } from "../api"
@@ -28,7 +27,9 @@ const mainVariants = {
 function ProfilePage() {
     const navigate = useNavigate()
     const { user } = useContext(UserContext)
-    const [profileData, setProfileData] = useState<IUserFull | undefined>(undefined)
+    const [profileData, setProfileData] = useState<IUserFull | undefined>(
+        undefined,
+    )
 
     useEffect(() => {
         if (!user) {
@@ -49,10 +50,7 @@ function ProfilePage() {
     return (
         <>
             <motion.div variants={itemVariants} layout>
-                <motion.h1
-                    variants={itemVariants}
-                    className="text-5xl"
-                >
+                <motion.h1 variants={itemVariants} className="text-5xl">
                     Your Profile
                 </motion.h1>
             </motion.div>
@@ -62,15 +60,15 @@ function ProfilePage() {
                 layout
             >
                 <ul className="list-disc text-2xl">
-                <motion.li variants={itemVariants}>
-                    <b>Username</b>: {profileData.username}
-                </motion.li>
-                <motion.li variants={itemVariants}>
-                    <b>User ID</b>: {profileData.id}
-                </motion.li>
-                <motion.li variants={itemVariants}>
-                    <b>Year</b>: {profileData.year}
-                </motion.li>
+                    <motion.li variants={itemVariants}>
+                        <b>Username</b>: {profileData.username}
+                    </motion.li>
+                    <motion.li variants={itemVariants}>
+                        <b>User ID</b>: {profileData.id}
+                    </motion.li>
+                    <motion.li variants={itemVariants}>
+                        <b>Year</b>: {profileData.year}
+                    </motion.li>
                 </ul>
             </motion.div>
         </>

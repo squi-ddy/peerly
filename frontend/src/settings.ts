@@ -1,5 +1,5 @@
 const settings = {
-    API_HOST: "http://localhost:3001",
+    API_HOST: import.meta.env.API_HOST || "https://squiddy.me/peerly-api",
 }
 
 export { settings }

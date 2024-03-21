@@ -10,10 +10,11 @@ RUN bun i
 
 FROM base AS build
 
+ARG API_URL https://squiddy.me/peerly-api
+ENV API_URL $API_URL
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-ENV NODE_ENV production
 RUN bun run build
 
 FROM nginx:alpine-slim AS deploy
