@@ -1,5 +1,5 @@
 import passport from "passport"
-import { connection as conn } from "db"
+import { getConnection } from "db"
 import { Strategy as LocalStrategy } from "passport-local"
 import bcrypt from "bcryptjs"
 import { isUser } from "checkers"
@@ -15,7 +15,8 @@ passport.use(
         async (username, password, callback) => {
             let res, _fields
             try {
-                [res, _fields] = await conn.query(
+                const conn = await getConnection()
+                ;[res, _fields] = await conn.query(
                     "SELECT id, username, password FROM users WHERE username = ?",
                     [username],
                 )

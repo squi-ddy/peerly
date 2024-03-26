@@ -1,10 +1,16 @@
 import mysql from "mysql2/promise"
 
-const connection = await mysql.createConnection({
+const pool = mysql.createPool({
     host: "peerly-db",
     user: "peerly",
     password: "peerly",
     database: "peerly",
+    waitForConnections: true,
+    connectionLimit: 4
 })
 
-export { connection }
+const getConnection = async () => {
+    return await pool.getConnection()
+}
+
+export { getConnection }
