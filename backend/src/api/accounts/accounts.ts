@@ -1,7 +1,7 @@
 import express from "express"
 import passport from "passport"
 import bcrypt from "bcryptjs"
-import { getConnection } from "db"
+import { getConnection, pool } from "db"
 import { isFullUser } from "checkers"
 
 const acctRouter = express.Router()
@@ -65,13 +65,14 @@ acctRouter.post("/signup", async (req, res) => {
     // check if user already exists
     const conn = await getConnection()
     await conn.beginTransaction()
-    const [rows, _fields] = await conn.query(
+    const [rows, _fields] = await conn.execute(
         "SELECT * FROM users WHERE username = ?",
         [req.body.username],
     )
 
     if (Array.isArray(rows) && rows.length > 0) {
         await conn.rollback()
+        await conn.release()
         return res.status(400).json({ message: "User already exists" })
     }
 
@@ -80,14 +81,16 @@ acctRouter.post("/signup", async (req, res) => {
         hashedPass = await bcrypt.hash(req.body.password, 10)
     } catch (err) {
         await conn.rollback()
+        await conn.release()
         return res.status(500).json(err)
     }
 
-    const [result, _fields2] = await conn.query(
+    const [result, _fields2] = await conn.execute(
         "INSERT INTO users (username, password, year) VALUES (?, ?, ?)",
         [req.body.username, hashedPass, req.body.year],
     )
     await conn.commit()
+    await conn.release()
 
     if (Array.isArray(result)) {
         return res
@@ -124,8 +127,7 @@ acctRouter.get("/session", (req, res) => {
 
 acctRouter.get("/me", async (req, res) => {
     if (req.isAuthenticated()) {
-        const conn = await getConnection()
-        const [result, _fields] = await conn.query(
+        const [result, _fields] = await pool.execute(
             "SELECT username, id, year FROM users WHERE id = ?",
             [req.user.id],
         )

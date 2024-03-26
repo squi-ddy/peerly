@@ -229,7 +229,7 @@ function Register() {
                         }
                         setErrorText(message)
                     } else {
-                        updateUser()
+                        await updateUser()
                         navigate("/")
                     }
                 }}

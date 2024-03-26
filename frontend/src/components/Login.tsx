@@ -131,7 +131,7 @@ function Login() {
                             setUsernameError(false)
                         }
                     } else {
-                        updateUser()
+                        await updateUser()
                         navigate("/")
                     }
                 }}
