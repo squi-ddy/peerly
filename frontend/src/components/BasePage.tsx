@@ -1,16 +1,14 @@
-import { AnimatePresence, motion } from "framer-motion"
-import MotionNavButton from "./MotionNavButton"
+import { motion } from "framer-motion"
 import MotionLink from "./MotionLink"
-import { getCurrentSession, logout } from "../api"
-import React, {
-    ReactElement,
+import { getCurrentSession } from "../api"
+import {
     createContext,
     useCallback,
     useEffect,
+    useMemo,
     useState,
 } from "react"
 import { IUser } from "../types/user"
-import MotionButton from "./MotionButton"
 import NavBar from "./NavBar"
 
 type UserOrNull = IUser | null
@@ -29,6 +27,22 @@ const topBarVariants = {
     },
     exit: {
         transform: "translateY(-100%)",
+    },
+}
+
+const itemVariants = {
+    visible: {
+            opacity: 1,
+            transform: "translateY(0px)",
+            transition: { duration: 0.3 },
+        },
+    hidden: {
+        opacity: 0,
+        transform: "translateY(-20px)",
+    },
+    exit: {
+        opacity: 0,
+        transform: "translateY(-20px)",
     },
 }
 
@@ -57,13 +71,18 @@ function BasePage(props: { children?: React.ReactNode }) {
         updateUser()
     }, [updateUser])
 
+    const contextValue = useMemo(
+        () => {return { user: currentUser === undefined ? null : currentUser, updateUser, firstRender }}, 
+        [currentUser, updateUser, firstRender]
+    )
+
     if (currentUser === undefined) {
         return <></>
     }
 
     return (
         <div id="root">
-            <UserContext.Provider value={{ user: currentUser, updateUser, firstRender }}>
+            <UserContext.Provider value={contextValue}>
                 <motion.div
                     variants={topBarVariants}
                     initial={"hidden"}
@@ -73,6 +92,18 @@ function BasePage(props: { children?: React.ReactNode }) {
                     className="pt-[20px] bg-gradient-to-r from-sky-900 to-sky-800 w-full mb-[-20px]"
                 >
                     <div className="px-5 flex items-center justify-items-center p-2 gap-2">
+                    <MotionLink
+                        to="/"
+                        variants={itemVariants}
+                        initial={"hidden"}
+                        animate={"visible"}
+                        exit={"exit"}
+                        className="text-5xl justify-self-start my-1 font-bold text-orange-400 drop-shadow-md"
+                    >
+                        Peerly
+                    </MotionLink>
+
+                    <div className="grow" />
                         <NavBar />
                     </div>
                 </motion.div>

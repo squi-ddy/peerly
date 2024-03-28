@@ -9,6 +9,7 @@ services:
       context: ./frontend
       args:
         API_URL: http://localhost:3001
+        NODE_ENV: development
   peerly-backend:
     extends:
       file: docker-compose.yml

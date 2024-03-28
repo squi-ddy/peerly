@@ -8,9 +8,10 @@ RUN bun i --frozen-lockfile --verbose
 
 FROM base AS build
 
-ARG API_URL=https://squiddy.me/peerly-api
+ARG API_URL=http://localhost:3000/
+ARG NODE_ENV=production
 ENV VITE_API_URL=$API_URL
-ENV NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
 WORKDIR /app/
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
