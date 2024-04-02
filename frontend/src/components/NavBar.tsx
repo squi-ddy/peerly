@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useContext, ReactElement, cloneElement, useMemo } from "react"
 import { logout } from "../api"
 import MotionButton from "./MotionButton"
-import MotionLink from "./MotionLink"
 import MotionNavButton from "./MotionNavButton"
 import { UserContext } from "./BasePage"
 
@@ -21,7 +20,7 @@ const itemVariants = {
     exit: {
         // opacity: 0,
         transform: "translateY(-20px)",
-        transition: { delay: 0, duration: 0.3 }
+        transition: { delay: 0, duration: 0.3 },
     },
 }
 
@@ -79,11 +78,7 @@ function NavBar() {
         })
     }, [user, firstRender, updateUser])
 
-    return (
-        <AnimatePresence mode="popLayout">
-            {children}
-        </AnimatePresence>
-    )
+    return <AnimatePresence mode="popLayout">{children}</AnimatePresence>
 }
 
 export default NavBar

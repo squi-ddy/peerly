@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
 import MotionButton from "./MotionButton"
@@ -14,10 +13,7 @@ const itemVariants = {
 }
 
 function MainPage() {
-    
     const navigate = useNavigate()
-
-    
 
     return (
         <>

@@ -6,5 +6,8 @@ import typescript from "@rollup/plugin-typescript"
 export default defineConfig({
     plugins: [react(), typescript()],
     esbuild: false,
+    build: {
+        sourcemap: true,
+    },
     base: "/peerly",
 })

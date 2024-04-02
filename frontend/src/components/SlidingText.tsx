@@ -15,8 +15,7 @@ const textElements = texts.map((text, index) => {
         <motion.h1
             initial={{
                 opacity: 0,
-                transform:
-                    index === 0 ? "translateX(0)" : "translateX(40px)",
+                transform: index === 0 ? "translateX(0)" : "translateX(40px)",
             }}
             animate={{
                 opacity: index === texts.length - 1 ? 0 : 1,
@@ -51,10 +50,7 @@ function SlidingText() {
         return () => clearInterval(interval)
     }, [index])
 
-    return <AnimatePresence mode="wait">
-    {textElements[index]}
-</AnimatePresence>
-    
+    return <AnimatePresence mode="wait">{textElements[index]}</AnimatePresence>
 }
 
 export default SlidingText

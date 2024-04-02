@@ -7,12 +7,12 @@ axios.defaults.withCredentials = true
 
 let currentUser: IUser | null | undefined = undefined
 
-export async function login(username: string, password: string) {
+export async function login(studentId: string, password: string) {
     try {
         const resp = {
             success: true,
             response: await axios.post(`${settings.API_URL}/acct/login`, {
-                username,
+                studentId,
                 password,
             }),
         }

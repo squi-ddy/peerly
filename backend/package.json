@@ -8,8 +8,8 @@
         "typia": "bunx typia generate --input src/ --output generated/ --project tsconfig.json",
         "build-tsconfig": "mv tsconfig.json tsconfig.dev.json && mv tsconfig.build.json tsconfig.json",
         "dev-tsconfig": "mv tsconfig.json tsconfig.build.json && mv tsconfig.dev.json tsconfig.json",
-        "ncc": "ncc build generated/index.ts -o dist -t",
-        "build": "bun run typia && bun run build-tsconfig && bun run ncc && bun run dev-tsconfig",
+        "bun-build": "bun build --target bun --minify --sourcemap generated/index.ts --outdir dist",
+        "build": "bun run typia && bun run build-tsconfig && bun run bun-build && bun run dev-tsconfig",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "typecheck": "tsc --noemit",
         "format": "prettier --write .",
@@ -19,7 +19,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@types/bcryptjs": "^2.4.6",
+        "@types/bun": "^1.0.12",
         "@types/compression": "^1.7.5",
         "@types/connect-memcached": "^1.0.3",
         "@types/cors": "^2.8.17",
@@ -28,12 +28,10 @@
         "@types/passport-local": "^1.0.38",
         "@typescript-eslint/eslint-plugin": "^7.0.2",
         "@typescript-eslint/parser": "^7.0.2",
-        "@vercel/ncc": "0.38.1",
         "eslint": "^8.9.0",
         "typescript": "^5.0.4"
     },
     "dependencies": {
-        "bcryptjs": "^2.4.3",
         "compression": "^1.7.4",
         "connect-memcached": "^2.0.0",
         "cors": "^2.8.5",

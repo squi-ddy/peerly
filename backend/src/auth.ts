@@ -1,22 +1,22 @@
 import passport from "passport"
-import { getConnection, pool } from "db"
+import { pool } from "db"
 import { Strategy as LocalStrategy } from "passport-local"
-import bcrypt from "bcryptjs"
-import { isUser } from "checkers"
-import { SerialisedUser } from "types/user"
+import { password as BunPassword } from "bun"
+import { isMinimalUser } from "checkers"
+import { IUserMinimal } from "types/user"
 
 passport.use(
     "local",
     new LocalStrategy(
         {
-            usernameField: "username",
+            usernameField: "studentId",
             passwordField: "password",
         },
         async (username, password, callback) => {
             let res, _fields
             try {
-                ;[res, _fields] = await pool.execute(
-                    "SELECT id, username, password FROM users WHERE username = ?",
+                [res, _fields] = await pool.execute(
+                    "SELECT uuid, username, password FROM student WHERE `student-id` = ?",
                     [username],
                 )
             } catch (error) {
@@ -24,50 +24,49 @@ passport.use(
             }
 
             if (!Array.isArray(res) || res.length === 0) {
-                return callback(null, false, { message: "Invalid username" })
+                return callback(null, false, { message: "Invalid student id" })
             }
 
-            const user = res[0]
+            const row = res[0]
 
-            if (!isUser(user)) {
+            if (!isMinimalUser(row)) {
                 return callback(null, false, {
-                    message: "Internal server error (user object incorrect)",
+                    message: "Internal server error (returned row incorrect)",
                 })
             }
 
-            if (!("password" in user) || typeof user.password !== "string") {
+            const user: IUserMinimal = {
+                uuid: row.uuid,
+                username: row.username,
+            }
+
+            if (!("password" in row) || typeof row.password !== "string") {
                 return callback(null, false, {
                     message:
                         "Internal server error (password field non-existent)",
                 })
             }
 
-            bcrypt.compare(password, user.password, (error, result) => {
-                if (error) {
-                    return callback(error)
-                }
+            const result = await BunPassword.verify(password, row.password)
 
-                if (!result) {
-                    return callback(null, false, {
-                        message: "Invalid password",
-                    })
-                }
+            if (!result) {
+                return callback(null, false, {
+                    message: "Invalid password",
+                })
+            }
 
-                delete user.password
-
-                return callback(null, user)
-            })
+            return callback(null, user)
         },
     ),
 )
 
-passport.serializeUser<SerialisedUser>(function (user, cb) {
+passport.serializeUser<IUserMinimal>(function (user, cb) {
     process.nextTick(function () {
-        cb(null, { id: user.id, username: user.username })
+        cb(null, { uuid: user.uuid, username: user.username })
     })
 })
 
-passport.deserializeUser(function (user: SerialisedUser, cb) {
+passport.deserializeUser(function (user: IUserMinimal, cb) {
     process.nextTick(function () {
         return cb(null, user)
     })

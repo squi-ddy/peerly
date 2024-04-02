@@ -1,8 +1,8 @@
 import express from "express"
 import passport from "passport"
-import bcrypt from "bcryptjs"
 import { getConnection, pool } from "db"
-import { isFullUser } from "checkers"
+import { password as BunPassword } from "bun"
+import { isFullUser, isMinimalUser, validateCreateUser } from "checkers"
 
 const acctRouter = express.Router()
 
@@ -41,33 +41,24 @@ acctRouter.post("/logout", (req, res) => {
 })
 
 acctRouter.post("/signup", async (req, res) => {
-    if (
-        !("username" in req.body) ||
-        typeof req.body.username !== "string" ||
-        !req.body.username.match(/^[a-zA-Z0-9_-]+$/)
-    ) {
-        return res.status(400).json({ message: "Invalid username" })
+    let createUser = req.body
+    const validationStatus = validateCreateUser(createUser)
+
+    if (!validationStatus.success) {
+        return res.status(400).json({
+            message: "Validation error",
+            errors: validationStatus.errors,
+        })
     }
 
-    if (!("password" in req.body) || typeof req.body.password !== "string") {
-        return res.status(400).json({ message: "Invalid password" })
-    }
-
-    if (
-        !("year" in req.body) ||
-        typeof req.body.year !== "number" ||
-        req.body.year < 1 ||
-        req.body.year > 6
-    ) {
-        return res.status(400).json({ message: "Invalid year" })
-    }
+    createUser = validationStatus.data
 
     // check if user already exists
     const conn = await getConnection()
     await conn.beginTransaction()
-    const [rows, _fields] = await conn.execute(
-        "SELECT * FROM users WHERE username = ?",
-        [req.body.username],
+    let [rows, _fields] = await conn.execute(
+        "SELECT `student-id` FROM student WHERE `student-id` = ?",
+        [createUser["student-id"]],
     )
 
     if (Array.isArray(rows) && rows.length > 0) {
@@ -78,35 +69,63 @@ acctRouter.post("/signup", async (req, res) => {
 
     let hashedPass
     try {
-        hashedPass = await bcrypt.hash(req.body.password, 10)
+        hashedPass = await BunPassword.hash(createUser.password)
     } catch (err) {
         await conn.rollback()
         await conn.release()
         return res.status(500).json(err)
     }
 
-    const [result, _fields2] = await conn.execute(
-        "INSERT INTO users (username, password, year) VALUES (?, ?, ?)",
-        [req.body.username, hashedPass, req.body.year],
+    [rows, _fields] = await conn.execute(
+        `INSERT INTO student 
+            (\`student-id\`, uuid, name, username, password, class, email, \`year-offset\`) 
+            VALUES 
+            (?, uuid(), ?, ?, ?, ?, compute_year_offset(year(now()), ?, ?))
+        `,
+        [
+            createUser["student-id"],
+            createUser.name,
+            createUser.username,
+            hashedPass,
+            createUser.class,
+            createUser.email,
+            createUser["student-id"],
+            createUser.year,
+        ],
     )
-    await conn.commit()
-    await conn.release()
 
-    if (Array.isArray(result)) {
+    if (Array.isArray(rows)) {
         return res
             .status(500)
             .json({ message: "Internal server error (check SQL)" })
     }
-    if (result.affectedRows !== 1) {
+    if (rows.affectedRows !== 1) {
         return res
             .status(500)
             .json({ message: "Internal server error (user not created)" })
     }
-    const id = result.insertId
 
-    const user: Express.User = {
-        id,
-        username: req.body.username,
+    [rows, _fields] = await conn.execute(
+        "SELECT uuid, username FROM student WHERE `student-id` = ?",
+        [createUser["student-id"]],
+    )
+
+    if (!Array.isArray(rows) || rows.length !== 1) {
+        await conn.rollback()
+        await conn.release()
+        return res
+            .status(500)
+            .json({ message: "Internal server error (user not found)" })
+    }
+
+    const user = rows[0]
+
+    if (!isMinimalUser(user)) {
+        await conn.rollback()
+        await conn.release()
+        return res
+            .status(500)
+            .json({ message: "Internal server error (user object incorrect)" })
     }
 
     req.login(user, function (err) {
@@ -128,20 +147,34 @@ acctRouter.get("/session", (req, res) => {
 acctRouter.get("/me", async (req, res) => {
     if (req.isAuthenticated()) {
         const [result, _fields] = await pool.execute(
-            "SELECT username, id, year FROM users WHERE id = ?",
-            [req.user.id],
+            `
+            SELECT 
+                \`student-id\`, name, class, year, email, \`is-learner\`, \`is-tutor\`, uuid, username
+            FROM student 
+            WHERE uuid = ?
+            `,
+            [req.user.uuid],
         )
         if (!Array.isArray(result) || result.length !== 1) {
             return res
                 .status(500)
                 .json({ message: "Internal server error (user not found)" })
         }
-        if (!isFullUser(result[0])) {
-            return res
-                .status(500)
-                .json({ message: "Internal server error (user object incorrect)" })
+        const user = result[0]
+        if (!isFullUser(user)) {
+            return res.status(500).json({
+                message: "Internal server error (user object incorrect)",
+            })
         }
-        res.json(result[0])
+        res.json(user)
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+acctRouter.get("/edit", async (req, res) => {
+    if (req.isAuthenticated()) {
+        const [_result, _fields] = await pool.execute("UPDATE ")
     } else {
         res.sendStatus(401)
     }

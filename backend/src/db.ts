@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     password: "peerly",
     database: "peerly",
     waitForConnections: true,
-    connectionLimit: 4
+    connectionLimit: 4,
 })
 
 const getConnection = async () => {

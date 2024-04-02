@@ -21,10 +21,10 @@ const showIconVariants = {
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false)
-    const usernameRef = useRef<HTMLInputElement>(null)
+    const studentIdRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const [errorText, setErrorText] = useState("")
-    const [usernameError, setUsernameError] = useState(false)
+    const [studentIdError, setStudentIdError] = useState(false)
     const [passwordError, setPasswordError] = useState(false)
 
     const navigate = useNavigate()
@@ -37,13 +37,13 @@ function Login() {
             <motion.input
                 variants={itemVariants}
                 type="text"
-                placeholder="Username"
+                placeholder="Student ID"
                 className={
                     "border-2 rounded-xl bg-transparent text-2xl w-5/6 p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors" +
-                    (usernameError ? " border-red-500" : "")
+                    (studentIdError ? " border-red-500" : "")
                 }
                 layout
-                ref={usernameRef}
+                ref={studentIdRef}
             />
             <motion.div
                 variants={itemVariants}
@@ -105,30 +105,30 @@ function Login() {
                 text="Submit"
                 variants={itemVariants}
                 onClick={async () => {
-                    const username = usernameRef.current!.value
+                    const studentId = studentIdRef.current!.value
                     const password = passwordRef.current!.value
-                    if (!username) {
-                        setUsernameError(true)
+                    if (!studentId) {
+                        setStudentIdError(true)
                         setPasswordError(false)
                         setErrorText("Username is required")
                         return
                     }
                     if (!password) {
                         setPasswordError(true)
-                        setUsernameError(false)
+                        setStudentIdError(false)
                         setErrorText("Password is required")
                         return
                     }
-                    const res = await login(username, password)
+                    const res = await login(studentId, password)
                     if (!res.success) {
                         const message = res.response!.data!.message
                         setErrorText(message)
-                        if (message === "Invalid username") {
-                            setUsernameError(true)
+                        if (message === "Invalid student id") {
+                            setStudentIdError(true)
                             setPasswordError(false)
                         } else if (message === "Invalid password") {
                             setPasswordError(true)
-                            setUsernameError(false)
+                            setStudentIdError(false)
                         }
                     } else {
                         await updateUser()

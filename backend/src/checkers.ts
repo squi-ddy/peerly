@@ -1,5 +1,7 @@
-import { createIs } from "typia"
-import { IUser, IUserFull } from "types/user"
+import { createIs, createValidate } from "typia"
+import { IUserMinimal, IUserFull, ICreateUser } from "types/user"
 
-export const isUser = createIs<IUser>()
+export const isMinimalUser = createIs<IUserMinimal>()
 export const isFullUser = createIs<IUserFull>()
+
+export const validateCreateUser = createValidate<ICreateUser>()
