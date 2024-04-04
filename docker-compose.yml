@@ -3,6 +3,8 @@ services:
     build:
       dockerfile: ./frontend/Dockerfile
       context: .
+      args:
+        API_URL: https://squiddy.me/peerly-api
     restart: unless-stopped
   peerly-backend:
     build: ./backend

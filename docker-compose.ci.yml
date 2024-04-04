@@ -3,11 +3,6 @@ services:
     extends:
       file: docker-compose.yml
       service: peerly-frontend
-    build:
-      dockerfile: ./frontend/Dockerfile
-      context: .
-      args:
-        API_URL: https://squiddy.me/peerly-api
   peerly-backend:
     extends:
       file: docker-compose.yml
