@@ -2,20 +2,20 @@ services:
   peerly-frontend:
     extends:
       file: docker-compose.yml
-      service: peerly-frontend
+      service: frontend
   peerly-backend:
     extends:
       file: docker-compose.yml
-      service: peerly-backend
+      service: backend
     depends_on:
       - peerly-db
       - peerly-memcached
   peerly-db:
     extends:
       file: docker-compose.yml
-      service: peerly-db
+      service: db
   peerly-memcached:
     extends:
       file: docker-compose.yml
-      service: peerly-memcached
+      service: memcached
 

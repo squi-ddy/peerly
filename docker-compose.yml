@@ -1,18 +1,15 @@
 services:
-  peerly-frontend:
+  frontend:
     build:
       dockerfile: ./frontend/Dockerfile
       context: .
       args:
         API_URL: https://squiddy.me/peerly-api
     restart: unless-stopped
-  peerly-backend:
+  backend:
     build: ./backend
     restart: unless-stopped
-    depends_on:
-      - peerly-db
-      - peerly-memcached
-  peerly-db:
+  db:
     image: mysql:latest
     restart: unless-stopped
     environment:
@@ -23,7 +20,7 @@ services:
     volumes:
       - ./db-data:/var/lib/mysql
       - ./db-setup:/docker-entrypoint-initdb.d
-  peerly-memcached:
+  memcached:
     image: memcached:alpine
     restart: unless-stopped
     command: memcached -m 64
