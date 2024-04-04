@@ -20,7 +20,8 @@
                 "transform": "typia/lib/transform"
             }
         ],
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "paths": { "@backend/types/*": ["../backend/src/types/*"], },
     },
     "include": [
         "src/**/*.tsx",

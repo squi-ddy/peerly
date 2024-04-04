@@ -64,7 +64,7 @@ function ProfilePage() {
                         <b>Username</b>: {profileData.username}
                     </motion.li>
                     <motion.li variants={itemVariants}>
-                        <b>User ID</b>: {profileData.id}
+                        <b>User ID</b>: {profileData.uuid}
                     </motion.li>
                     <motion.li variants={itemVariants}>
                         <b>Year</b>: {profileData.year}

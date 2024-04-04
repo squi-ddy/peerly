@@ -1,6 +1,8 @@
 services:
   peerly-frontend:
-    build: ./frontend
+    build:
+      dockerfile: ./frontend/Dockerfile
+      context: .
     restart: unless-stopped
   peerly-backend:
     build: ./backend

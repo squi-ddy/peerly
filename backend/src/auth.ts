@@ -1,7 +1,7 @@
 import passport from "passport"
 import { pool } from "db"
 import { Strategy as LocalStrategy } from "passport-local"
-import { password as BunPassword } from "bun"
+import argon2 from "@node-rs/argon2"
 import { isMinimalUser } from "checkers"
 import { IUserMinimal } from "types/user"
 
@@ -47,12 +47,16 @@ passport.use(
                 })
             }
 
-            const result = await BunPassword.verify(password, row.password)
+            try {
+                const result = await argon2.verify(password, row.password)
 
-            if (!result) {
-                return callback(null, false, {
-                    message: "Invalid password",
-                })
+                if (!result) {
+                    return callback(null, false, {
+                        message: "Invalid password",
+                    })
+                }
+            } catch (err) {
+                return callback(err)
             }
 
             return callback(null, user)

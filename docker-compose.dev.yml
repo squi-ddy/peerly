@@ -6,7 +6,8 @@ services:
     ports:
       - "3000:3000"
     build:
-      context: ./frontend
+      dockerfile: ./frontend/Dockerfile
+      context: .
       args:
         API_URL: http://localhost:3001
         NODE_ENV: development

@@ -1,7 +1,7 @@
 import express from "express"
 import passport from "passport"
 import { getConnection, pool } from "db"
-import { password as BunPassword } from "bun"
+import argon2 from "@node-rs/argon2"
 import { isFullUser, isMinimalUser, validateCreateUser } from "checkers"
 
 const acctRouter = express.Router()
@@ -69,7 +69,7 @@ acctRouter.post("/signup", async (req, res) => {
 
     let hashedPass
     try {
-        hashedPass = await BunPassword.hash(createUser.password)
+        hashedPass = await argon2.hash(createUser.password)
     } catch (err) {
         await conn.rollback()
         await conn.release()

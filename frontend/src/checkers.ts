@@ -1,5 +1,5 @@
 import typia from "typia"
-import { IUser, IUserFull } from "./types/user"
+import { IUserMinimal, IUserFull } from "@backend/types/user"
 
-export const isUser = typia.createIs<IUser>()
+export const isMinimalUser = typia.createIs<IUserMinimal>()
 export const isFullUser = typia.createIs<IUserFull>()

@@ -1,11 +1,11 @@
 import { settings } from "./settings"
 import axios from "axios"
-import { IUser, IUserFull } from "./types/user"
-import { isFullUser, isUser } from "./checkers"
+import { IUserMinimal, IUserFull } from "@backend/types/user"
+import { isFullUser, isMinimalUser } from "./checkers"
 
 axios.defaults.withCredentials = true
 
-let currentUser: IUser | null | undefined = undefined
+let currentUser: IUserMinimal | null | undefined = undefined
 
 export async function login(studentId: string, password: string) {
     try {
@@ -66,14 +66,14 @@ export async function logout() {
     }
 }
 
-export async function getCurrentSession(): Promise<IUser | null> {
+export async function getCurrentSession(): Promise<IUserMinimal | null> {
     if (currentUser !== undefined) {
         return currentUser
     }
     try {
         const response = await axios.get(`${settings.API_URL}/acct/session`)
         const data = response.data
-        if (!isUser(data)) {
+        if (!isMinimalUser(data)) {
             throw new Error("Invalid user data")
         }
         currentUser = data
