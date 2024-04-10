@@ -1,10 +1,10 @@
-import express from "express"
+import { Router } from "express"
 import passport from "passport"
-import { getConnection, pool } from "db"
-import argon2 from "@node-rs/argon2"
-import { isFullUser, isMinimalUser, validateCreateUser } from "checkers"
+import { convertBoolean, getConnection, pool } from "db"
+import { hash } from "passwords"
+import { isFullUser, isMinimalUser, validateCreateUser, validatePatchUser } from "checkers"
 
-const acctRouter = express.Router()
+const acctRouter = Router()
 
 acctRouter.post("/login", (req, res, next) => {
     passport.authenticate(
@@ -41,17 +41,17 @@ acctRouter.post("/logout", (req, res) => {
 })
 
 acctRouter.post("/signup", async (req, res) => {
-    let createUser = req.body
-    const validationStatus = validateCreateUser(createUser)
+    const userData = req.body
+    const validationStatus = validateCreateUser(userData)
 
     if (!validationStatus.success) {
         return res.status(400).json({
             message: "Validation error",
-            errors: validationStatus.errors,
+            errors: validationStatus.errors.map((e) => e.path),
         })
     }
 
-    createUser = validationStatus.data
+    const createUser = validationStatus.data
 
     // check if user already exists
     const conn = await getConnection()
@@ -69,7 +69,7 @@ acctRouter.post("/signup", async (req, res) => {
 
     let hashedPass
     try {
-        hashedPass = await argon2.hash(createUser.password)
+        hashedPass = await hash(createUser.password)
     } catch (err) {
         await conn.rollback()
         await conn.release()
@@ -78,19 +78,20 @@ acctRouter.post("/signup", async (req, res) => {
 
     [rows, _fields] = await conn.execute(
         `INSERT INTO student 
-            (\`student-id\`, uuid, name, username, password, class, email, \`year-offset\`) 
+            (\`student-id\`, uuid, username, password, class, email, \`year-offset\`, \`is-learner\`, \`is-tutor\`) 
             VALUES 
-            (?, uuid(), ?, ?, ?, ?, compute_year_offset(year(now()), ?, ?))
+            (?, uuid(), ?, ?, ?, ?, compute_year_offset(year(now()), ?, ?), ?, ?)
         `,
         [
             createUser["student-id"],
-            createUser.name,
             createUser.username,
             hashedPass,
             createUser.class,
             createUser.email,
             createUser["student-id"],
             createUser.year,
+            createUser["is-learner"],
+            createUser["is-tutor"]
         ],
     )
 
@@ -128,6 +129,9 @@ acctRouter.post("/signup", async (req, res) => {
             .json({ message: "Internal server error (user object incorrect)" })
     }
 
+    await conn.commit()
+    await conn.release()
+
     req.login(user, function (err) {
         if (err) {
             return res.status(500).json(err)
@@ -149,7 +153,7 @@ acctRouter.get("/me", async (req, res) => {
         const [result, _fields] = await pool.execute(
             `
             SELECT 
-                \`student-id\`, name, class, year, email, \`is-learner\`, \`is-tutor\`, uuid, username
+                \`student-id\`, class, year, email, \`is-learner\`, \`is-tutor\`, uuid, username
             FROM student 
             WHERE uuid = ?
             `,
@@ -161,6 +165,8 @@ acctRouter.get("/me", async (req, res) => {
                 .json({ message: "Internal server error (user not found)" })
         }
         const user = result[0]
+        convertBoolean(user, "is-learner")
+        convertBoolean(user, "is-tutor")
         if (!isFullUser(user)) {
             return res.status(500).json({
                 message: "Internal server error (user object incorrect)",
@@ -172,15 +178,61 @@ acctRouter.get("/me", async (req, res) => {
     }
 })
 
-acctRouter.get("/edit", async (req, res) => {
+acctRouter.patch("/edit", async (req, res) => {
     if (req.isAuthenticated()) {
-        const [_result, _fields] = await pool.execute("UPDATE ")
+        const userData = req.body
+        const validationStatus = validatePatchUser(userData)
+
+        if (!validationStatus.success) {
+            return res.status(400).json({
+                message: "Validation error",
+                errors: validationStatus.errors.map((e) => e.path),
+            })
+        }
+
+        const patchUser = validationStatus.data
+        const hashedPass = patchUser.password ? await hash(patchUser.password) : undefined
+
+        const [result, _fields] = await pool.execute(`
+            UPDATE student 
+            SET 
+                username = IFNULL(?, username),
+                class = IFNULL(?, class),
+                year = IFNULL(?, year),
+                email = IFNULL(?, email),
+                \`is-learner\` = IFNULL(?, \`is-learner\`),
+                \`is-tutor\` = IFNULL(?, \`is-tutor\`),
+                password = IFNULL(?, password)
+            WHERE uuid = ?`, [
+                patchUser.username,
+                patchUser.class,
+                patchUser.year,
+                patchUser.email,
+                patchUser["is-learner"],
+                patchUser["is-tutor"],
+                hashedPass,
+                req.user.uuid
+            ])
+
+        if (Array.isArray(result)) {
+            return res
+                .status(500)
+                .json({ message: "Internal server error (check SQL)" })
+        }
+
+        if (result.affectedRows !== 1) {
+            return res
+                .status(500)
+                .json({ message: "Internal server error (user not updated)" })
+        }
+
+        res.sendStatus(200)
     } else {
         res.sendStatus(401)
     }
 })
 
-acctRouter.get("/", (req, res) => {
+acctRouter.get("/", (_req, res) => {
     res.send("Login API")
 })
 

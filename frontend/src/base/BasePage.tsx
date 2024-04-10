@@ -1,11 +1,11 @@
 import { motion } from "framer-motion"
-import MotionLink from "./MotionLink"
-import { getCurrentSession } from "../api"
+import MotionLink from "@/components/MotionLink"
+import { getCurrentSession } from "@/api"
 import { createContext, useCallback, useEffect, useMemo, useState } from "react"
-import { IUser } from "../types/user"
-import NavBar from "./NavBar"
+import { IUserMinimal } from "@backend/types/user"
+import NavBar from "@/components/NavBar"
 
-type UserOrNull = IUser | null
+type UserOrNull = IUserMinimal | null
 export const UserContext = createContext<{
     user: UserOrNull
     updateUser: () => Promise<void>
@@ -41,9 +41,9 @@ const itemVariants = {
 }
 
 function BasePage(props: { children?: React.ReactNode }) {
-    const [currentUser, setCurrentUser] = useState<IUser | null | undefined>(
-        undefined,
-    )
+    const [currentUser, setCurrentUser] = useState<
+        IUserMinimal | null | undefined
+    >(undefined)
     const [firstRender, setFirstRender] = useState(true)
 
     useEffect(() => {

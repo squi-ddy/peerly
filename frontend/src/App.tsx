@@ -1,159 +1,89 @@
 import { AnimatePresence } from "framer-motion"
-import { cloneElement, useEffect, useRef, useState } from "react"
-import { useLocation, useRoutes } from "react-router-dom"
-import BasePage from "./components/BasePage"
-import MainPage from "./components/MainPage"
-import MotionBase from "./components/MotionBase"
-import Page404 from "./components/Page404"
-import LoginRegister from "./components/LoginRegister"
-import Login from "./components/Login"
-import Register from "./components/Register"
-import TutorsPage from "./components/TutorsPage"
-import LearnersPage from "./components/LearnersPage"
-import LessonsPage from "./components/LessonsPage"
-import AboutPage from "./components/AboutPage"
-import ProfilePage from "./components/ProfilePage"
+import { cloneElement } from "react"
+import { Outlet, useLocation, useRoutes } from "react-router-dom"
+import BasePage from "./base/BasePage"
+import MainPage from "./pages/MainPage"
+import MotionBase from "./base/MotionBase"
+import Page404 from "./pages/Page404"
+import AuthPage from "./pages/AuthPage"
+import LoginForm from "./components/LoginForm"
+import RegisterForm from "./components/RegisterForm"
+import TutorsPage from "./pages/TutorsPage"
+import LearnersPage from "./pages/LearnersPage"
+import LessonsPage from "./pages/LessonsPage"
+import AboutPage from "./pages/AboutPage"
+import ProfilePage from "./pages/ProfilePage"
+import TutorSetupPage from "./pages/TutorSetupPage"
+import LearnerSetupPage from "./pages/LearnerSetupPage"
 
 function App() {
-    const [renderState, setRenderState] = useState("0")
-    const lastLocation = useRef([] as string[])
-
-    const baseRouteDelayMap: { [key: string]: number } = {
-        "0": 0.8,
-    }
-
-    const authRouteDelayMap: { [key: string]: number } = {
-        "0": 1.9,
-        "1": 1.2,
-        "2": 0,
-    }
+    const location = useLocation()
 
     const element = useRoutes([
         {
             path: "/",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <MainPage />
-                </MotionBase>
-            ),
-        },
-        {
-            path: "/:name",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <MainPage />
-                </MotionBase>
-            ),
+            element: <MainPage />,
         },
         {
             path: "/tutors",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <TutorsPage />
-                </MotionBase>
-            ),
+            element: <TutorsPage />,
         },
         {
             path: "/about",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <AboutPage />
-                </MotionBase>
-            ),
+            element: <AboutPage />,
         },
         {
             path: "/learners",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <LearnersPage />
-                </MotionBase>
-            ),
+            element: <LearnersPage />,
         },
         {
             path: "/lessons",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <LessonsPage />
-                </MotionBase>
-            ),
+            element: <LessonsPage />,
         },
         {
             path: "/me",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <ProfilePage />
-                </MotionBase>
-            ),
+            element: <ProfilePage />,
         },
         {
             path: "/auth",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <LoginRegister />
-                </MotionBase>
-            ),
+            element: <AuthPage />,
             children: [
                 {
                     path: "register",
-                    element: (
-                        <MotionBase
-                            delay={authRouteDelayMap[renderState]}
-                            layout
-                        >
-                            <Register />
-                        </MotionBase>
-                    ),
+                    element: <RegisterForm />,
                 },
                 {
                     index: true,
-                    element: (
-                        <MotionBase
-                            delay={authRouteDelayMap[renderState]}
-                            layout
-                        >
-                            <Login />
-                        </MotionBase>
-                    ),
+                    element: <LoginForm />,
+                },
+            ],
+        },
+        {
+            path: "/setup",
+            element: <Outlet />,
+            children: [
+                {
+                    path: "tutor",
+                    element: <TutorSetupPage />,
+                },
+                {
+                    path: "learner",
+                    element: <LearnerSetupPage />,
                 },
             ],
         },
         {
             path: "*",
-            element: (
-                <MotionBase delay={baseRouteDelayMap[renderState]}>
-                    <Page404 />
-                </MotionBase>
-            ),
+            element: <Page404 />,
         },
     ])
-
-    const location = useLocation()
-
-    useEffect(() => {
-        const loc_split = location.pathname.split("/")
-        const prev_loc_split = lastLocation.current
-        let i
-        for (
-            i = 0;
-            i < Math.min(loc_split.length, prev_loc_split.length);
-            i++
-        ) {
-            if (loc_split[i] !== prev_loc_split[i]) {
-                break
-            }
-        }
-        setRenderState(i.toString())
-        lastLocation.current = loc_split
-    }, [location])
 
     if (!element) return null
 
     return (
         <BasePage>
             <AnimatePresence mode="wait">
-                {cloneElement(element, {
-                    key: location.pathname.split("/")[1],
-                })}
+                <MotionBase key={location.pathname.split("/")[1]}>{element}</MotionBase>
             </AnimatePresence>
         </BasePage>
     )

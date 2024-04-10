@@ -10,6 +10,6 @@
         "baseUrl": "generated",
         "strict": true
     },
-    "include": ["generated/**/*.ts"],
+    "include": ["generated/**/*.ts", "generated/**/*.d.ts"],
     "lib": ["es2015"]
 }

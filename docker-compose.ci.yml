@@ -7,6 +7,9 @@ services:
     extends:
       file: docker-compose.yml
       service: backend
+    environment:
+      - MEMCACHED_HOST=peerly-memcached
+      - DB_HOST=peerly-db
     depends_on:
       - peerly-db
       - peerly-memcached

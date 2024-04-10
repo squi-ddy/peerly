@@ -1,26 +1,22 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useContext, ReactElement, cloneElement, useMemo } from "react"
-import { logout } from "../api"
+import { logout } from "@/api"
 import MotionButton from "./MotionButton"
 import MotionNavButton from "./MotionNavButton"
-import { UserContext } from "./BasePage"
+import { UserContext } from "@/base/BasePage"
 
 const itemVariants = {
-    visible: (idx: number) => {
-        return {
-            opacity: 1,
-            transform: "translateY(0px)",
-            transition: { delay: idx === -1 ? 0 : 0.3 + idx * 0.2 },
-        }
+    visible: {
+        opacity: 1,
+        transform: "translateY(0px)",
     },
     hidden: {
         opacity: 0,
         transform: "translateY(-20px)",
     },
     exit: {
-        // opacity: 0,
+        opacity: 0,
         transform: "translateY(-20px)",
-        transition: { delay: 0, duration: 0.3 },
     },
 }
 
@@ -66,14 +62,13 @@ function NavBar() {
             <MotionNavButton to="about" text="About" key="about" />,
         ])
 
-        return topBarItems.map((item, idx) => {
+        return topBarItems.map((item) => {
             return cloneElement(item, {
                 variants: itemVariants,
                 initial: "hidden",
                 animate: "visible",
                 exit: "exit",
                 layout: true,
-                custom: firstRender ? idx : -1,
             })
         })
     }, [user, firstRender, updateUser])

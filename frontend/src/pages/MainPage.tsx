@@ -1,10 +1,10 @@
 import { motion } from "framer-motion"
 import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
-import MotionButton from "./MotionButton"
-import SetTitle from "./SetTitle"
+import MotionButton from "@/components/MotionButton"
+import SetTitle from "@/components/SetTitle"
 import { useNavigate } from "react-router-dom"
-import SlidingText from "./SlidingText"
+import SlidingText from "@/components/SlidingText"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

@@ -6,6 +6,7 @@ const Button = forwardRef(function Button(
         text: string
         textSize?: string
         emphasis?: boolean
+        z?: string
     } & HTMLAttributes<HTMLButtonElement>,
     ref: React.ForwardedRef<HTMLButtonElement>,
 ) {
@@ -15,7 +16,7 @@ const Button = forwardRef(function Button(
         emphasis
             ? "text-sky-600 bg-sky-50 font-semibold"
             : "hover:bg-sky-50 hover:text-sky-600 transition-colors duration-300"
-    } py-1 px-3 rounded-md border border-sky-100`
+    } py-1 px-3 rounded-md border border-sky-100 ${props.z || ""}`
     const tmpProps: {
         text: undefined
         textSize: undefined

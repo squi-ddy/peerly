@@ -1,7 +1,7 @@
 import passport from "passport"
 import { pool } from "db"
 import { Strategy as LocalStrategy } from "passport-local"
-import argon2 from "@node-rs/argon2"
+import { verify } from "passwords"
 import { isMinimalUser } from "checkers"
 import { IUserMinimal } from "types/user"
 
@@ -48,7 +48,7 @@ passport.use(
             }
 
             try {
-                const result = await argon2.verify(password, row.password)
+                const result = await verify(password, row.password)
 
                 if (!result) {
                     return callback(null, false, {

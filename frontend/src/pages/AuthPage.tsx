@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion"
-import MotionButton from "./MotionButton"
+import MotionButton from "@/components/MotionButton"
 import { useEffect, useState, cloneElement, useContext } from "react"
-import { useLocation, useNavigate, useOutlet } from "react-router-dom"
-import { UserContext } from "./BasePage"
+import { redirect, useLocation, useNavigate, useOutlet } from "react-router-dom"
+import { UserContext } from "@/base/BasePage"
+import MotionBase from "@/base/MotionBase"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -15,15 +16,15 @@ const mainVariants = {
     visible: {
         opacity: 1,
         transform: "translateY(0)",
-        transition: { when: "beforeChildren", staggerChildren: 0.3 },
+        transition: { when: "beforeChildren", staggerChildren: 0.1 },
     },
     exit: {
         opacity: 0,
-        transition: { when: "afterChildren", staggerChildren: 0.05 },
+        transition: { when: "afterChildren", staggerChildren: 0.01 },
     },
 }
 
-function LoginRegister() {
+function AuthPage() {
     const location = useLocation()
     const [registering, setRegistering] = useState(
         location.pathname === "/auth/register",
@@ -31,11 +32,10 @@ function LoginRegister() {
     const navigate = useNavigate()
     const { user } = useContext(UserContext)
 
-    useEffect(() => {
-        if (user) {
-            navigate("/")
-        }
-    }, [user])
+    if (user) {
+        navigate("/")
+        return <></>
+    }
 
     useEffect(() => {
         if (location.pathname.startsWith("/auth"))
@@ -69,7 +69,7 @@ function LoginRegister() {
             </motion.div>
             <motion.div
                 variants={mainVariants}
-                className="flex flex-col gap-4 justify-center items-center border-2 rounded-xl p-4 w-1/3 flex flex-col items-center gap-2"
+                className="flex flex-col gap-4 justify-center items-center border-2 rounded-xl p-4 w-1/3"
                 layout
             >
                 <div className="flex flex-row gap-2">
@@ -91,13 +91,15 @@ function LoginRegister() {
                     />
                 </div>
                 <AnimatePresence mode="wait">
-                    {cloneElement(child, {
-                        key: registering ? "register" : "login",
-                    })}
+                    <MotionBase layout>
+                        {cloneElement(child, {
+                            key: registering ? "register" : "login",
+                        })}
+                    </MotionBase>
                 </AnimatePresence>
             </motion.div>
         </>
     )
 }
 
-export default LoginRegister
+export default AuthPage

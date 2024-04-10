@@ -1,11 +1,10 @@
 create table student (
     `student-id` char(8) primary key,
     uuid char(36) not null unique key,
-    name varchar(255) not null,
     password varchar(255) not null,
     username varchar(255) not null,
     class decimal(5,0) unsigned not null, -- 0 to 99999
-    email varchar(30) not null,
+    email varchar(255) not null,
     `year-offset` tinyint unsigned default 0 not null,
     year int unsigned default 0 not null,
     `is-learner` boolean not null,
@@ -207,20 +206,25 @@ returns tinyint unsigned deterministic
 return (current_year % 100) - substr(student_id, 2, 2)
 + substr(student_id, 4, 1) - year;
 
+insert into subject(`subject-code`, name) values
+('PC', 'Physics'),
+('CS', 'Computer Science'),
+('CM', 'Chemistry'),
+('BL', 'Biology'),
+('MA', 'Mathematics'),
+('EL', 'English'),
+('EC', 'Economics'),
+('GE', 'Geography'),
+('HE', 'History'),
+('CH', 'Higher Chinese');
+
 delimiter //
 create procedure update_student_years()
 begin
     update student
     set year = compute_year(year(now()), `student-id`, `year-offset`);
 end //
-delimiter ;
 
-create event sched_update_student_years
-on schedule every 1 year starts makedate(year(now()) + 1, 1)
-do
-call update_student_years();
-
-delimiter //
 create trigger set_year_trigger
 before insert on student
 for each row
@@ -236,3 +240,8 @@ begin
 end //
 
 delimiter ;
+
+create event sched_update_student_years
+on schedule every 1 year starts makedate(year(now()) + 1, 1)
+do
+call update_student_years();

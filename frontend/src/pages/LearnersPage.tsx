@@ -1,6 +1,6 @@
 import { LayoutGroup, motion } from "framer-motion"
-import SetTitle from "./SetTitle"
-import { learners } from "../data"
+import SetTitle from "@/components/SetTitle"
+import { learners } from "@/data"
 import { useState } from "react"
 import Fuse from "fuse.js"
 
@@ -20,11 +20,11 @@ const mainVariants = {
     visible: {
         opacity: 1,
         transform: "translateY(0)",
-        transition: { when: "beforeChildren", staggerChildren: 0.05 },
+        transition: { when: "beforeChildren", staggerChildren: 0.1 },
     },
     exit: {
         opacity: 0,
-        transition: { when: "afterChildren", staggerChildren: 0.005 },
+        transition: { when: "afterChildren", staggerChildren: 0.01 },
     },
 }
 
@@ -64,7 +64,7 @@ function LearnersPage() {
                 />
                 <div className="h-4/5 w-full flex flex-col items-center">
                     <motion.div
-                        className="data-table-container"
+                        className="table-container"
                         variants={mainVariants}
                         layout
                     >

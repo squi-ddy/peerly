@@ -21,7 +21,10 @@
             }
         ],
         "strictNullChecks": true,
-        "paths": { "@backend/types/*": ["../backend/src/types/*"], },
+        "paths": {
+            "@backend/types/*": ["../backend/src/types/*"],
+            "@/*": ["./src/*"]
+        }
     },
     "include": [
         "src/**/*.tsx",

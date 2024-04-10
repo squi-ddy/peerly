@@ -1,11 +1,21 @@
 import { LayoutGroup, motion } from "framer-motion"
-import SetTitle from "./SetTitle"
-import { tutors } from "../data"
+import SetTitle from "@/components/SetTitle"
+import { lessons } from "@/data"
 import { useState } from "react"
 import Fuse from "fuse.js"
 
-const fuse = new Fuse(tutors, {
-    keys: ["name", "subjects", "year"],
+const lessonsStringDate: {
+    tutor: string
+    learner: string
+    subject: string
+    date: string
+}[] = lessons.map((lesson) => ({
+    ...lesson,
+    date: lesson.date.toLocaleString(),
+}))
+
+const fuse = new Fuse(lessonsStringDate, {
+    keys: ["tutor", "learner", "subject", "date"],
     threshold: 0.1,
 })
 
@@ -20,20 +30,20 @@ const mainVariants = {
     visible: {
         opacity: 1,
         transform: "translateY(0)",
-        transition: { when: "beforeChildren", staggerChildren: 0.05 },
+        transition: { when: "beforeChildren", staggerChildren: 0.1 },
     },
     exit: {
         opacity: 0,
-        transition: { when: "afterChildren", staggerChildren: 0.005 },
+        transition: { when: "afterChildren", staggerChildren: 0.01 },
     },
 }
 
-function TutorsPage() {
-    const [visibleTutors, setVisibleTutors] = useState(tutors)
+function LessonsPage() {
+    const [visibleLessons, setVisibleLessons] = useState(lessonsStringDate)
 
     return (
         <>
-            <SetTitle title="Tutors" />
+            <SetTitle title="Lessons" />
             <LayoutGroup>
                 <motion.h1
                     key="join"
@@ -41,7 +51,7 @@ function TutorsPage() {
                     className="text-5xl"
                     layout
                 >
-                    Tutors
+                    Lessons
                 </motion.h1>
                 <motion.input
                     variants={itemVariants}
@@ -58,13 +68,13 @@ function TutorsPage() {
                             const value = target.value
                             const res = await fuse.search(value)
                             res.sort((a, b) => a.refIndex - b.refIndex)
-                            setVisibleTutors(res.map((r) => r.item))
+                            setVisibleLessons(res.map((r) => r.item))
                         }
                     }}
                 />
                 <div className="h-4/5 w-full flex flex-col items-center">
                     <motion.div
-                        className="data-table-container"
+                        className="table-container"
                         variants={mainVariants}
                         layout
                     >
@@ -75,22 +85,31 @@ function TutorsPage() {
                         >
                             <thead>
                                 <motion.tr variants={itemVariants} layout>
-                                    <th className="w-[35%]">Name</th>
-                                    <th className="w-[55%]">Subjects</th>
-                                    <th className="w-[10%]">Year</th>
+                                    <th className="w-[25%]">Tutor</th>
+                                    <th className="w-[25%]">Learner</th>
+                                    <th className="w-[25%]">Subject</th>
+                                    <th className="w-[25%]">Date</th>
                                 </motion.tr>
                             </thead>
                             <tbody>
-                                {visibleTutors.map((tutor) => {
+                                {visibleLessons.map((lesson) => {
                                     return (
                                         <motion.tr
                                             variants={itemVariants}
-                                            key={tutor.name}
+                                            key={
+                                                lesson.tutor +
+                                                lesson.learner +
+                                                lesson.subject +
+                                                lesson.date
+                                            }
                                             layout
                                         >
-                                            <td>{tutor.name}</td>
-                                            <td>{tutor.subjects.join(", ")}</td>
-                                            <td>{tutor.year}</td>
+                                            <td>{lesson.tutor}</td>
+                                            <td>{lesson.learner}</td>
+                                            <td>{lesson.subject}</td>
+                                            <td>
+                                                {lesson.date.toLocaleString()}
+                                            </td>
                                         </motion.tr>
                                     )
                                 })}
@@ -103,4 +122,4 @@ function TutorsPage() {
     )
 }
 
-export default TutorsPage
+export default LessonsPage

@@ -1,6 +1,6 @@
 import { settings } from "./settings"
 import axios from "axios"
-import { IUserMinimal, IUserFull } from "@backend/types/user"
+import { IUserMinimal, IUserFull, IUserCreate } from "@backend/types/user"
 import { isFullUser, isMinimalUser } from "./checkers"
 
 axios.defaults.withCredentials = true
@@ -26,19 +26,11 @@ export async function login(studentId: string, password: string) {
     }
 }
 
-export async function register(
-    username: string,
-    password: string,
-    year: number,
-) {
+export async function register(data: IUserCreate) {
     try {
         const resp = {
             success: true,
-            response: await axios.post(`${settings.API_URL}/acct/signup`, {
-                username,
-                password,
-                year,
-            }),
+            response: await axios.post(`${settings.API_URL}/acct/signup`, data),
         }
         currentUser = undefined // force refresh
         return resp

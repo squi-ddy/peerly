@@ -8,6 +8,9 @@ services:
     restart: unless-stopped
   backend:
     build: ./backend
+    environment:
+      - MEMCACHED_HOST=memcached
+      - DB_HOST=db
     restart: unless-stopped
   db:
     image: mysql:latest

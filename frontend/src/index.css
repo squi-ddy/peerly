@@ -9,10 +9,6 @@
         font-family: "Nunito", sans-serif;
     }
 
-    .text-stroke-1 {
-        -webkit-text-stroke: 4px black;
-    }
-
     .nav-button.active {
         @apply bg-sky-100 text-sky-600 font-semibold;
     }
@@ -27,7 +23,7 @@
         -webkit-appearance: none;
     }
 
-    .data-table-container {
+    .table-container {
         @apply w-5/6 max-h-full h-fit overflow-y-scroll border-2 rounded-xl;
     }
 
@@ -58,6 +54,30 @@
 
     .data-table > tbody > tr:last-child > td {
         @apply border-b-0;
+    }
+
+    .vert-table {
+        @apply border-separate w-full table-fixed;
+    }
+
+    .vert-table > tbody > tr > * {
+        @apply text-center border-b-2 border-l-2;
+    }
+
+    .vert-table > tbody > tr:nth-child(even) {
+        @apply bg-slate-950;
+    }
+
+    .vert-table > tbody > tr:last-child > * {
+        @apply border-b-0;
+    }
+
+    .vert-table > tbody > tr > th {
+        @apply border-l-0;
+    }
+
+    .vert-table > tbody > tr > th {
+        @apply font-semibold bg-sky-900;
     }
 }
 

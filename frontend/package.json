@@ -8,7 +8,7 @@
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "format": "prettier --write .",
         "typecheck": "tsc --noemit",
-        "precommit": "pnpm run format && pnpm run lint && pnpm run typecheck",
+        "precommit": "bun run format && bun run typecheck && bun run lint",
         "serve": "npx serve ./dist -l 8080 -s",
         "prepare": "ts-patch install && typia patch"
     },
@@ -16,11 +16,10 @@
     "license": "ISC",
     "dependencies": {
         "@faker-js/faker": "^8.3.1",
+        "@floating-ui/react": "^0.26.12",
         "@vitejs/plugin-react": "^4.0.0",
         "autoprefixer": "^10.4.13",
         "axios": "^1.6.8",
-        "esbuild": "^0.19.0",
-        "esbuild-node-tsc": "^2.0.4",
         "framer-motion": "^10.18.0",
         "fuse.js": "^7.0.0",
         "postcss": "^8.4.18",

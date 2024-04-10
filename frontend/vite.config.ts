@@ -4,7 +4,16 @@ import typescript from "@rollup/plugin-typescript"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), typescript()],
+    plugins: [
+        react(),
+        typescript({
+            include: [
+                "./src/**/*.ts",
+                "./src/**/*.tsx",
+                "../backend/src/types/*.ts",
+            ],
+        }),
+    ],
     esbuild: false,
     build: {
         sourcemap: true,

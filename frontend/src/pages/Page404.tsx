@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { TbMoodSad } from "react-icons/tb"
-import SetTitle from "./SetTitle"
+import SetTitle from "@/components/SetTitle"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
