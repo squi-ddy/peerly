@@ -14,6 +14,7 @@ import FormCheckboxInput from "./forms/FormCheckboxInput"
 import FormNumberInput from "./forms/FormNumberInput"
 import FormPasswordInput from "./forms/FormPasswordInput"
 import FormTextInput from "./forms/FormTextInput"
+import { preciseFloor } from "@/util"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -75,6 +76,8 @@ const defaultInputContainer = {
     } as InputFunctionItems<boolean>,
 } satisfies InputFunctionContainer<typeof fieldNames>
 
+const currYear = new Date().getFullYear() % 100
+
 function RegisterForm() {
     const inputContainer = useRef(defaultInputContainer)
 
@@ -97,8 +100,6 @@ function RegisterForm() {
         },
         [],
     )
-
-    const currYear = new Date().getFullYear() % 100
 
     const navigate = useNavigate()
 
@@ -301,7 +302,7 @@ function RegisterForm() {
                         )
                         return
                     }
-                    const year = Math.floor(studentClass3Digit / 100)
+                    const year = preciseFloor(studentClass3Digit, 100)
                     const studentClass = currYear * 1000 + studentClass3Digit
                     const data: IUserCreate = {
                         "student-id": studentId.toLowerCase(),

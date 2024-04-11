@@ -4,7 +4,12 @@ import {
     ITutorSubjectCreate,
     ITutorSubjectGet,
 } from "@backend/types/subject"
-import { IUserCreate, IUserFull, IUserMinimal } from "@backend/types/user"
+import {
+    IUserCreate,
+    IUserFull,
+    IUserMinimal,
+    IUserPatch,
+} from "@backend/types/user"
 import axios from "axios"
 import {
     isEmptyTimeslotArray,
@@ -201,5 +206,21 @@ export async function getTutorSubjects(
             throw error
         }
         return null
+    }
+}
+
+export async function patchCurrentUser(data: IUserPatch) {
+    try {
+        const resp = {
+            success: true,
+            response: await axios.patch(`${settings.API_URL}/acct/me`, data),
+        }
+        currentUser = undefined // force refresh
+        return resp
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return { success: false, response: error.response }
     }
 }

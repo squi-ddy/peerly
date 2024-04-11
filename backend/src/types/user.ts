@@ -31,7 +31,7 @@ type ValidateClass = tags.TagBase<{
     value: undefined
     validate: `(() => {
         const year = new Date().getFullYear() % 100
-        return Math.floor($input / 1000) === year
+        return Math.round(($input - $input % 1000) / 1000) === year
     })()`
 }>
 

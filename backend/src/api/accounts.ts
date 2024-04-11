@@ -191,7 +191,7 @@ acctRouter.get("/me", async (req, res) => {
     }
 })
 
-acctRouter.patch("/edit", async (req, res) => {
+acctRouter.patch("/me", async (req, res) => {
     if (req.isAuthenticated()) {
         const userData = req.body
         const validationStatus = validatePatchUser(userData)
@@ -206,45 +206,91 @@ acctRouter.patch("/edit", async (req, res) => {
         const patchUser = validationStatus.data
         const hashedPass = patchUser.password
             ? await hash(patchUser.password)
-            : undefined
+            : null
 
-        const [result, _fields] = await pool.execute(
-            `
-            UPDATE student 
-            SET 
-                username = IFNULL(?, username),
-                class = IFNULL(?, class),
-                year = IFNULL(?, year),
-                email = IFNULL(?, email),
-                \`is-learner\` = IFNULL(?, \`is-learner\`),
-                \`is-tutor\` = IFNULL(?, \`is-tutor\`),
-                password = IFNULL(?, password)
-            WHERE uuid = ?`,
-            [
-                patchUser.username,
-                patchUser.class,
-                patchUser.year,
-                patchUser.email,
-                patchUser["is-learner"],
-                patchUser["is-tutor"],
-                hashedPass,
-                req.user.uuid,
-            ],
-        )
+        let user: IUserMinimal | undefined = undefined
+        const conn = await getConnection()
+        await conn.beginTransaction()
+        try {
+            let [rows, _fields] = await conn.execute(
+                `
+                UPDATE student 
+                SET 
+                    username = IFNULL(?, username),
+                    class = IFNULL(?, class),
+                    \`year-offset\` = IF(? IS NULL, \`year-offset\`, compute_year_offset(year(now()), ?, ?)),
+                    email = IFNULL(?, email),
+                    \`is-learner\` = IFNULL(?, \`is-learner\`),
+                    \`is-tutor\` = IFNULL(?, \`is-tutor\`),
+                    password = IFNULL(?, password)
+                WHERE \`student-id\` = ?`,
+                [
+                    patchUser.username ?? null,
+                    patchUser.class ?? null,
+                    patchUser.year ?? null,
+                    req.user["student-id"],
+                    patchUser.year ?? null,
+                    patchUser.email ?? null,
+                    patchUser["is-learner"] ?? null,
+                    patchUser["is-tutor"] ?? null,
+                    hashedPass,
+                    req.user["student-id"],
+                ],
+            )
 
-        if (Array.isArray(result)) {
-            return res
-                .status(500)
-                .json({ message: "Internal server error (check SQL)" })
+            if (Array.isArray(rows)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            if (rows.affectedRows !== 1) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (user not updated)" })
+            }
+
+            [rows, _fields] = await conn.execute(
+                "SELECT uuid, username, `student-id`, `is-learner`, `is-tutor` FROM student WHERE `student-id` = ?",
+                [req.user["student-id"]],
+            )
+
+            if (!Array.isArray(rows) || rows.length !== 1) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (user not found)" })
+            }
+
+            const tempUser = rows[0]
+
+            convertBoolean(tempUser, "is-learner")
+            convertBoolean(tempUser, "is-tutor")
+
+            if (!isMinimalUser(tempUser)) {
+                await conn.rollback()
+                return res.status(500).json({
+                    message: "Internal server error (user object incorrect)",
+                })
+            }
+
+            user = tempUser
+
+            await conn.commit()
+        } catch (err) {
+            return res.status(500).json({ message: "SQL Error", error: err })
+        } finally {
+            conn.release()
         }
 
-        if (result.affectedRows !== 1) {
-            return res
-                .status(500)
-                .json({ message: "Internal server error (user not updated)" })
-        }
-
-        res.sendStatus(200)
+        req.login(user, function (err) {
+            if (err) {
+                return res.status(500).json(err)
+            }
+            res.sendStatus(200)
+        })
     } else {
         res.sendStatus(401)
     }

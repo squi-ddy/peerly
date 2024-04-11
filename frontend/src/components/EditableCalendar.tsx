@@ -1,3 +1,4 @@
+import { preciseFloor } from "@/util"
 import { motion } from "framer-motion"
 import { useCallback, useMemo, useRef, useState } from "react"
 
@@ -33,7 +34,7 @@ const defaultRefArray: RefArray = Array.from({ length: rows }, () =>
 
 const days: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"]
 export const timestamps: string[] = Array.from({ length: rows + 1 }, (_, i) => {
-    return `${(8 + Math.floor(0.1 + i / 2)).toString().padStart(2, "0")}:${
+    return `${(8 + preciseFloor(i, 2)).toString().padStart(2, "0")}:${
         i % 2 ? "30" : "00"
     }`
 })

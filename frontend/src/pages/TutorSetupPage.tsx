@@ -216,7 +216,11 @@ function TutorSetupPage() {
                             )
                             return
                         }
-                        navigate("/")
+                        if (state?.setup && state?.learner) {
+                            navigate("/setup/learner", {
+                                state: { setup: true },
+                            })
+                        } else navigate("/")
                     }}
                 />
             </motion.div>
