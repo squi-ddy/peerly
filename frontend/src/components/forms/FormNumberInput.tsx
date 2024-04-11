@@ -13,6 +13,12 @@ const errorVariants: Variants = {
     exit: { opacity: 0 },
 }
 
+const defaultChecker: InputCheckFunction<number> = () => {
+    return { success: true }
+}
+
+const emptyFunction = () => {}
+
 function FormNumberInput(props: {
     fieldName: string
     variants?: Variants
@@ -26,6 +32,8 @@ function FormNumberInput(props: {
     max?: number
     z?: string
     h?: string
+    textSize?: string
+    errorTextSize?: string
     setSubmitFunction?: (getValue: InputSubmitFunction<number>) => void
     setErrorFunction?: (setError: InputErrorFunction) => void
 }) {
@@ -40,15 +48,12 @@ function FormNumberInput(props: {
     const numberWidth = props.numberWidth ?? "w-20"
     const h = props.h ?? "h-14"
     const z = props.z ?? "z-0"
+    const textSize = props.textSize ?? "text-2xl"
+    const errorTextSize = props.errorTextSize ?? "text-l"
 
-    const checker =
-        props.checker ??
-        (useCallback(() => {
-            return { success: true }
-        }, []) as InputCheckFunction<number>)
-    const setSubmitFunction =
-        props.setSubmitFunction ?? useCallback(() => {}, [])
-    const setErrorFunction = props.setErrorFunction ?? useCallback(() => {}, [])
+    const checker = props.checker ?? defaultChecker
+    const setSubmitFunction = props.setSubmitFunction ?? emptyFunction
+    const setErrorFunction = props.setErrorFunction ?? emptyFunction
     const edit = props.edit ?? true
     const fieldValue = props.fieldValue ?? 0
 
@@ -56,7 +61,7 @@ function FormNumberInput(props: {
         if (!edit) {
             return fieldValue
         }
-        const value = parseInt(inputRef.current!.value, 10)
+        const value = inputRef.current!.valueAsNumber
         const check = checker(value)
         if (check.success) {
             setError(false)
@@ -88,15 +93,13 @@ function FormNumberInput(props: {
             className={`flex gap-4 items-center ${h} ${z} ${width} min-w-0 justify-center`}
             layout
         >
-            {spanContent && <span className="text-2xl">{spanContent}</span>}
+            {spanContent && <span className={textSize}>{spanContent}</span>}
             {edit && (
                 <>
                     <input
                         type="number"
-                        className={
-                            `border-2 rounded-xl bg-transparent text-2xl p-2 text-center min-w-0 ${numberWidth} focus:border-sky-400 focus:outline-none transition-colors` +
-                            (error ? " border-red-500" : "")
-                        }
+                        className={`border-2 rounded-xl bg-transparent ${textSize} p-2 text-center min-w-0 ${numberWidth} focus:border-sky-400 focus:outline-none transition-colors
+                            ${error ? " border-red-500" : ""}`}
                         min={props.min}
                         max={props.max}
                         defaultValue={fieldValue}
@@ -122,7 +125,7 @@ function FormNumberInput(props: {
                                 variants={errorVariants}
                                 style={floatingStyles}
                                 ref={refs.setFloating}
-                                className="mt-2 text-l text-center border-white border bg-red-400 py-1 px-2 rounded-md"
+                                className={`mt-2 ${errorTextSize} text-center border-white border bg-red-400 py-1 px-2 rounded-md`}
                             >
                                 {errorMessage}
                             </motion.p>

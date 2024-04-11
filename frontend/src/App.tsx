@@ -1,20 +1,18 @@
 import { AnimatePresence } from "framer-motion"
-import { cloneElement } from "react"
 import { Outlet, useLocation, useRoutes } from "react-router-dom"
 import BasePage from "./base/BasePage"
-import MainPage from "./pages/MainPage"
 import MotionBase from "./base/MotionBase"
-import Page404 from "./pages/Page404"
-import AuthPage from "./pages/AuthPage"
 import LoginForm from "./components/LoginForm"
 import RegisterForm from "./components/RegisterForm"
-import TutorsPage from "./pages/TutorsPage"
+import AboutPage from "./pages/AboutPage"
+import AuthPage from "./pages/AuthPage"
+import LearnerSetupPage from "./pages/LearnerSetupPage"
 import LearnersPage from "./pages/LearnersPage"
 import LessonsPage from "./pages/LessonsPage"
-import AboutPage from "./pages/AboutPage"
+import MainPage from "./pages/MainPage"
+import Page404 from "./pages/Page404"
 import ProfilePage from "./pages/ProfilePage"
 import TutorSetupPage from "./pages/TutorSetupPage"
-import LearnerSetupPage from "./pages/LearnerSetupPage"
 
 function App() {
     const location = useLocation()
@@ -25,8 +23,8 @@ function App() {
             element: <MainPage />,
         },
         {
-            path: "/tutors",
-            element: <TutorsPage />,
+            path: "/tutor",
+            element: <TutorSetupPage />,
         },
         {
             path: "/about",
@@ -59,8 +57,34 @@ function App() {
             ],
         },
         {
+            path: "/options",
+            element: (
+                <AnimatePresence mode="wait">
+                    <MotionBase key={location.pathname.split("/")[2]}>
+                        <Outlet />
+                    </MotionBase>
+                </AnimatePresence>
+            ),
+            children: [
+                {
+                    path: "tutor",
+                    element: <TutorSetupPage />,
+                },
+                {
+                    path: "learner",
+                    element: <LearnerSetupPage />,
+                },
+            ],
+        },
+        {
             path: "/setup",
-            element: <Outlet />,
+            element: (
+                <AnimatePresence mode="wait">
+                    <MotionBase key={location.pathname.split("/")[2]}>
+                        <Outlet />
+                    </MotionBase>
+                </AnimatePresence>
+            ),
             children: [
                 {
                     path: "tutor",
@@ -83,7 +107,9 @@ function App() {
     return (
         <BasePage>
             <AnimatePresence mode="wait">
-                <MotionBase key={location.pathname.split("/")[1]}>{element}</MotionBase>
+                <MotionBase key={location.pathname.split("/")[1]}>
+                    {element}
+                </MotionBase>
             </AnimatePresence>
         </BasePage>
     )

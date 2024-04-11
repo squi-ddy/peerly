@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise"
 import { settings } from "settings"
+import { ITime } from "types/timeslot"
 
 export const pool = mysql.createPool({
     host: settings.DB_HOST,
@@ -8,18 +9,14 @@ export const pool = mysql.createPool({
     database: "peerly",
     waitForConnections: true,
     connectionLimit: 4,
-    typeCast: function (field, next) {
-        if (field.type === "DECIMAL" || field.type === "NEWDECIMAL") {
-            var value = field.string();
-            return (value === null) ? null : Number(value);
-        }
-        return next();
-    }
+    dateStrings: true,
+    decimalNumbers: true,
 })
 
 export function convertBoolean(row: unknown, key: string) {
-    if (typeof row !== "object" || !row) throw new Error("row is not an object")
-    if (!row.hasOwnProperty(key)) throw new Error("key is not in row")
+    if (typeof row !== "object" || !row) throw new Error("Row is not an object")
+    if (!Object.prototype.hasOwnProperty.call(row, key))
+        throw new Error("Key is not in row")
     const objRow = row as Record<string, unknown>
     if (typeof objRow[key] === "number") {
         if (objRow[key] === 0) {
@@ -27,6 +24,21 @@ export function convertBoolean(row: unknown, key: string) {
         } else if (objRow[key] === 1) {
             objRow[key] = true
         }
+    }
+}
+
+export function convertTime(row: unknown, key: string) {
+    if (typeof row !== "object" || !row) throw new Error("Row is not an object")
+    if (!Object.prototype.hasOwnProperty.call(row, key))
+        throw new Error("Key is not in row")
+    const objRow = row as Record<string, unknown>
+    if (typeof objRow[key] === "string") {
+        const parts = (objRow[key] as string).split(":")
+        objRow[key] = {
+            hour: parseInt(parts[0]),
+            minute: parseInt(parts[1]),
+            second: parseInt(parts[2]),
+        } as ITime
     }
 }
 

@@ -1,7 +1,5 @@
-import { useState } from "react";
-
 function LearnerSetupPage() {
-  return <></>
+    return <></>
 }
 
 export default LearnerSetupPage

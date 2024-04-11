@@ -1,5 +1,5 @@
 import passport from "passport"
-import { pool } from "db"
+import { convertBoolean, pool } from "db"
 import { Strategy as LocalStrategy } from "passport-local"
 import { verify } from "passwords"
 import { isMinimalUser } from "checkers"
@@ -12,12 +12,12 @@ passport.use(
             usernameField: "studentId",
             passwordField: "password",
         },
-        async (username, password, callback) => {
+        async (studentId, password, callback) => {
             let res, _fields
             try {
                 [res, _fields] = await pool.execute(
-                    "SELECT uuid, username, password FROM student WHERE `student-id` = ?",
-                    [username],
+                    "SELECT uuid, username, password, `is-tutor`, `is-learner`, `student-id` FROM student WHERE `student-id` = ?",
+                    [studentId],
                 )
             } catch (error) {
                 return callback(error)
@@ -29,6 +29,9 @@ passport.use(
 
             const row = res[0]
 
+            convertBoolean(row, "is-learner")
+            convertBoolean(row, "is-tutor")
+
             if (!isMinimalUser(row)) {
                 return callback(null, false, {
                     message: "Internal server error (returned row incorrect)",
@@ -38,6 +41,9 @@ passport.use(
             const user: IUserMinimal = {
                 uuid: row.uuid,
                 username: row.username,
+                "is-learner": row["is-learner"],
+                "is-tutor": row["is-tutor"],
+                "student-id": row["student-id"],
             }
 
             if (!("password" in row) || typeof row.password !== "string") {
@@ -66,7 +72,13 @@ passport.use(
 
 passport.serializeUser<IUserMinimal>(function (user, cb) {
     process.nextTick(function () {
-        cb(null, { uuid: user.uuid, username: user.username })
+        cb(null, {
+            uuid: user.uuid,
+            username: user.username,
+            "is-learner": user["is-learner"],
+            "is-tutor": user["is-tutor"],
+            "student-id": user["student-id"],
+        })
     })
 })
 

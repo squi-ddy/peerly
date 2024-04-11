@@ -11,6 +11,7 @@ import MotionButton from "./MotionButton"
 import SetTitle from "./SetTitle"
 import FormPasswordInput from "./forms/FormPasswordInput"
 import FormTextInput from "./forms/FormTextInput"
+import { IValidation } from "typia"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -75,7 +76,7 @@ function LoginForm() {
                             success: false,
                             message: "Student ID is required",
                         }
-                    if (!/^h\d{7}$/i.test(value)) {
+                    if (!/^h[0-9]{7}$/i.test(value)) {
                         return {
                             success: false,
                             message:
@@ -119,13 +120,26 @@ function LoginForm() {
                         inputContainer.current[field].value = value
                     }
                     if (anyNulls) return
-                    // should never throw
                     const studentId = inputContainer.current.studentId.value
                     const password = inputContainer.current.password.value
-                    const res = await login(studentId, password)
+                    const res = await login(studentId.toLowerCase(), password)
                     if (!res.success) {
                         const message = res.response!.data!.message
-                        if (message === "Invalid student id") {
+                        if (message === "Validation error") {
+                            const errors: string[] = (
+                                res.response!.data!
+                                    .errors as IValidation.IError[]
+                            ).map((e) => e.path)
+                            for (const field of fieldNames) {
+                                for (const errorField of errors) {
+                                    if (errorField.includes(field)) {
+                                        inputContainer.current[field].errorFunc(
+                                            "Unknown error",
+                                        )
+                                    }
+                                }
+                            }
+                        } else if (message === "Invalid student id") {
                             inputContainer.current.studentId.errorFunc(
                                 "No account with this student ID",
                             )

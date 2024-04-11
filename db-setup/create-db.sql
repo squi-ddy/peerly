@@ -84,7 +84,8 @@ create table emptyTimeslot (
     `start-time` time not null,
     `end-time` time not null,
     foreign key (`tutor-sid`) references student(`student-id`)
-    on update cascade on delete cascade
+    on update cascade on delete cascade,
+    unique (`tutor-sid`, `day-of-week`, `start-time`, `end-time`)
 );
 
 create table pendingTimes (
@@ -131,7 +132,7 @@ create table canTeach (
     `tutor-sid` char(8),
     `subject-code` char(2),
     `subject-gpa` decimal(2,1) not null,
-    year int unsigned not null,
+    year tinyint unsigned not null,
     primary key (`tutor-sid`, `subject-code`),
     foreign key (`tutor-sid`) references student(`student-id`)
     on update cascade on delete cascade,

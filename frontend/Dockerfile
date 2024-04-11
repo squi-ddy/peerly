@@ -14,7 +14,8 @@ ENV VITE_API_URL=$API_URL
 ENV NODE_ENV=$NODE_ENV
 WORKDIR /app/
 COPY ./frontend .
-COPY ./backend/src/types ..
+COPY ./frontend/vite.config.build.ts ./vite.config.ts
+COPY ./backend/src/types ./src/backend/types
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN bun run build
 

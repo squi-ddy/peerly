@@ -21,7 +21,7 @@ const itemVariants = {
 }
 
 function NavBar() {
-    const { user, updateUser, firstRender } = useContext(UserContext)
+    const { user, updateUser } = useContext(UserContext)
 
     const children = useMemo(() => {
         let topBarItems: ReactElement[] = []
@@ -37,8 +37,6 @@ function NavBar() {
         }
 
         topBarItems = topBarItems.concat([
-            <MotionNavButton to="tutors" text="Tutors" key="tutors" />,
-
             <MotionNavButton to="learners" text="Learners" key="learners" />,
 
             <MotionNavButton to="lessons" text="Lessons" key="lessons" />,
@@ -71,7 +69,7 @@ function NavBar() {
                 layout: true,
             })
         })
-    }, [user, firstRender, updateUser])
+    }, [user, updateUser])
 
     return <AnimatePresence mode="popLayout">{children}</AnimatePresence>
 }

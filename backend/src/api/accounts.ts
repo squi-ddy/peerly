@@ -2,7 +2,13 @@ import { Router } from "express"
 import passport from "passport"
 import { convertBoolean, getConnection, pool } from "db"
 import { hash } from "passwords"
-import { isFullUser, isMinimalUser, validateCreateUser, validatePatchUser } from "checkers"
+import {
+    isFullUser,
+    isMinimalUser,
+    validateCreateUser,
+    validatePatchUser,
+} from "checkers"
+import { IUserMinimal } from "types/user"
 
 const acctRouter = Router()
 
@@ -47,7 +53,7 @@ acctRouter.post("/signup", async (req, res) => {
     if (!validationStatus.success) {
         return res.status(400).json({
             message: "Validation error",
-            errors: validationStatus.errors.map((e) => e.path),
+            errors: validationStatus.errors,
         })
     }
 
@@ -56,81 +62,88 @@ acctRouter.post("/signup", async (req, res) => {
     // check if user already exists
     const conn = await getConnection()
     await conn.beginTransaction()
-    let [rows, _fields] = await conn.execute(
-        "SELECT `student-id` FROM student WHERE `student-id` = ?",
-        [createUser["student-id"]],
-    )
-
-    if (Array.isArray(rows) && rows.length > 0) {
-        await conn.rollback()
-        await conn.release()
-        return res.status(400).json({ message: "User already exists" })
-    }
-
-    let hashedPass
+    let user: IUserMinimal | undefined = undefined
     try {
-        hashedPass = await hash(createUser.password)
-    } catch (err) {
-        await conn.rollback()
-        await conn.release()
-        return res.status(500).json(err)
-    }
+        let [rows, _fields] = await conn.execute(
+            "SELECT `student-id` FROM student WHERE `student-id` = ?",
+            [createUser["student-id"]],
+        )
 
-    [rows, _fields] = await conn.execute(
-        `INSERT INTO student 
+        if (Array.isArray(rows) && rows.length > 0) {
+            await conn.rollback()
+            return res.status(400).json({ message: "User already exists" })
+        }
+
+        let hashedPass
+        try {
+            hashedPass = await hash(createUser.password)
+        } catch (err) {
+            await conn.rollback()
+            return res.status(500).json(err)
+        }
+
+        [rows, _fields] = await conn.execute(
+            `INSERT INTO student 
             (\`student-id\`, uuid, username, password, class, email, \`year-offset\`, \`is-learner\`, \`is-tutor\`) 
             VALUES 
             (?, uuid(), ?, ?, ?, ?, compute_year_offset(year(now()), ?, ?), ?, ?)
         `,
-        [
-            createUser["student-id"],
-            createUser.username,
-            hashedPass,
-            createUser.class,
-            createUser.email,
-            createUser["student-id"],
-            createUser.year,
-            createUser["is-learner"],
-            createUser["is-tutor"]
-        ],
-    )
+            [
+                createUser["student-id"],
+                createUser.username,
+                hashedPass,
+                createUser.class,
+                createUser.email,
+                createUser["student-id"],
+                createUser.year,
+                createUser["is-learner"],
+                createUser["is-tutor"],
+            ],
+        )
 
-    if (Array.isArray(rows)) {
-        return res
-            .status(500)
-            .json({ message: "Internal server error (check SQL)" })
+        if (Array.isArray(rows)) {
+            return res
+                .status(500)
+                .json({ message: "Internal server error (check SQL)" })
+        }
+        if (rows.affectedRows !== 1) {
+            return res
+                .status(500)
+                .json({ message: "Internal server error (user not created)" })
+        }
+
+        [rows, _fields] = await conn.execute(
+            "SELECT uuid, username, `student-id`, `is-learner`, `is-tutor` FROM student WHERE `student-id` = ?",
+            [createUser["student-id"]],
+        )
+
+        if (!Array.isArray(rows) || rows.length !== 1) {
+            await conn.rollback()
+            return res
+                .status(500)
+                .json({ message: "Internal server error (user not found)" })
+        }
+
+        const tempUser = rows[0]
+
+        convertBoolean(tempUser, "is-learner")
+        convertBoolean(tempUser, "is-tutor")
+
+        if (!isMinimalUser(tempUser)) {
+            await conn.rollback()
+            return res.status(500).json({
+                message: "Internal server error (user object incorrect)",
+            })
+        }
+
+        user = tempUser
+
+        await conn.commit()
+    } catch (err) {
+        return res.status(500).json({ message: "SQL Error", error: err })
+    } finally {
+        conn.release()
     }
-    if (rows.affectedRows !== 1) {
-        return res
-            .status(500)
-            .json({ message: "Internal server error (user not created)" })
-    }
-
-    [rows, _fields] = await conn.execute(
-        "SELECT uuid, username FROM student WHERE `student-id` = ?",
-        [createUser["student-id"]],
-    )
-
-    if (!Array.isArray(rows) || rows.length !== 1) {
-        await conn.rollback()
-        await conn.release()
-        return res
-            .status(500)
-            .json({ message: "Internal server error (user not found)" })
-    }
-
-    const user = rows[0]
-
-    if (!isMinimalUser(user)) {
-        await conn.rollback()
-        await conn.release()
-        return res
-            .status(500)
-            .json({ message: "Internal server error (user object incorrect)" })
-    }
-
-    await conn.commit()
-    await conn.release()
 
     req.login(user, function (err) {
         if (err) {
@@ -186,14 +199,17 @@ acctRouter.patch("/edit", async (req, res) => {
         if (!validationStatus.success) {
             return res.status(400).json({
                 message: "Validation error",
-                errors: validationStatus.errors.map((e) => e.path),
+                errors: validationStatus.errors,
             })
         }
 
         const patchUser = validationStatus.data
-        const hashedPass = patchUser.password ? await hash(patchUser.password) : undefined
+        const hashedPass = patchUser.password
+            ? await hash(patchUser.password)
+            : undefined
 
-        const [result, _fields] = await pool.execute(`
+        const [result, _fields] = await pool.execute(
+            `
             UPDATE student 
             SET 
                 username = IFNULL(?, username),
@@ -203,7 +219,8 @@ acctRouter.patch("/edit", async (req, res) => {
                 \`is-learner\` = IFNULL(?, \`is-learner\`),
                 \`is-tutor\` = IFNULL(?, \`is-tutor\`),
                 password = IFNULL(?, password)
-            WHERE uuid = ?`, [
+            WHERE uuid = ?`,
+            [
                 patchUser.username,
                 patchUser.class,
                 patchUser.year,
@@ -211,8 +228,9 @@ acctRouter.patch("/edit", async (req, res) => {
                 patchUser["is-learner"],
                 patchUser["is-tutor"],
                 hashedPass,
-                req.user.uuid
-            ])
+                req.user.uuid,
+            ],
+        )
 
         if (Array.isArray(result)) {
             return res

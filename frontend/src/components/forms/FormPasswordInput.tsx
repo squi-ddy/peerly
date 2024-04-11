@@ -20,6 +20,12 @@ const showIconVariants = {
     exit: { opacity: 0 },
 }
 
+const defaultChecker: InputCheckFunction<string> = () => {
+    return { success: true }
+}
+
+const emptyFunction = () => {}
+
 function FormPasswordInput(props: {
     fieldName: string
     variants?: Variants
@@ -28,6 +34,8 @@ function FormPasswordInput(props: {
     width?: string
     z?: string
     h?: string
+    textSize?: string
+    errorTextSize?: string
     setSubmitFunction?: (getValue: InputSubmitFunction<string>) => void
     setErrorFunction?: (setError: InputErrorFunction) => void
 }) {
@@ -41,14 +49,11 @@ function FormPasswordInput(props: {
     const width = props.width ?? "w-5/6"
     const h = props.h ?? "h-14"
     const z = props.z ?? "z-0"
-    const checker =
-        props.checker ??
-        (useCallback(() => {
-            return { success: true }
-        }, []) as InputCheckFunction<string>)
-    const setSubmitFunction =
-        props.setSubmitFunction ?? useCallback(() => {}, [])
-    const setErrorFunction = props.setErrorFunction ?? useCallback(() => {}, [])
+    const textSize = props.textSize ?? "text-2xl"
+    const errorTextSize = props.errorTextSize ?? "text-l"
+    const checker = props.checker ?? defaultChecker
+    const setSubmitFunction = props.setSubmitFunction ?? emptyFunction
+    const setErrorFunction = props.setErrorFunction ?? emptyFunction
 
     const submitFunction: InputSubmitFunction<string> = useCallback(() => {
         const value = inputRef.current!.value
@@ -83,10 +88,9 @@ function FormPasswordInput(props: {
         >
             <input
                 type={showPassword ? "text" : "password"}
-                className={
-                    "relative z-0 grow border-2 rounded-xl bg-transparent text-2xl p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors" +
-                    (error ? " border-red-500" : "")
-                }
+                className={`grow border-2 rounded-xl bg-transparent ${textSize} p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors ${
+                    error ? "border-red-500" : ""
+                }`}
                 placeholder={props.fieldPlaceholder}
                 onInput={() => {
                     setError(false)
@@ -131,7 +135,7 @@ function FormPasswordInput(props: {
                         variants={errorVariants}
                         style={floatingStyles}
                         ref={refs.setFloating}
-                        className="mt-2 text-l text-center border-white border bg-red-400 py-1 px-2 rounded-md"
+                        className={`mt-2 ${errorTextSize} text-center border-white border bg-red-400 py-1 px-2 rounded-md`}
                     >
                         {errorMessage}
                     </motion.p>

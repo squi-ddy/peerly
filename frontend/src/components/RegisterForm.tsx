@@ -1,19 +1,19 @@
-import SetTitle from "./SetTitle"
-import { useCallback, useContext, useRef } from "react"
-import MotionButton from "./MotionButton"
 import { register } from "@/api"
-import { useNavigate } from "react-router-dom"
-import { UserContext } from "@/base/BasePage"
-import FormNumberInput from "./forms/FormNumberInput"
-import FormTextInput from "./forms/FormTextInput"
-import FormPasswordInput from "./forms/FormPasswordInput"
-import FormCheckboxInput from "./forms/FormCheckboxInput"
 import {
     InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
 } from "@/types/FormDefinition"
 import { IUserCreate } from "@backend/types/user"
+import { useCallback, useRef } from "react"
+import { useNavigate } from "react-router-dom"
+import { IValidation } from "typia"
+import MotionButton from "./MotionButton"
+import SetTitle from "./SetTitle"
+import FormCheckboxInput from "./forms/FormCheckboxInput"
+import FormNumberInput from "./forms/FormNumberInput"
+import FormPasswordInput from "./forms/FormPasswordInput"
+import FormTextInput from "./forms/FormTextInput"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -102,8 +102,6 @@ function RegisterForm() {
 
     const navigate = useNavigate()
 
-    const { updateUser } = useContext(UserContext)
-
     return (
         <>
             <SetTitle title="Register" />
@@ -120,7 +118,7 @@ function RegisterForm() {
                             success: false,
                             message: "Student ID is required",
                         }
-                    if (!/^h\d{7}$/i.test(value)) {
+                    if (!/^h[0-9]{7}$/i.test(value)) {
                         return {
                             success: false,
                             message:
@@ -240,6 +238,11 @@ function RegisterForm() {
                             success: false,
                             message: "Invalid class",
                         }
+                    if (!Number.isInteger(value))
+                        return {
+                            success: false,
+                            message: "Class must be an integer",
+                        }
                     return { success: true }
                 }}
             />
@@ -301,7 +304,7 @@ function RegisterForm() {
                     const year = Math.floor(studentClass3Digit / 100)
                     const studentClass = currYear * 1000 + studentClass3Digit
                     const data: IUserCreate = {
-                        "student-id": studentId,
+                        "student-id": studentId.toLowerCase(),
                         username,
                         email,
                         password,
@@ -311,13 +314,14 @@ function RegisterForm() {
                         "is-learner": isLearner,
                     }
 
-                    console.log(data)
-
                     const res = await register(data)
                     if (!res.success) {
                         const message = res.response!.data!.message
                         if (message === "Validation error") {
-                            const errors: string[] = res.response!.data!.errors
+                            const errors: string[] = (
+                                res.response!.data!
+                                    .errors as IValidation.IError[]
+                            ).map((e) => e.path)
                             for (const field of fieldNames) {
                                 for (const errorField of errors) {
                                     if (errorField.includes(field)) {
@@ -335,11 +339,14 @@ function RegisterForm() {
                             alert(`Unknown error ${message}`)
                         }
                     } else {
-                        await updateUser()
                         if (isTutor) {
-                            navigate("/setup/tutor", { state: { learner: isLearner }})
+                            navigate("/setup/tutor", {
+                                state: { setup: true, learner: isLearner },
+                            })
                         } else {
-                            navigate("/setup/learner")
+                            navigate("/setup/learner", {
+                                state: { setup: true },
+                            })
                         }
                     }
                 }}

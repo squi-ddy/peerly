@@ -13,6 +13,12 @@ const errorVariants: Variants = {
     exit: { opacity: 0 },
 }
 
+const defaultChecker: InputCheckFunction<string> = () => {
+    return { success: true }
+}
+
+const emptyFunction = () => {}
+
 function FormTextInput(props: {
     fieldName: string
     variants?: Variants
@@ -25,6 +31,8 @@ function FormTextInput(props: {
     z?: string
     h?: string
     type?: string
+    textSize?: string
+    errorTextSize?: string
     setSubmitFunction?: (getValue: InputSubmitFunction<string>) => void
     setErrorFunction?: (setError: InputErrorFunction) => void
 }) {
@@ -40,14 +48,11 @@ function FormTextInput(props: {
     const z = props.z ?? "z-0"
     const fieldValue = props.fieldValue ?? ""
     const type = props.type ?? "text"
-    const checker =
-        props.checker ??
-        (useCallback(() => {
-            return { success: true }
-        }, []) as InputCheckFunction<string>)
-    const setSubmitFunction =
-        props.setSubmitFunction ?? useCallback(() => {}, [])
-    const setErrorFunction = props.setErrorFunction ?? useCallback(() => {}, [])
+    const textSize = props.textSize ?? "text-2xl"
+    const errorTextSize = props.errorTextSize ?? "text-l"
+    const checker = props.checker ?? defaultChecker
+    const setSubmitFunction = props.setSubmitFunction ?? emptyFunction
+    const setErrorFunction = props.setErrorFunction ?? emptyFunction
     const edit = props.edit ?? true
 
     const submitFunction: InputSubmitFunction<string> = useCallback(() => {
@@ -90,7 +95,9 @@ function FormTextInput(props: {
             {edit ? (
                 <>
                     {props.fieldPrefix && (
-                        <p className="text-2xl w-1/6 text-center min-w-0">
+                        <p
+                            className={`${errorTextSize} w-1/6 text-center min-w-fit`}
+                        >
                             {props.fieldPrefix}
                         </p>
                     )}
@@ -102,10 +109,9 @@ function FormTextInput(props: {
                         onInput={() => {
                             setError(false)
                         }}
-                        className={
-                            "border-2 rounded-xl bg-transparent text-2xl w-full h-full p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors" +
-                            (error ? " border-red-500" : "")
-                        }
+                        className={`border-2 rounded-xl bg-transparent ${textSize} w-full h-full p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors ${
+                            error ? "border-red-500" : ""
+                        }`}
                     />
                     <AnimatePresence mode="wait">
                         {error && (
@@ -113,7 +119,7 @@ function FormTextInput(props: {
                                 variants={errorVariants}
                                 style={floatingStyles}
                                 ref={refs.setFloating}
-                                className="mt-2 text-l text-center border-white border bg-red-400 py-1 px-2 rounded-md"
+                                className={`mt-2 ${errorTextSize} text-center border-white border bg-red-400 py-1 px-2 rounded-md`}
                             >
                                 {errorMessage}
                             </motion.p>
@@ -121,7 +127,7 @@ function FormTextInput(props: {
                     </AnimatePresence>
                 </>
             ) : (
-                <p className="text-2xl w-full text-center min-w-0">
+                <p className={`${textSize} w-full text-center min-w-fit`}>
                     {(props.fieldPrefix ?? "") + fieldValue}
                 </p>
             )}

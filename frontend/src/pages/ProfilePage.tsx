@@ -1,28 +1,19 @@
-import { LayoutGroup, motion } from "framer-motion"
-import {
-    useEffect,
-    useState,
-    useContext,
-    ReactHTMLElement,
-    useRef,
-    useCallback,
-} from "react"
-import { redirect, useNavigate } from "react-router-dom"
-import { UserContext } from "@/base/BasePage"
-import { IUserFull } from "@backend/types/user"
 import { getCurrentProfile } from "@/api"
+import { UserContext } from "@/base/BasePage"
+import MotionButton from "@/components/MotionButton"
+import SetTitle from "@/components/SetTitle"
+import FormCheckboxInput from "@/components/forms/FormCheckboxInput"
+import FormNumberInput from "@/components/forms/FormNumberInput"
+import FormPasswordInput from "@/components/forms/FormPasswordInput"
+import FormTextInput from "@/components/forms/FormTextInput"
 import {
-    FormInput,
-    InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
 } from "@/types/FormDefinition"
-import FormTextInput from "@/components/forms/FormTextInput"
-import FormNumberInput from "@/components/forms/FormNumberInput"
-import FormCheckboxInput from "@/components/forms/FormCheckboxInput"
-import MotionButton from "@/components/MotionButton"
-import FormPasswordInput from "@/components/forms/FormPasswordInput"
-import SetTitle from "@/components/SetTitle"
+import { IUserFull } from "@backend/types/user"
+import { LayoutGroup, motion } from "framer-motion"
+import { ReactNode, useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -95,10 +86,7 @@ const defaultInputContainer = {
     } as InputFunctionItems<boolean>,
 } satisfies InputFunctionContainer<typeof fieldNames>
 
-function ProfilePageRow(props: {
-    title: string
-    children: FormInput | ReactHTMLElement<HTMLDivElement>
-}) {
+function ProfilePageRow(props: { title: string; children: ReactNode }) {
     return (
         <motion.tr variants={itemVariants} layout>
             <th className="w-1/3 py-2">{props.title}</th>
@@ -118,41 +106,38 @@ function ProfilePage() {
 
     const [edit, setEdit] = useState(false)
 
-    const inputContainer = useRef(defaultInputContainer)
+    // const inputContainer = useRef(defaultInputContainer)
 
-    const setSubmitFunction = useCallback(
-        (key: keyof typeof defaultInputContainer) => {
-            return (
-                func: (typeof defaultInputContainer)[typeof key]["submitFunc"],
-            ) => {
-                inputContainer.current[key]["submitFunc"] = func
-            }
-        },
-        [],
-    )
+    // const setSubmitFunction = useCallback(
+    //     (key: keyof typeof defaultInputContainer) => {
+    //         return (
+    //             func: (typeof defaultInputContainer)[typeof key]["submitFunc"],
+    //         ) => {
+    //             inputContainer.current[key]["submitFunc"] = func
+    //         }
+    //     },
+    //     [],
+    // )
 
-    const setErrorFunction = useCallback(
-        (key: keyof typeof defaultInputContainer) => {
-            return (func: InputErrorFunction) => {
-                inputContainer.current[key]["errorFunc"] = func
-            }
-        },
-        [],
-    )
-
-    if (!user) {
-        navigate("/auth")
-        return <></>
-    }
+    // const setErrorFunction = useCallback(
+    //     (key: keyof typeof defaultInputContainer) => {
+    //         return (func: InputErrorFunction) => {
+    //             inputContainer.current[key]["errorFunc"] = func
+    //         }
+    //     },
+    //     [],
+    // )
 
     useEffect(() => {
-        if (user)
+        if (!user) {
+            navigate("/auth")
+        } else
             getCurrentProfile().then((data) => {
                 if (data) {
                     setProfileData(data)
                 }
             })
-    }, [user])
+    }, [user, navigate])
 
     if (!profileData) {
         return <></>
@@ -160,129 +145,151 @@ function ProfilePage() {
 
     return (
         <>
-        <SetTitle title="Profile" />
-        <LayoutGroup>
-            <motion.div
-                variants={itemVariants}
-                layout
-                className="mb-1 flex flex-row w-2/3"
-            >
-                <motion.h1 variants={itemVariants} className="text-5xl">
-                    Your Profile
-                </motion.h1>
-                <div className="grow" />
-                <MotionButton
-                    text={edit ? "Submit" : "Edit"}
-                    textSize="text-2xl"
-                    layout
-                    onClick={() => {
-                        if (edit) {
-                            alert("submit")
-                        }
-                        setEdit(!edit)
-                    }}
-                />
-            </motion.div>
-            <div className="h-4/5 w-full flex flex-col items-center">
+            <SetTitle title="Profile" />
+            <LayoutGroup>
                 <motion.div
-                    className="table-container w-2/3"
-                    variants={mainVariants}
+                    variants={itemVariants}
                     layout
+                    className="mb-1 flex flex-row w-2/3"
                 >
-                    <table
-                        className="vert-table text-2xl"
-                        cellSpacing={0}
-                        cellPadding={0}
-                    >
-                        <tbody>
-                            <ProfilePageRow title="Student ID">
-                                <div className="h-14 flex items-center">
-                                    {profileData["student-id"]}
-                                </div>
-                            </ProfilePageRow>
-                            <ProfilePageRow title="Username">
-                                <FormTextInput
-                                    fieldName={"username"}
-                                    fieldPlaceholder={""}
-                                    width="w-1/2"
-                                    edit={edit}
-                                    fieldValue={profileData.username}
-                                />
-                            </ProfilePageRow>
-                            <ProfilePageRow title="Email">
-                                <FormTextInput
-                                    fieldName={"email"}
-                                    type={"email"}
-                                    fieldPlaceholder={""}
-                                    width="w-1/2"
-                                    edit={edit}
-                                    fieldValue={profileData.email}
-                                />
-                            </ProfilePageRow>
-                            {edit && (
-                                <>
-                                    <ProfilePageRow title="Password">
-                                        <FormPasswordInput
-                                            width="w-1/2"
-                                            fieldName="password"
-                                            fieldPlaceholder="Password"
-                                        />
-                                    </ProfilePageRow>
-                                    <ProfilePageRow title="Confirm Password">
-                                        <FormPasswordInput
-                                            width="w-1/2"
-                                            fieldName="confirmPassword"
-                                            fieldPlaceholder="Confirm Password"
-                                        />
-                                    </ProfilePageRow>
-                                </>
-                            )}
-                            <ProfilePageRow title="Class">
-                                <FormNumberInput
-                                    fieldName={"class"}
-                                    fieldPlaceholder={"M"}
-                                    edit={edit}
-                                    numberWidth="w-28"
-                                    fieldValue={profileData.class}
-                                />
-                            </ProfilePageRow>
-
-                            <ProfilePageRow title="Year">
-                                <FormNumberInput
-                                    fieldName={"year"}
-                                    fieldPlaceholder={""}
-                                    edit={edit}
-                                    fieldValue={profileData.year}
-                                />
-                            </ProfilePageRow>
-                            <ProfilePageRow title="UUID">
-                                <div className="h-14 flex items-center">
-                                    {profileData.uuid}
-                                </div>
-                            </ProfilePageRow>
-                            <ProfilePageRow title="Is Tutor?">
-                                <FormCheckboxInput
-                                    fieldName={"isTutor"}
-                                    fieldPlaceholder={""}
-                                    width="w-1/2"
-                                    edit={edit}
-                                    fieldValue={profileData["is-tutor"]}
-                                />
-                            </ProfilePageRow>
-                            <ProfilePageRow title="Is Learner?">
-                                <FormCheckboxInput
-                                    fieldName={"isLearner"}
-                                    fieldPlaceholder={""}
-                                    width="w-1/2"
-                                    edit={edit}
-                                    fieldValue={profileData["is-learner"]}
-                                />
-                            </ProfilePageRow>
-                        </tbody>
-                    </table>
+                    <motion.h1 variants={itemVariants} className="text-5xl">
+                        Your Profile
+                    </motion.h1>
+                    <div className="grow" />
+                    <MotionButton
+                        text={edit ? "Save" : "Edit"}
+                        textSize="text-2xl"
+                        layout
+                        onClick={() => {
+                            if (edit) {
+                                alert("submit")
+                            }
+                            setEdit(!edit)
+                        }}
+                    />
                 </motion.div>
-            </div>
-        </LayoutGroup>
+                <div className="h-4/5 w-full flex flex-col items-center">
+                    <motion.div
+                        className="table-container w-2/3"
+                        variants={mainVariants}
+                        layout
+                    >
+                        <table
+                            className="vert-table text-2xl"
+                            cellSpacing={0}
+                            cellPadding={0}
+                        >
+                            <tbody>
+                                <ProfilePageRow title="Student ID">
+                                    <div className="h-14 flex items-center">
+                                        {profileData["student-id"]}
+                                    </div>
+                                </ProfilePageRow>
+                                <ProfilePageRow title="Username">
+                                    <FormTextInput
+                                        fieldName={"username"}
+                                        fieldPlaceholder={""}
+                                        width="w-1/2"
+                                        edit={edit}
+                                        fieldValue={profileData.username}
+                                    />
+                                </ProfilePageRow>
+                                <ProfilePageRow title="Email">
+                                    <FormTextInput
+                                        fieldName={"email"}
+                                        type={"email"}
+                                        fieldPlaceholder={""}
+                                        width="w-1/2"
+                                        edit={edit}
+                                        fieldValue={profileData.email}
+                                    />
+                                </ProfilePageRow>
+                                {edit && (
+                                    <>
+                                        <ProfilePageRow title="Password">
+                                            <FormPasswordInput
+                                                width="w-1/2"
+                                                fieldName="password"
+                                                fieldPlaceholder="Password"
+                                            />
+                                        </ProfilePageRow>
+                                        <ProfilePageRow title="Confirm Password">
+                                            <FormPasswordInput
+                                                width="w-1/2"
+                                                fieldName="confirmPassword"
+                                                fieldPlaceholder="Confirm Password"
+                                            />
+                                        </ProfilePageRow>
+                                    </>
+                                )}
+                                <ProfilePageRow title="Class">
+                                    <FormNumberInput
+                                        fieldName={"class"}
+                                        fieldPlaceholder={"M"}
+                                        edit={edit}
+                                        numberWidth="w-28"
+                                        fieldValue={profileData.class}
+                                    />
+                                </ProfilePageRow>
+
+                                <ProfilePageRow title="Year">
+                                    <FormNumberInput
+                                        fieldName={"year"}
+                                        fieldPlaceholder={""}
+                                        edit={edit}
+                                        fieldValue={profileData.year}
+                                    />
+                                </ProfilePageRow>
+                                <ProfilePageRow title="UUID">
+                                    <div className="h-14 flex items-center">
+                                        {profileData.uuid}
+                                    </div>
+                                </ProfilePageRow>
+                                <ProfilePageRow title="Is Tutor?">
+                                    <FormCheckboxInput
+                                        fieldName={"isTutor"}
+                                        fieldPlaceholder={""}
+                                        width="w-1/2"
+                                        edit={edit}
+                                        fieldValue={profileData["is-tutor"]}
+                                    />
+                                </ProfilePageRow>
+                                {edit && profileData["is-tutor"] && (
+                                    <ProfilePageRow title="Edit Tutor Details">
+                                        <MotionButton
+                                            text="Save and Edit..."
+                                            onClick={() => {
+                                                // TODO: submit
+                                                navigate("/options/tutor")
+                                            }}
+                                        />
+                                    </ProfilePageRow>
+                                )}
+                                <ProfilePageRow title="Is Learner?">
+                                    <FormCheckboxInput
+                                        fieldName={"isLearner"}
+                                        fieldPlaceholder={""}
+                                        width="w-1/2"
+                                        edit={edit}
+                                        fieldValue={profileData["is-learner"]}
+                                    />
+                                </ProfilePageRow>
+                                {edit && profileData["is-learner"] && (
+                                    <ProfilePageRow title="Edit Learner Details">
+                                        <MotionButton
+                                            text="Save and Edit..."
+                                            onClick={() => {
+                                                // TODO: submit
+                                                navigate("/options/learner")
+                                            }}
+                                        />
+                                    </ProfilePageRow>
+                                )}
+                            </tbody>
+                        </table>
+                    </motion.div>
+                </div>
+            </LayoutGroup>
         </>
     )
 }

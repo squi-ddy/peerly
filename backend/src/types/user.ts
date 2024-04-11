@@ -6,18 +6,23 @@ declare global {
     }
 }
 
+export type IStudentID = string &
+    tags.MinLength<8> &
+    tags.MaxLength<8> &
+    tags.Pattern<"^h[0-9]{7}$">
+
 export interface IUserMinimal {
     uuid: string & tags.Format<"uuid">
+    "student-id": IStudentID
     username: string & tags.MaxLength<255> & tags.Pattern<"^[a-zA-Z0-9_]+$">
+    "is-learner": boolean
+    "is-tutor": boolean
 }
 
 export interface IUserFull extends IUserMinimal {
-    "student-id": string & tags.MinLength<8> & tags.MaxLength<8>
     class: number & tags.ExclusiveMaximum<100000> & tags.Minimum<0>
     year: number & tags.Type<"uint32">
     email: string & tags.MaxLength<255>
-    "is-learner": boolean
-    "is-tutor": boolean
 }
 
 type ValidateClass = tags.TagBase<{

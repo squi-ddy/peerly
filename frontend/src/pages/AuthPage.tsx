@@ -1,9 +1,9 @@
-import { AnimatePresence, motion } from "framer-motion"
-import MotionButton from "@/components/MotionButton"
-import { useEffect, useState, cloneElement, useContext } from "react"
-import { redirect, useLocation, useNavigate, useOutlet } from "react-router-dom"
 import { UserContext } from "@/base/BasePage"
 import MotionBase from "@/base/MotionBase"
+import MotionButton from "@/components/MotionButton"
+import { AnimatePresence, motion } from "framer-motion"
+import { cloneElement, useContext, useEffect, useState } from "react"
+import { useLocation, useNavigate, useOutlet } from "react-router-dom"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -32,10 +32,11 @@ function AuthPage() {
     const navigate = useNavigate()
     const { user } = useContext(UserContext)
 
-    if (user) {
-        navigate("/")
-        return <></>
-    }
+    useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [user, navigate])
 
     useEffect(() => {
         if (location.pathname.startsWith("/auth"))

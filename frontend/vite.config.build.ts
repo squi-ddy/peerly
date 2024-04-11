@@ -7,12 +7,8 @@ export default defineConfig({
     plugins: [
         react(),
         typescript({
-            tsconfig: "./tsconfig.json",
-            include: [
-                "./src/**/*.ts",
-                "./src/**/*.tsx",
-                "../backend/src/types/*.ts",
-            ],
+            tsconfig: "./tsconfig.build.json",
+            include: ["./src/**/*.ts", "./src/**/*.tsx"],
         }),
     ],
     esbuild: false,
