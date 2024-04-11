@@ -1,6 +1,11 @@
 import { createIs, createValidate } from "typia"
 import { IUserMinimal, IUserFull, IUserCreate, IUserPatch } from "types/user"
-import { ISubject, ITutorSubject, ITutorSubjectCreate, ITutorSubjectGet } from "types/subject"
+import {
+    ISubject,
+    ITutorSubject,
+    ITutorSubjectCreate,
+    ITutorSubjectGet,
+} from "types/subject"
 import {
     IEmptyTimeslot,
     IEmptyTimeslotCreate,

@@ -1,7 +1,7 @@
 import {
     isEmptyTimeslots,
     validateCreateEmptyTimeslots,
-    validateGetEmptyTimeslots
+    validateGetEmptyTimeslots,
 } from "checkers"
 import { convertTime, pool } from "db"
 import { Router } from "express"

@@ -251,7 +251,7 @@ function ProfilePage() {
                         layout
                         onClick={async () => {
                             if (edit) {
-                                if (!await submit()) return
+                                if (!(await submit())) return
                             }
                             setEdit(!edit)
                         }}
@@ -405,7 +405,14 @@ function ProfilePage() {
                                 <ProfilePageRow title="Class">
                                     <FormNumberInput
                                         fieldName={"class"}
-                                        fieldPlaceholder={`M${edit ? currYear.toString() : preciseFloor(profileData.class, 1000)}`}
+                                        fieldPlaceholder={`M${
+                                            edit
+                                                ? currYear.toString()
+                                                : preciseFloor(
+                                                      profileData.class,
+                                                      1000,
+                                                  )
+                                        }`}
                                         edit={edit}
                                         numberWidth="w-20"
                                         fieldValue={profileData.class % 1000}
@@ -466,7 +473,7 @@ function ProfilePage() {
                                         <MotionButton
                                             text="Save and Edit..."
                                             onClick={async () => {
-                                                if (!await submit()) return
+                                                if (!(await submit())) return
                                                 navigate("/options/tutor")
                                             }}
                                         />
@@ -495,7 +502,7 @@ function ProfilePage() {
                                         <MotionButton
                                             text="Save and Edit..."
                                             onClick={async () => {
-                                                if (!await submit()) return
+                                                if (!(await submit())) return
                                                 navigate("/options/learner")
                                             }}
                                         />

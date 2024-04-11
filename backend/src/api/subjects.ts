@@ -1,4 +1,9 @@
-import { isSubjects, isTutorSubjects, validateCreateTutorSubjects, validateGetTutorSubjects } from "checkers"
+import {
+    isSubjects,
+    isTutorSubjects,
+    validateCreateTutorSubjects,
+    validateGetTutorSubjects,
+} from "checkers"
 import { pool } from "db"
 import { Router } from "express"
 
@@ -123,12 +128,16 @@ subjectRouter.get("/getTutor", async (req, res) => {
     )
 
     if (!Array.isArray(result)) {
-        res.status(500).send("Internal Server Error (tutor subjects not a list)")
+        res.status(500).send(
+            "Internal Server Error (tutor subjects not a list)",
+        )
         return
     }
 
     if (!isTutorSubjects(result)) {
-        res.status(500).send("Internal Server Error (tutor subjects not tutor subjects?)")
+        res.status(500).send(
+            "Internal Server Error (tutor subjects not tutor subjects?)",
+        )
         return
     }
 

@@ -249,7 +249,9 @@ acctRouter.patch("/me", async (req, res) => {
                 await conn.rollback()
                 return res
                     .status(500)
-                    .json({ message: "Internal server error (user not updated)" })
+                    .json({
+                        message: "Internal server error (user not updated)",
+                    })
             }
 
             [rows, _fields] = await conn.execute(
