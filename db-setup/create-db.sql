@@ -123,7 +123,17 @@ create table notification (
     `notification-id` int unsigned auto_increment primary key,
     message varchar(1000) not null,
     `time-sent` datetime not null,
-    `interest-id` int unsigned not null,
+    `tutor-sid` char(8),
+    foreign key (`tutor-sid`) references student(`student-id`)
+    on update cascade on delete cascade
+);
+
+create table notificationInterests (
+    `notification-id` int unsigned,
+    `interest-id` int unsigned,
+    primary key (`notification-id`, `interest-id`),
+    foreign key (`notification-id`) references notification(`notification-id`)
+    on update cascade on delete cascade,
     foreign key (`interest-id`) references interest(`interest-id`)
     on update cascade on delete cascade
 );
@@ -238,6 +248,100 @@ before update on student
 for each row
 begin
     set new.year = compute_year(year(now()), new.`student-id`, new.`year-offset`);
+end //
+
+create function timeslots_overlap(
+    ts1_start time,
+    ts1_end time,
+    ts2_start time,
+    ts2_end time
+) returns boolean deterministic
+return ts1_start < ts2_end and ts1_end > ts2_start//
+
+-- find_timeslots() uses these temporary table templates that is recreated every time
+create table timeslotsInTemplate (
+    `day-of-week` tinyint,
+    `start-time` time,
+    `end-time` time
+)//
+
+create table interestedSubjectsTemplate (
+    `subject-code` char(2)
+)//
+
+create procedure find_timeslots()
+begin
+    select
+        ct.`tutor-sid`, 
+        s.username, 
+        (
+            select json_arrayagg(tmp.subj)
+            from (
+                select json_object(
+                    'subject-code', sub.`subject-code`, 
+                    'name', sub.name
+                ) subj
+                from subject sub
+                where sub.`subject-code` in (
+                    select `subject-code` 
+                    from canTeach 
+                    where `tutor-sid` = ct.`tutor-sid`
+                )
+                and sub.`subject-code` in (
+                    select `subject-code` from interestedSubjects
+                )
+            ) tmp
+        ) `can-teach-subjects`, 
+        (
+            select json_arrayagg(tmp.tslot)
+            from (
+                select json_object(
+                    'day-of-week', ts.`day-of-week`, 
+                    'start-time', greatest(ts.`start-time`, tsIn.`start-time`), 
+                    'end-time', least(ts.`end-time`, tsIn.`end-time`)
+                ) tslot
+                from timeslotsIn tsIn
+                join emptyTimeslot ts on 
+                    ts.`day-of-week` = tsIn.`day-of-week` 
+                    and timeslots_overlap(
+                        ts.`start-time`, ts.`end-time`, 
+                        tsIn.`start-time`, tsIn.`end-time`
+                    )
+                    and ts.`tutor-sid` = ct.`tutor-sid`
+            ) tmp
+        ) timeslots
+        from canTeach ct
+        join student s on ct.`tutor-sid` = s.`student-id`
+        group by ct.`tutor-sid`
+        having 
+            timeslots is not null 
+            and `can-teach-subjects` is not null;
+end //
+
+create procedure find_proposals_at_time(
+    in tutor_id char(8), 
+    in day_of_week tinyint, 
+    in start_time time, 
+    in end_time time,
+    in is_not_student char(8)
+)
+begin
+    select 
+        t.`tutelage-id`, t.`tutor-sid`, t.`learner-sid`, s.name `learner-name`,
+        ts.`day-of-week`, ts.`start-time`, ts.`end-time`, sub.name `subject-name`
+    from pendingTutelage t
+    join pendingTimes m on t.`tutelage-id` = m.`tutelage-id`
+    join emptyTimeslot ts on m.`timeslot-id` = ts.`timeslot-id`
+    and ts.`day-of-week` = day_of_week
+    and ts.`start-time` <= end_time
+    and ts.`end-time` >= start_time
+    join student s on t.`learner-sid` = s.`student-id`
+    join subject sub on m.`subject-code` = sub.`subject-code`
+    where t.`tutor-sid` = tutor_id
+    and (
+        is_not_student is null 
+        or t.`learner-sid` != is_not_student
+    );
 end //
 
 delimiter ;

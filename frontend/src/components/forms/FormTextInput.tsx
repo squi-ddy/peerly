@@ -116,6 +116,9 @@ function FormTextInput(props: {
                     <AnimatePresence mode="wait">
                         {error && (
                             <motion.p
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
                                 variants={errorVariants}
                                 style={floatingStyles}
                                 ref={refs.setFloating}

@@ -41,6 +41,9 @@ function FormCheckboxInput(props: {
         placement: "bottom",
     })
 
+    const fieldValue = props.fieldValue ?? false
+    const [checked, setChecked] = useState<boolean>(fieldValue)
+
     const width = props.width ?? "w-5/6"
     const h = props.h ?? "h-10"
     const z = props.z ?? "z-0"
@@ -51,7 +54,6 @@ function FormCheckboxInput(props: {
     const setSubmitFunction = props.setSubmitFunction ?? emptyFunction
     const setErrorFunction = props.setErrorFunction ?? emptyFunction
     const edit = props.edit ?? true
-    const fieldValue = props.fieldValue ?? false
 
     const submitFunction: InputSubmitFunction<boolean> = useCallback(() => {
         if (!edit) {
@@ -91,22 +93,46 @@ function FormCheckboxInput(props: {
                 <span className={textSize}>{props.fieldPlaceholder}</span>
             )}
             <>
-                <input
-                    type="checkbox"
-                    className={`min-w-0 accent-sky-400 transition-colors ${
-                        error ? " ring-2 ring-red-500" : ""
-                    }`}
-                    defaultChecked={fieldValue}
-                    ref={inputRef}
-                    onInput={() => {
-                        setError(false)
+                <div
+                    className={`p-0.5 flex border rounded-md h-5 w-5 items-center justify-center transition-colors ${
+                        edit ? "cursor-pointer" : ""
+                    } ${
+                        checked
+                            ? edit
+                                ? "duration-0 bg-sky-400"
+                                : "bg-gray-500"
+                            : edit
+                            ? "hover:bg-sky-900"
+                            : ""
+                    } ${error ? "border-red-500" : "border-white"}`}
+                    onClick={() => {
+                        if (edit) {
+                            setError(false)
+                            setChecked(!checked)
+                        }
                     }}
-                    disabled={!edit}
-                />
+                >
+                    <input
+                        type="checkbox"
+                        className={`w-full h-full pointer-events-none ${
+                            checked
+                                ? edit
+                                    ? "accent-sky-400"
+                                    : "accent-gray-500"
+                                : "opacity-0"
+                        }`}
+                        ref={inputRef}
+                        checked={checked}
+                        readOnly
+                    />
+                </div>
                 <AnimatePresence mode="wait">
                     {edit && error && (
                         <motion.p
                             variants={errorVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
                             style={floatingStyles}
                             ref={refs.setFloating}
                             className={`${errorTextSize} text-center mt-2 border-white border bg-red-400 py-1 px-2 rounded-md`}

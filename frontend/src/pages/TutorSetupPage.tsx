@@ -3,14 +3,14 @@ import {
     getSubjects,
     getTutorSubjects,
     sendEmptyTimeslots,
-    sendSubjects,
+    sendTutorSubjects,
 } from "@/api"
 import { UserContext } from "@/base/BasePage"
-import MotionBase from "@/base/MotionBase"
-import EditableCalendar, {
-    ContiguousSlot,
+import Calendar, {
+    IAdditionalSlot,
+    IContiguousSlot,
     timestamps,
-} from "@/components/EditableCalendar"
+} from "@/components/Calendar"
 import MotionButton from "@/components/MotionButton"
 import SetTitle from "@/components/SetTitle"
 import TutorSubjectSelection, {
@@ -28,6 +28,8 @@ const itemVariants = {
     exit: { opacity: 0 },
 }
 
+const emptyArray: IAdditionalSlot[] = []
+
 function TutorSetupPage() {
     const { state, pathname } = useLocation()
     const { user, updateUser } = useContext(UserContext)
@@ -38,10 +40,12 @@ function TutorSetupPage() {
     const [floatingRef, setFloatingRef] = useState<HTMLElement | null>(null)
 
     const [dialog, setDialog] = useState<ReactElement | null>(null)
-    const getContiguousSlots = useRef<() => ContiguousSlot[]>(() => [])
+    const getContiguousSlots = useRef<() => IContiguousSlot[]>(() => [])
     const [errorText, setErrorText] = useState<string>("")
 
-    const [defaultSelected, setDefaultSelected] = useState<ContiguousSlot[]>([])
+    const [defaultSelected, setDefaultSelected] = useState<IContiguousSlot[]>(
+        [],
+    )
     const [calendarApiReturned, setCalendarApiReturned] = useState(false)
 
     useEffect(() => {
@@ -102,7 +106,7 @@ function TutorSetupPage() {
     const pageTitle = state?.setup ? "Tutor Setup" : "Tutor Details"
 
     return (
-        <MotionBase>
+        <>
             <SetTitle title={pageTitle} />
             <motion.div
                 ref={setFloatingRef}
@@ -142,18 +146,22 @@ function TutorSetupPage() {
                         Your Free Slots
                     </motion.div>
                     {calendarApiReturned && (
-                        <EditableCalendar
+                        <Calendar
                             defaultSelected={defaultSelected}
                             setGetContiguousSlots={(
-                                f: () => ContiguousSlot[],
+                                f: () => IContiguousSlot[],
                             ) => {
                                 getContiguousSlots.current = f
                             }}
+                            edit={true}
+                            additionalSlots={emptyArray}
+                            drawContiguousSlots={true}
                         />
                     )}
                 </div>
             </motion.div>
             <motion.div
+                variants={itemVariants}
                 className="flex flex-row w-full justify-center gap-2"
                 layout
             >
@@ -174,7 +182,7 @@ function TutorSetupPage() {
                 )}
                 <MotionButton
                     variants={itemVariants}
-                    text="Submit"
+                    text="Save"
                     onClick={async () => {
                         if (subjects.length === 0) {
                             setErrorText("Please select at least one subject!")
@@ -185,7 +193,7 @@ function TutorSetupPage() {
                             setErrorText("Please select at least one slot!")
                             return
                         }
-                        let resp = await sendSubjects(
+                        let resp = await sendTutorSubjects(
                             subjects.map((subject) => ({
                                 "subject-code": subject["subject-code"],
                                 "subject-gpa": subject["subject-gpa"],
@@ -234,7 +242,7 @@ function TutorSetupPage() {
                 </motion.div>
             )}
             {dialog}
-        </MotionBase>
+        </>
     )
 }
 

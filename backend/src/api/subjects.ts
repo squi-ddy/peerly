@@ -1,7 +1,10 @@
 import {
+    isLearnerSubjects,
     isSubjects,
     isTutorSubjects,
+    validateCreateLearnerSubjects,
     validateCreateTutorSubjects,
+    validateGetLearnerSubjects,
     validateGetTutorSubjects,
 } from "checkers"
 import { pool } from "db"
@@ -96,6 +99,7 @@ subjectRouter.post("/submitTutor", async (req, res) => {
             await conn.commit()
             res.sendStatus(200)
         } catch (err) {
+            await conn.rollback()
             res.status(500).json({ message: "SQL Error", error: err })
         } finally {
             conn.release()
@@ -142,6 +146,114 @@ subjectRouter.get("/getTutor", async (req, res) => {
     }
 
     res.json(result)
+})
+
+subjectRouter.get("/getLearner", async (req, res) => {
+    const data = req.query
+    const validationStatus = validateGetLearnerSubjects(data)
+    if (!validationStatus.success) {
+        res.status(400).json({
+            message: "Validation error",
+            errors: validationStatus.errors,
+        })
+        return
+    }
+
+    const learnerSid = validationStatus.data["learner-sid"]
+    const [result, _fields] = await pool.execute(
+        `
+        SELECT i.\`learner-sid\`, i.\`subject-code\`, s.name
+        FROM interest i
+        JOIN subject s ON i.\`subject-code\` = s.\`subject-code\`
+        WHERE \`learner-sid\` = ?
+    `,
+        [learnerSid],
+    )
+
+    if (!Array.isArray(result)) {
+        res.status(500).send(
+            "Internal Server Error (learner interests not a list)",
+        )
+        return
+    }
+
+    if (!isLearnerSubjects(result)) {
+        res.status(500).send(
+            "Internal Server Error (learner interests not learner interests?)",
+        )
+        return
+    }
+
+    res.json(result)
+})
+
+subjectRouter.post("/submitLearner", async (req, res) => {
+    if (req.isAuthenticated()) {
+        const user = req.user
+
+        if (!user["is-learner"]) {
+            res.sendStatus(401)
+            return
+        }
+
+        const data = req.body
+        const validationStatus = validateCreateLearnerSubjects(data)
+        if (!validationStatus.success) {
+            res.status(400).json({
+                message: "Validation error",
+                errors: validationStatus.errors,
+            })
+            return
+        }
+
+        const subjects = validationStatus.data
+
+        const conn = await pool.getConnection()
+        await conn.beginTransaction()
+
+        try {
+            // delete extra
+            let [result, _fields] = await conn.query(
+                `
+                DELETE FROM interest WHERE \`learner-sid\` = ? AND \`subject-code\` NOT IN (?)
+            `,
+                [user["student-id"], subjects.map((s) => s["subject-code"])],
+            )
+
+            if (Array.isArray(result)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            // on duplicate key do a noop
+            [result, _fields] = await conn.query(
+                `
+                INSERT INTO interest(\`learner-sid\`, \`subject-code\`) VALUES ?
+                ON DUPLICATE KEY UPDATE \`learner-sid\` = \`learner-sid\`
+            `,
+                [subjects.map((s) => [user["student-id"], s["subject-code"]])],
+            )
+
+            if (Array.isArray(result)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            await conn.commit()
+            res.sendStatus(200)
+        } catch (err) {
+            await conn.rollback()
+            res.status(500).json({ message: "SQL Error", error: err })
+        } finally {
+            conn.release()
+        }
+    } else {
+        res.sendStatus(401)
+    }
 })
 
 export default subjectRouter

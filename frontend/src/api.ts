@@ -1,4 +1,7 @@
 import {
+    ILearnerSubject,
+    ILearnerSubjectCreate,
+    ILearnerSubjectGet,
     ISubject,
     ITutorSubject,
     ITutorSubjectCreate,
@@ -13,7 +16,9 @@ import {
 import axios from "axios"
 import {
     isEmptyTimeslotArray,
+    isFindTimeslotsResultArray,
     isFullUser,
+    isLearnerSubjectArray,
     isMinimalUser,
     isSubjectArray,
     isTutorSubjectArray,
@@ -23,6 +28,8 @@ import {
     IEmptyTimeslot,
     IEmptyTimeslotCreate,
     IEmptyTimeslotGet,
+    IFindTimeslots,
+    IFindTimeslotsResult,
 } from "@backend/types/timeslot"
 
 axios.defaults.withCredentials = true
@@ -133,12 +140,30 @@ export async function getSubjects(): Promise<ISubject[] | null> {
     }
 }
 
-export async function sendSubjects(data: ITutorSubjectCreate[]) {
+export async function sendTutorSubjects(data: ITutorSubjectCreate[]) {
     try {
         const resp = {
             success: true,
             response: await axios.post(
                 `${settings.API_URL}/subjects/submitTutor`,
+                data,
+            ),
+        }
+        return resp
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return { success: false, response: error.response }
+    }
+}
+
+export async function sendLearnerSubjects(data: ILearnerSubjectCreate[]) {
+    try {
+        const resp = {
+            success: true,
+            response: await axios.post(
+                `${settings.API_URL}/subjects/submitLearner`,
                 data,
             ),
         }
@@ -209,6 +234,29 @@ export async function getTutorSubjects(
     }
 }
 
+export async function getLearnerSubjects(
+    data: ILearnerSubjectGet,
+): Promise<ILearnerSubject[] | null> {
+    try {
+        const resp = await axios.get(
+            `${settings.API_URL}/subjects/getLearner`,
+            {
+                params: data,
+            },
+        )
+        const respData = resp.data
+        if (!isLearnerSubjectArray(respData)) {
+            throw new Error("Invalid learner interest data")
+        }
+        return respData
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return null
+    }
+}
+
 export async function patchCurrentUser(data: IUserPatch) {
     try {
         const resp = {
@@ -222,5 +270,26 @@ export async function patchCurrentUser(data: IUserPatch) {
             throw error
         }
         return { success: false, response: error.response }
+    }
+}
+
+export async function findTimeslots(
+    data: IFindTimeslots,
+): Promise<IFindTimeslotsResult[] | null> {
+    try {
+        const resp = await axios.post(
+            `${settings.API_URL}/timeslots/findTutors`,
+            data,
+        )
+        const respData = resp.data
+        if (!isFindTimeslotsResultArray(respData)) {
+            throw new Error("Invalid result data")
+        }
+        return respData
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return null
     }
 }

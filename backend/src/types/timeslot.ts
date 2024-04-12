@@ -1,5 +1,6 @@
 import { tags } from "typia"
-import { IStudentID } from "./user"
+import { IStudentID, IUserMinimal } from "./user"
+import { ISubject, ISubjectCode } from "./subject"
 
 export class Time {
     public readonly hour: number & tags.Minimum<0> & tags.ExclusiveMaximum<24>
@@ -37,12 +38,15 @@ export interface ITime {
     second: number & tags.Minimum<0> & tags.ExclusiveMaximum<60>
 }
 
-export interface IEmptyTimeslot {
-    "timeslot-id": number & tags.Type<"uint32">
-    "tutor-sid": IStudentID
+export interface ITimeslot {
     "day-of-week": number & tags.Minimum<0> & tags.ExclusiveMaximum<5> // 0 -> Monday, 4 -> Friday
     "start-time": ITime
     "end-time": ITime
+}
+
+export interface IEmptyTimeslot extends ITimeslot {
+    "timeslot-id": number & tags.Type<"uint32">
+    "tutor-sid": IStudentID
 }
 
 export interface IEmptyTimeslotCreate
@@ -50,4 +54,15 @@ export interface IEmptyTimeslotCreate
 
 export interface IEmptyTimeslotGet {
     "tutor-sid": IStudentID
+}
+
+export interface IFindTimeslots {
+    subjects: ISubjectCode[]
+    timeslots: ITimeslot[]
+}
+
+export interface IFindTimeslotsResult extends Pick<IUserMinimal, "username"> {
+    "tutor-sid": IStudentID
+    "can-teach-subjects": ISubject[]
+    timeslots: ITimeslot[]
 }

@@ -1,11 +1,13 @@
 import {
     isEmptyTimeslots,
+    isFindTimeslotsResults,
     validateCreateEmptyTimeslots,
+    validateFindTimeslots,
     validateGetEmptyTimeslots,
 } from "checkers"
 import { convertTime, pool } from "db"
 import { Router } from "express"
-import { Time } from "types/timeslot"
+import { IFindTimeslotsResult, Time } from "types/timeslot"
 
 const timeslotsRouter = Router()
 
@@ -129,12 +131,107 @@ timeslotsRouter.post("/setEmpty", async (req, res) => {
             await conn.commit()
             res.sendStatus(200)
         } catch (err) {
+            await conn.rollback()
             res.status(500).json({ message: "SQL Error", error: err })
         } finally {
             conn.release()
         }
     } else {
         res.sendStatus(401)
+    }
+})
+
+// this should be a GET, but because of the lengthy data that needs to be sent, it is a POST
+timeslotsRouter.post("/findTutors", async (req, res) => {
+    const data = req.body
+    const validationStatus = validateFindTimeslots(data)
+    if (!validationStatus.success) {
+        res.status(400).json({
+            message: "Validation error",
+            errors: validationStatus.errors,
+        })
+        return
+    }
+
+    const params = validationStatus.data
+    const conn = await pool.getConnection()
+    await conn.beginTransaction()
+
+    try {
+        // drop old temporary tables
+        await conn.execute("DROP TEMPORARY TABLE IF EXISTS timeslotsIn")
+        await conn.execute("DROP TEMPORARY TABLE IF EXISTS interestedSubjects")
+
+        // create temporary tables
+        await conn.execute(
+            "CREATE TEMPORARY TABLE timeslotsIn LIKE timeslotsInTemplate",
+        )
+        await conn.execute(
+            "CREATE TEMPORARY TABLE interestedSubjects LIKE interestedSubjectsTemplate",
+        )
+
+        // insert into temporary tables
+        await conn.query(
+            "INSERT INTO timeslotsIn(`day-of-week`, `start-time`, `end-time`) VALUES ?",
+            [
+                params.timeslots.map((ts) => [
+                    ts["day-of-week"],
+                    Time.fromITime(ts["start-time"]),
+                    Time.fromITime(ts["end-time"]),
+                ]),
+            ],
+        )
+        await conn.query(
+            "INSERT INTO interestedSubjects(`subject-code`) VALUES ?",
+            [params.subjects.map((s) => [s["subject-code"]])],
+        )
+
+        console.log("insertion success")
+
+        // call stored procedure
+        const [rows, _fields] = await conn.execute("CALL find_timeslots()")
+
+        if (!Array.isArray(rows)) {
+            await conn.rollback()
+            return res
+                .status(500)
+                .json({ message: "Internal server error (check SQL)" })
+        }
+
+        const data = rows[0]
+
+        if (!Array.isArray(data)) {
+            await conn.rollback()
+            return res
+                .status(500)
+                .json({ message: "Internal server error (output not a list)" })
+        }
+
+        (data as IFindTimeslotsResult[]).forEach((row) => {
+            row.timeslots.forEach((ts) => {
+                convertTime(ts, "start-time")
+                convertTime(ts, "end-time")
+            })
+        })
+
+        if (!isFindTimeslotsResults(data)) {
+            await conn.rollback()
+            return res
+                .status(500)
+                .json({
+                    message: "Internal server error (output rows incorrect)",
+                })
+        }
+
+        res.json(data)
+
+        await conn.commit()
+    } catch (err) {
+        console.log(err)
+        await conn.rollback()
+        res.status(500).json({ message: "SQL Error", error: err })
+    } finally {
+        conn.release()
     }
 })
 

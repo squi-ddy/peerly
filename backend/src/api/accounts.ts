@@ -140,6 +140,7 @@ acctRouter.post("/signup", async (req, res) => {
 
         await conn.commit()
     } catch (err) {
+        await conn.rollback()
         return res.status(500).json({ message: "SQL Error", error: err })
     } finally {
         conn.release()
@@ -247,11 +248,9 @@ acctRouter.patch("/me", async (req, res) => {
 
             if (rows.affectedRows !== 1) {
                 await conn.rollback()
-                return res
-                    .status(500)
-                    .json({
-                        message: "Internal server error (user not updated)",
-                    })
+                return res.status(500).json({
+                    message: "Internal server error (user not updated)",
+                })
             }
 
             [rows, _fields] = await conn.execute(
@@ -282,6 +281,7 @@ acctRouter.patch("/me", async (req, res) => {
 
             await conn.commit()
         } catch (err) {
+            await conn.rollback()
             return res.status(500).json({ message: "SQL Error", error: err })
         } finally {
             conn.release()

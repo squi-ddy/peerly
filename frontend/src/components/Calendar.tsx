@@ -6,10 +6,18 @@ type CalendarData = {
     selected: boolean
 }
 
-export type ContiguousSlot = {
+export interface IContiguousSlot {
     dayOfWeek: number
     beginIndex: number
     endIndex: number
+}
+
+export interface IAdditionalSlot extends IContiguousSlot {
+    dayOfWeek: number
+    beginIndex: number
+    endIndex: number
+    styles: string
+    text: string
 }
 
 type CalendarArray = CalendarData[][]
@@ -62,9 +70,12 @@ const mainVariants = {
     },
 }
 
-function EditableCalendar(props: {
-    defaultSelected: ContiguousSlot[]
-    setGetContiguousSlots: (func: () => ContiguousSlot[]) => void
+function Calendar(props: {
+    defaultSelected: IContiguousSlot[]
+    setGetContiguousSlots: (func: () => IContiguousSlot[]) => void
+    edit: boolean
+    additionalSlots: IAdditionalSlot[]
+    drawContiguousSlots: boolean
 }) {
     const defaultCalendarData = useMemo(() => {
         const calendarData = [...emptyCalendarData]
@@ -94,23 +105,24 @@ function EditableCalendar(props: {
         [],
     )
 
-    const commitSelection = () => {
+    const commitSelection = useCallback(() => {
         const newCalendarData = [...calendarData]
-        for (
-            let i = Math.min(startCell[0], endCell[0]);
-            i <= Math.max(startCell[0], endCell[0]);
-            i++
-        ) {
+        if (dragging)
             for (
-                let j = Math.min(startCell[1], endCell[1]);
-                j <= Math.min(startCell[1], endCell[1]);
-                j++
+                let i = Math.min(startCell[0], endCell[0]);
+                i <= Math.max(startCell[0], endCell[0]);
+                i++
             ) {
-                newCalendarData[i][j].selected = fill
+                for (
+                    let j = Math.min(startCell[1], endCell[1]);
+                    j <= Math.min(startCell[1], endCell[1]);
+                    j++
+                ) {
+                    newCalendarData[i][j].selected = fill
+                }
             }
-        }
         setCalendarData(newCalendarData)
-    }
+    }, [calendarData, dragging, fill, startCell, endCell])
 
     const isSelected = useCallback(
         (i: number, j: number): boolean | undefined => {
@@ -129,7 +141,7 @@ function EditableCalendar(props: {
         [calendarData, fill, startCell, endCell],
     )
 
-    const contiguousSlots: ContiguousSlot[] = useMemo(() => {
+    const contiguousSlots: IContiguousSlot[] = useMemo(() => {
         const contiguousSlots = []
         for (let j = 0; j < columns; j++) {
             let startIndex = -1
@@ -161,61 +173,80 @@ function EditableCalendar(props: {
         useCallback(() => contiguousSlots, [contiguousSlots]),
     )
 
+    const getSlotStyles = useCallback((slot: IContiguousSlot) => {
+        const referenceBounds = referenceRef.current!.getBoundingClientRect()
+        const topBounds =
+            refs.current[slot.beginIndex][
+                slot.dayOfWeek
+            ]!.getBoundingClientRect()
+        const bottomBounds =
+            refs.current[slot.endIndex][slot.dayOfWeek]!.getBoundingClientRect()
+
+        const top = topBounds.top - referenceBounds.top - 2
+        const left = topBounds.left - referenceBounds.left - 0.5
+        const width = topBounds.width
+        const height = bottomBounds.bottom - topBounds.top
+
+        return { top, left, width, height }
+    }, [])
+
     const slotLabels = useMemo(
         () =>
             finishedRender
-                ? contiguousSlots.map((slot, idx) => {
-                      const day = days[slot.dayOfWeek]
-                      const beginTime = timestamps[slot.beginIndex]
-                      const endTime = timestamps[slot.endIndex + 1]
+                ? (props.drawContiguousSlots
+                      ? contiguousSlots.map((slot, idx) => {
+                            const day = days[slot.dayOfWeek]
+                            const beginTime = timestamps[slot.beginIndex]
+                            const endTime = timestamps[slot.endIndex + 1]
+                            const numSlots = slot.endIndex - slot.beginIndex + 1
 
-                      const referenceBounds =
-                          referenceRef.current!.getBoundingClientRect()
-                      const topBounds =
-                          refs.current[slot.beginIndex][
-                              slot.dayOfWeek
-                          ]!.getBoundingClientRect()
-                      const bottomBounds =
-                          refs.current[slot.endIndex][
-                              slot.dayOfWeek
-                          ]!.getBoundingClientRect()
-
-                      const top = topBounds.top - referenceBounds.top - 2
-                      const left = topBounds.left - referenceBounds.left - 0.5
-                      const width = topBounds.width
-                      const height = bottomBounds.bottom - topBounds.top
-
-                      const numSlots = slot.endIndex - slot.beginIndex + 1
-
-                      return (
-                          <motion.div
-                              key={idx}
-                              className={`absolute z-10 ${
-                                  numSlots > 1 ? "p-2" : "px-2 py-1"
-                              } pointer-events-none`}
-                              style={{
-                                  top,
-                                  left,
-                                  width,
-                                  height,
-                              }}
-                              variants={itemVariants}
-                          >
-                              <div className="flex flex-col items-center justify-center bg-emerald-700 text-white border border-white rounded-md w-full h-full">
-                                  {numSlots > 2 && (
-                                      <span className="font-semibold">
-                                          {day}
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`absolute z-10 ${
+                                        numSlots > 1 ? "p-2" : "px-2 py-1"
+                                    } pointer-events-none`}
+                                    style={getSlotStyles(slot)}
+                                >
+                                    <div className="flex flex-col items-center justify-center bg-emerald-700 text-white border border-white rounded-md w-full h-full">
+                                        {numSlots > 2 && (
+                                            <span className="font-semibold">
+                                                {day}
+                                            </span>
+                                        )}
+                                        <span className="text-xs">
+                                            {beginTime} - {endTime}
+                                        </span>
+                                    </div>
+                                </div>
+                            )
+                        })
+                      : []
+                  ).concat(
+                      props.additionalSlots.map((slot, idx) => {
+                          return (
+                              <div
+                                  key={idx}
+                                  className={`absolute z-20 p-2 pointer-events-none ${slot.styles}`}
+                                  style={getSlotStyles(slot)}
+                              >
+                                  <div className="flex flex-col items-center justify-center bg-emerald-700 text-white border border-white rounded-md w-full h-full">
+                                      <span className="text-xs">
+                                          {slot.text}
                                       </span>
-                                  )}
-                                  <span className="text-xs">
-                                      {beginTime} - {endTime}
-                                  </span>
+                                  </div>
                               </div>
-                          </motion.div>
-                      )
-                  })
+                          )
+                      }),
+                  )
                 : [],
-        [contiguousSlots, referenceRef, finishedRender],
+        [
+            contiguousSlots,
+            finishedRender,
+            props.additionalSlots,
+            getSlotStyles,
+            props.drawContiguousSlots,
+        ],
     )
 
     return (
@@ -268,12 +299,15 @@ function EditableCalendar(props: {
                                         key={j}
                                         ref={setRef(i, j)}
                                         onMouseDown={() => {
-                                            setDragging(true)
-                                            setFill(
-                                                !calendarData[i][j].selected,
-                                            )
-                                            setStartCell([i, j])
-                                            setEndCell([i, j])
+                                            if (props.edit) {
+                                                setDragging(true)
+                                                setFill(
+                                                    !calendarData[i][j]
+                                                        .selected,
+                                                )
+                                                setStartCell([i, j])
+                                                setEndCell([i, j])
+                                            }
                                         }}
                                         onMouseEnter={() => {
                                             if (
@@ -306,4 +340,4 @@ function EditableCalendar(props: {
     )
 }
 
-export default EditableCalendar
+export default Calendar

@@ -123,6 +123,9 @@ function FormNumberInput(props: {
                         {error && (
                             <motion.p
                                 variants={errorVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
                                 style={floatingStyles}
                                 ref={refs.setFloating}
                                 className={`mt-2 ${errorTextSize} text-center border-white border bg-red-400 py-1 px-2 rounded-md`}
