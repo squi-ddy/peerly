@@ -56,14 +56,6 @@ function MainPage() {
                         navigate("/auth/register")
                     }}
                 />
-                <MotionButton
-                    variants={itemVariants}
-                    text="See Tutors"
-                    textSize="text-2xl"
-                    onClick={() => {
-                        navigate("/tutors")
-                    }}
-                />
             </div>
             <div className="grow" />
             <div className="flex gap-4 w-full justify-center">
