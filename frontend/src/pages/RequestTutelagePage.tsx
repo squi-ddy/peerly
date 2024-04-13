@@ -174,7 +174,7 @@ function RequestTutelagePage() {
         const newSlotsData = clickedSubject
             ? addSchedule(clickedSubject, contiguousSlots)
             : slotsData
-        subjects.forEach((subject) => {
+        for (const subject of subjects) {
             if (
                 !(subject["subject-code"] in newSlotsData) ||
                 newSlotsData[subject["subject-code"]].length === 0
@@ -182,7 +182,7 @@ function RequestTutelagePage() {
                 setErrorText(`Please select timeslots for ${subject.name}!`)
                 return false
             }
-        })
+        }
         setSlotsData(newSlotsData)
         const resp = await createPendingTutelage({
             "tutor-sid": data["tutor-sid"],
