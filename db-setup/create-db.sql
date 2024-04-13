@@ -269,7 +269,9 @@ create table interestedSubjectsTemplate (
     `subject-code` char(2)
 )//
 
-create procedure find_timeslots()
+create procedure find_timeslots(
+    in learner_sid char(8)
+)
 begin
     select
         ct.`tutor-sid`, 
@@ -279,15 +281,16 @@ begin
             from (
                 select json_object(
                     'subject-code', sub.`subject-code`, 
-                    'name', sub.name
+                    'name', sub.name,
+                    'year', ct2.year,
+                    'subject-gpa', ct2.`subject-gpa`,
+                    'tutor-sid', ct2.`tutor-sid`
                 ) subj
                 from subject sub
+                join canTeach ct2 on 
+                    ct2.`subject-code` = sub.`subject-code` 
+                    and ct.`tutor-sid` = ct2.`tutor-sid`
                 where sub.`subject-code` in (
-                    select `subject-code` 
-                    from canTeach 
-                    where `tutor-sid` = ct.`tutor-sid`
-                )
-                and sub.`subject-code` in (
                     select `subject-code` from interestedSubjects
                 )
             ) tmp
@@ -298,7 +301,8 @@ begin
                 select json_object(
                     'day-of-week', ts.`day-of-week`, 
                     'start-time', greatest(ts.`start-time`, tsIn.`start-time`), 
-                    'end-time', least(ts.`end-time`, tsIn.`end-time`)
+                    'end-time', least(ts.`end-time`, tsIn.`end-time`),
+                    'has-pending', if(pt.`timeslot-id` is null, 0, 1)
                 ) tslot
                 from timeslotsIn tsIn
                 join emptyTimeslot ts on 
@@ -308,15 +312,29 @@ begin
                         tsIn.`start-time`, tsIn.`end-time`
                     )
                     and ts.`tutor-sid` = ct.`tutor-sid`
+                left join pendingTimes pt on 
+                    pt.`timeslot-id` = ts.`timeslot-id`
             ) tmp
         ) timeslots
         from canTeach ct
         join student s on ct.`tutor-sid` = s.`student-id`
+        where not exists (
+            select 1
+            from filledTutelage ft
+            where ft.`tutor-sid` = ct.`tutor-sid`
+            and ft.`learner-sid` = learner_sid
+        )
+        and not exists (
+            select 1
+            from pendingTutelage pt
+            where pt.`tutor-sid` = ct.`tutor-sid`
+            and pt.`learner-sid` = learner_sid
+        )
         group by ct.`tutor-sid`
         having 
             timeslots is not null 
             and `can-teach-subjects` is not null;
-end //
+end//
 
 create procedure find_proposals_at_time(
     in tutor_id char(8), 
@@ -342,7 +360,37 @@ begin
         is_not_student is null 
         or t.`learner-sid` != is_not_student
     );
-end //
+end//
+
+create procedure find_notification_rec(
+    in tutor_id char(8)
+)
+begin
+    select 
+        i.`interest-id`, i.`learner-sid`, 
+        JSON_OBJECT(
+            'subject-code', sub.`subject-code`, 
+            'name', sub.name
+        ) subject,
+        JSON_OBJECT(
+            'student-id', tut.`student-id`, 
+            'username', tut.username
+        ) tutor
+    from interest i
+    join student s on i.`learner-sid` = s.`student-id`
+    join student tut on tut.`student-id` = tutor_id
+    join subject sub on i.`subject-code` = sub.`subject-code`
+    where i.`subject-code` in (
+        select ct.`subject-code`
+        from canTeach ct
+        where ct.`tutor-sid` = tutor_id
+    ) and i.`subject-code` not in (
+        select ts.`subject-code`
+        from filledTutelage t
+        join filledTimeslot ts on t.`tutelage-id` = ts.`tutelage-id`
+        where t.`learner-sid` = i.`learner-sid`
+    );
+end//
 
 delimiter ;
 

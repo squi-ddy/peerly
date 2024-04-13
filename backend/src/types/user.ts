@@ -11,13 +11,20 @@ export type IStudentID = string &
     tags.MaxLength<8> &
     tags.Pattern<"^h[0-9]{7}$">
 
+export type IUsername = string &
+    tags.MaxLength<255> &
+    tags.Pattern<"^[a-zA-Z0-9_]+$">
+
 export interface IUserMinimal {
     uuid: string & tags.Format<"uuid">
     "student-id": IStudentID
-    username: string & tags.MaxLength<255> & tags.Pattern<"^[a-zA-Z0-9_]+$">
+    username: IUsername
     "is-learner": boolean
     "is-tutor": boolean
 }
+
+export interface IUserMinimalInfo
+    extends Pick<IUserMinimal, "student-id" | "username"> {}
 
 export interface IUserFull extends IUserMinimal {
     class: number & tags.ExclusiveMaximum<100000> & tags.Minimum<0>

@@ -73,15 +73,11 @@
         @apply text-center p-1 border-b-2 border-l-2;
     }
 
-    .calendar-table > tbody > tr > td.selected {
-        @apply bg-emerald-700/50 border-b-0;
+    .calendar-table > tbody > tr > td.contiguous {
+        @apply border-b-0;
     }
 
-    .calendar-table > tbody > tr > td.not-selected {
-        @apply bg-red-700/50;
-    }
-
-    .calendar-table > tbody > tr > td.selected-last {
+    .calendar-table > tbody > tr > td.contiguous-last {
         @apply border-b-2;
     }
 

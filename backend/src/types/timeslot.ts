@@ -1,6 +1,11 @@
 import { tags } from "typia"
 import { IStudentID, IUserMinimal } from "./user"
-import { ISubject, ISubjectCode } from "./subject"
+import {
+    ISubject,
+    ISubjectCode,
+    ISubjectOnlyCode,
+    ITutorSubject,
+} from "./subject"
 
 export class Time {
     public readonly hour: number & tags.Minimum<0> & tags.ExclusiveMaximum<24>
@@ -28,7 +33,15 @@ export class Time {
     }
 
     toString(): string {
-        return `${this.hour}:${this.minute}:${this.second}`
+        return `${this.hour.toString().padStart(2, "0")}:${this.minute
+            .toString()
+            .padStart(2, "0")}:${this.second.toString().padStart(2, "0")}`
+    }
+
+    toHMString(): string {
+        return `${this.hour.toString().padStart(2, "0")}:${this.minute
+            .toString()
+            .padStart(2, "0")}`
     }
 }
 
@@ -44,6 +57,18 @@ export interface ITimeslot {
     "end-time": ITime
 }
 
+export interface IConflictTimeslot extends ITimeslot {
+    "has-pending": boolean
+}
+
+export interface IPendingTimeslot extends IEmptyTimeslot {
+    subject: ISubject
+}
+
+export interface IPendingTimeslotCreate extends IEmptyTimeslotCreate {
+    "subject-code": ISubjectCode
+}
+
 export interface IEmptyTimeslot extends ITimeslot {
     "timeslot-id": number & tags.Type<"uint32">
     "tutor-sid": IStudentID
@@ -57,12 +82,18 @@ export interface IEmptyTimeslotGet {
 }
 
 export interface IFindTimeslots {
-    subjects: ISubjectCode[]
+    subjects: ISubjectOnlyCode[]
     timeslots: ITimeslot[]
 }
 
 export interface IFindTimeslotsResult extends Pick<IUserMinimal, "username"> {
     "tutor-sid": IStudentID
-    "can-teach-subjects": ISubject[]
-    timeslots: ITimeslot[]
+    "can-teach-subjects": ITutorSubject[]
+    timeslots: IConflictTimeslot[]
+}
+
+export interface IPendingTimes {
+    "tutelage-id": number & tags.Type<"uint32">
+    "timeslot-id": number & tags.Type<"uint32">
+    "subject-code": ISubjectCode
 }

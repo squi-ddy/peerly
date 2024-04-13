@@ -20,6 +20,8 @@ import {
     isFullUser,
     isLearnerSubjectArray,
     isMinimalUser,
+    isNotificationArray,
+    isPendingTutelageArray,
     isSubjectArray,
     isTutorSubjectArray,
 } from "./checkers"
@@ -31,6 +33,8 @@ import {
     IFindTimeslots,
     IFindTimeslotsResult,
 } from "@backend/types/timeslot"
+import {INotification, INotificationDelete} from "@backend/types/notification"
+import { IPendingTutelage, IPendingTutelageCreate } from "@backend/types/tutelage"
 
 axios.defaults.withCredentials = true
 
@@ -291,5 +295,71 @@ export async function findTimeslots(
             throw error
         }
         return null
+    }
+}
+
+export async function createPendingTutelage(data: IPendingTutelageCreate) {
+    try {
+        const resp = {
+            success: true,
+            response: await axios.post(
+                `${settings.API_URL}/tutelages/create`,
+                data,
+            ),
+        }
+        return resp
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return { success: false, response: error.response }
+    }
+}
+
+export async function getPendingTutelages(): Promise<IPendingTutelage[] | null> {
+    try {
+        const resp = await axios.get(`${settings.API_URL}/tutelages/pending`)
+        const respData = resp.data
+        if (!isPendingTutelageArray(respData)) {
+            throw new Error("Invalid pending tutelage data")
+        }
+        return respData
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return null
+    }
+    
+}
+
+export async function getNotifications(): Promise<INotification[] | null> {
+    try {
+        const resp = await axios.get(`${settings.API_URL}/notifications/all`)
+        const respData = resp.data
+        if (!isNotificationArray(respData)) {
+            throw new Error("Invalid notification data")
+        }
+        return respData
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return null
+    }
+}
+
+export async function deleteNotification(data: INotificationDelete) {
+    try {
+        const resp = {
+            success: true,
+            response: await axios.delete(`${settings.API_URL}/notifications/delete`, { data }),
+        }
+        return resp
+    } catch (error) {
+        if (!axios.isAxiosError(error)) {
+            throw error
+        }
+        return { success: false, response: error.response }
     }
 }

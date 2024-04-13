@@ -1,12 +1,13 @@
 import { tags } from "typia"
 import { IStudentID } from "./user"
 
+export type ISubjectCode = string & tags.MinLength<2> & tags.MaxLength<2>
 export interface ISubject {
-    "subject-code": string & tags.MinLength<2> & tags.MaxLength<2>
+    "subject-code": ISubjectCode
     name: string & tags.MaxLength<30>
 }
 
-export interface ISubjectCode extends Omit<ISubject, "name"> {}
+export interface ISubjectOnlyCode extends Omit<ISubject, "name"> {}
 
 export interface ITutorSubject extends ISubject {
     "subject-gpa": number & tags.Minimum<0> & tags.Maximum<5>

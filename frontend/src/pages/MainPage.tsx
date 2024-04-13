@@ -5,6 +5,9 @@ import MotionButton from "@/components/MotionButton"
 import SetTitle from "@/components/SetTitle"
 import { useNavigate } from "react-router-dom"
 import SlidingText from "@/components/SlidingText"
+import { useContext } from "react"
+import { UserContext } from "@/base/BasePage"
+import HomePage from "./HomePage"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },
@@ -14,6 +17,10 @@ const itemVariants = {
 
 function MainPage() {
     const navigate = useNavigate()
+
+    const { user } = useContext(UserContext)
+
+    if (user) return <HomePage />
 
     return (
         <>

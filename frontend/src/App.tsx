@@ -13,6 +13,8 @@ import MainPage from "./pages/MainPage"
 import Page404 from "./pages/Page404"
 import ProfilePage from "./pages/ProfilePage"
 import TutorSetupPage from "./pages/TutorSetupPage"
+import RequestTutelagePage from "./pages/RequestTutelagePage"
+import RequestsPage from "./pages/RequestsPage"
 
 const routes = [
     {
@@ -34,6 +36,10 @@ const routes = [
     {
         path: "/me",
         element: <ProfilePage />,
+    },
+    {
+        path: "/request",
+        element: <RequestTutelagePage />,
     },
     {
         path: "/auth",
@@ -66,6 +72,10 @@ const routes = [
         element: <LearnerSetupPage />,
     },
     {
+        path: "/requests",
+        element: <RequestsPage />,
+    },
+    {
         path: "*",
         element: <Page404 />,
     },
@@ -83,6 +93,8 @@ const routeKeys = {
     "/options/learner": "learnerOptions",
     "/setup/tutor": "tutorSetup",
     "/setup/learner": "learnerSetup",
+    "/request": "request",
+    "/requests": "requests",
 } as Record<string, string | undefined>
 
 function App() {

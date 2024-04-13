@@ -1,5 +1,6 @@
 import {
     isLearnerSubjects,
+    isNotificationRecommendations,
     isSubjects,
     isTutorSubjects,
     validateCreateLearnerSubjects,
@@ -9,6 +10,7 @@ import {
 } from "checkers"
 import { pool } from "db"
 import { Router } from "express"
+import { INotificationRecommendation } from "types/notification"
 
 const subjectRouter = Router()
 
@@ -95,6 +97,67 @@ subjectRouter.post("/submitTutor", async (req, res) => {
                     .status(500)
                     .json({ message: "Internal server error (check SQL)" })
             }
+
+            // find notification targets
+            [result, _fields] = await conn.execute(
+                `CALL find_notification_rec(?)`,
+                [user["student-id"]],
+            )
+
+            if (!Array.isArray(result)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            const data = result[0]
+
+            if (!Array.isArray(data)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            if (!isNotificationRecommendations(data)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            // create notifications
+            [result, _fields] = await conn.execute(
+                `
+                INSERT INTO notification(message, \`time-sent\`, \`tutor-sid\`) VALUES (?, NOW(), ?)
+            `,
+                [
+                    `A new tutor ${user.username} (${user["student-id"]}) can teach subjects you're interested in!`,
+                    user["student-id"],
+                ],
+            )
+
+            if (Array.isArray(result)) {
+                await conn.rollback()
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error (check SQL)" })
+            }
+
+            const notificationId = result.insertId
+
+            ;[result, _fields] = await conn.query(
+                `
+                INSERT INTO notificationInterests(\`notification-id\`, \`interest-id\`) VALUES ?
+            `,
+                [
+                    data.map((d: INotificationRecommendation) => [
+                        notificationId,
+                        d["interest-id"],
+                    ]),
+                ],
+            )
 
             await conn.commit()
             res.sendStatus(200)

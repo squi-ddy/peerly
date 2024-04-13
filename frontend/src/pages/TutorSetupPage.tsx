@@ -57,6 +57,7 @@ function TutorSetupPage() {
 
     useEffect(() => {
         if (state?.setup) {
+            setCalendarApiReturned(true)
             return
         }
         if (!user || !user["is-tutor"]) {
@@ -74,19 +75,11 @@ function TutorSetupPage() {
                     timeslots.map((ts) => ({
                         dayOfWeek: ts["day-of-week"],
                         beginIndex: timestamps.indexOf(
-                            `${ts["start-time"].hour
-                                .toString()
-                                .padStart(2, "0")}:${ts["start-time"].minute
-                                .toString()
-                                .padStart(2, "0")}`,
+                            Time.fromITime(ts["start-time"]).toHMString(),
                         ),
                         endIndex:
                             timestamps.indexOf(
-                                `${ts["end-time"].hour
-                                    .toString()
-                                    .padStart(2, "0")}:${ts["end-time"].minute
-                                    .toString()
-                                    .padStart(2, "0")}`.toString(),
+                                Time.fromITime(ts["end-time"]).toHMString(),
                             ) - 1,
                     })),
                 )

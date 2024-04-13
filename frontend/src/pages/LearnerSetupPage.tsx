@@ -10,13 +10,15 @@ import Calendar, {
     IContiguousSlot,
     timestamps,
 } from "@/components/Calendar"
+import LearnerFindTimeslot from "@/components/LearnerFindTimeslot"
 import LearnerSubjectSelection, {
     IInputSubject,
 } from "@/components/LearnerSubjectSelection"
 import MotionButton from "@/components/MotionButton"
 import SetTitle from "@/components/SetTitle"
+import { mergeTimeslots, timeslotsNotIn } from "@/util"
 import { ISubject } from "@backend/types/subject"
-import { Time } from "@backend/types/timeslot"
+import { IFindTimeslotsResult, Time } from "@backend/types/timeslot"
 import { motion } from "framer-motion"
 import {
     ReactElement,
@@ -52,6 +54,43 @@ function LearnerSetupPage() {
     const [calendarEditable, setCalendarEditable] = useState(true)
     const [calendarDrawContiguous, setCalendarDrawContiguous] = useState(true)
     const getFilters = useRef<() => IInputSubject[]>(() => [])
+    const [calendarAdditionalSlots, setCalendarAdditionalSlots] = useState<
+        IAdditionalSlot[]
+    >([])
+    const [searchResults, setSearchResults] = useState<IFindTimeslotsResult[]>(
+        [],
+    )
+    const [highlightSubject, setHighlightSubject] = useState<string>("")
+
+    const setHoverIndex = useCallback(
+        (index: number) => {
+            if (index === -1) {
+                setCalendarEditable(true)
+                setCalendarDrawContiguous(true)
+                setCalendarAdditionalSlots([])
+            } else {
+                setCalendarEditable(false)
+                setCalendarDrawContiguous(false)
+                setCalendarAdditionalSlots(
+                    searchResults[index].timeslots.map((ts) => ({
+                        dayOfWeek: ts["day-of-week"],
+                        beginIndex: timestamps.indexOf(
+                            Time.fromITime(ts["start-time"]).toHMString(),
+                        ),
+                        endIndex:
+                            timestamps.indexOf(
+                                Time.fromITime(ts["end-time"]).toHMString(),
+                            ) - 1,
+                        text: ts["has-pending"] ? "Conflict?" : "Available",
+                        styles: ts["has-pending"]
+                            ? "bg-yellow-700"
+                            : "bg-emerald-700",
+                    })),
+                )
+            }
+        },
+        [searchResults],
+    )
 
     useEffect(() => {
         if (state?.setup && pathname.includes("setup")) updateUser()
@@ -112,7 +151,6 @@ function LearnerSetupPage() {
             return false
         }
         const filteredSubjects = getFilters.current()
-        console.log(filteredSubjects)
         if (filteredSubjects.length === 0) {
             setErrorText("Please select at least one subject!")
             return false
@@ -129,7 +167,30 @@ function LearnerSetupPage() {
             setErrorText("Internal Server Error: Search failed!")
             return false
         }
-        console.log(resp)
+        resp.forEach((tutor) => {
+            const conflicting = tutor.timeslots.filter(
+                (ts) => ts["has-pending"],
+            )
+            const nonConflicting = tutor.timeslots.filter(
+                (ts) => !ts["has-pending"],
+            )
+            tutor.timeslots = mergeTimeslots(conflicting)
+                .map((ts) => ({
+                    ...ts,
+                    "has-pending": true,
+                }))
+                .concat(timeslotsNotIn(nonConflicting, conflicting).map((ts) => ({...ts, "has-pending": false})))
+                .sort((a, b) => {
+                    if (a["day-of-week"] !== b["day-of-week"]) {
+                        return a["day-of-week"] - b["day-of-week"]
+                    }
+                    if (a["start-time"].hour !== b["start-time"].hour) {
+                        return a["start-time"].hour - b["start-time"].hour
+                    }
+                    return a["start-time"].minute - b["start-time"].minute
+                })
+        })
+        setSearchResults(resp)
         return true
     }, [user])
 
@@ -171,6 +232,7 @@ function LearnerSetupPage() {
                         allSubjects={allSubjects}
                         reference={floatingRef!}
                         setDialog={setDialog}
+                        setHighlightSubject={setHighlightSubject}
                         setGetFilters={(f) => {
                             getFilters.current = f
                         }}
@@ -185,19 +247,6 @@ function LearnerSetupPage() {
                         >
                             Your Free Slots
                         </motion.div>
-                        {!calendarEditable && (
-                            <>
-                                <div className="grow" />
-                                <MotionButton
-                                    text="Edit"
-                                    variants={itemVariants}
-                                    onClick={() => {
-                                        navigate("/learner/slots")
-                                    }}
-                                    layout
-                                />
-                            </>
-                        )}
                     </div>
                     <Calendar
                         defaultSelected={emptyArray}
@@ -205,18 +254,16 @@ function LearnerSetupPage() {
                             getContiguousSlots.current = f
                         }}
                         edit={calendarEditable}
-                        additionalSlots={emptyArray}
+                        additionalSlots={calendarAdditionalSlots}
                         drawContiguousSlots={calendarDrawContiguous}
                     />
                 </div>
                 <div className="h-full w-2/5 flex flex-col items-center gap-2">
-                    {/* <LearnerSubjectSelection
-                        subjects={subjects}
-                        setSubjects={setSubjects}
-                        allSubjects={allSubjects}
-                        reference={floatingRef!}
-                        setDialog={setDialog}
-                    /> */}
+                    <LearnerFindTimeslot
+                        timeslots={searchResults}
+                        setHoverIndex={setHoverIndex}
+                        highlightSubject={highlightSubject}
+                    />
                 </div>
             </motion.div>
             <motion.div
@@ -235,7 +282,7 @@ function LearnerSetupPage() {
                 )}
                 <MotionButton
                     variants={itemVariants}
-                    text="Save"
+                    text="Save Interests"
                     onClick={async () => {
                         if (!(await submit())) return
                         navigate("/")
@@ -243,7 +290,7 @@ function LearnerSetupPage() {
                 />
                 <MotionButton
                     variants={itemVariants}
-                    text="Search..."
+                    text="Search for tutors..."
                     onClick={async () => {
                         if (!(await submit())) return
                         if (!(await search())) return

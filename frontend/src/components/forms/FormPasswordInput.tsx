@@ -88,7 +88,7 @@ function FormPasswordInput(props: {
         >
             <input
                 type={showPassword ? "text" : "password"}
-                className={`grow border-2 rounded-xl bg-transparent ${textSize} p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors ${
+                className={`grow h-full border-2 rounded-xl bg-transparent ${textSize} p-2 text-center min-w-0 focus:border-sky-400 focus:outline-none transition-colors ${
                     error ? "border-red-500" : ""
                 }`}
                 placeholder={props.fieldPlaceholder}

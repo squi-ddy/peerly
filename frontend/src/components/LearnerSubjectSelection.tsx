@@ -60,6 +60,7 @@ function LearnerSubjectSelection(props: {
     reference: HTMLElement
     setDialog: (dialog: ReactElement | null) => void
     setGetFilters: (func: () => IInputSubject[]) => void
+    setHighlightSubject: (subject: string) => void
 }) {
     const [addSubjectOpen, setAddSubjectOpen] = useState(false)
     const submitFunctions = useRef<
@@ -253,7 +254,13 @@ function LearnerSubjectSelection(props: {
                             animate="visible"
                             exit="exit"
                             key={subject["subject-code"]}
-                            className={`flex flex-col w-full gap-2 items-center py-2 px-4 border-b-2 border-white`}
+                            className={`flex flex-col w-full gap-2 items-center py-2 px-4 border-b-2 border-white hover:bg-sky-900/50 transition-colors`}
+                            onMouseEnter={() =>
+                                props.setHighlightSubject(
+                                    subject["subject-code"],
+                                )
+                            }
+                            onMouseLeave={() => props.setHighlightSubject("")}
                             layout
                         >
                             <div className="flex flex-row w-full">

@@ -5,7 +5,7 @@ import {
     validateFindTimeslots,
     validateGetEmptyTimeslots,
 } from "checkers"
-import { convertTime, pool } from "db"
+import { convertBoolean, convertTime, pool } from "db"
 import { Router } from "express"
 import { IFindTimeslotsResult, Time } from "types/timeslot"
 
@@ -143,6 +143,18 @@ timeslotsRouter.post("/setEmpty", async (req, res) => {
 
 // this should be a GET, but because of the lengthy data that needs to be sent, it is a POST
 timeslotsRouter.post("/findTutors", async (req, res) => {
+    if (!req.isAuthenticated()) {
+        res.sendStatus(401)
+        return
+    }
+
+    const user = req.user
+
+    if (!user["is-learner"]) {
+        res.sendStatus(401)
+        return
+    }
+
     const data = req.body
     const validationStatus = validateFindTimeslots(data)
     if (!validationStatus.success) {
@@ -186,10 +198,10 @@ timeslotsRouter.post("/findTutors", async (req, res) => {
             [params.subjects.map((s) => [s["subject-code"]])],
         )
 
-        console.log("insertion success")
-
         // call stored procedure
-        const [rows, _fields] = await conn.execute("CALL find_timeslots()")
+        const [rows, _fields] = await conn.execute("CALL find_timeslots(?)", [
+            user["student-id"],
+        ])
 
         if (!Array.isArray(rows)) {
             await conn.rollback()
@@ -211,16 +223,15 @@ timeslotsRouter.post("/findTutors", async (req, res) => {
             row.timeslots.forEach((ts) => {
                 convertTime(ts, "start-time")
                 convertTime(ts, "end-time")
+                convertBoolean(ts, "has-pending")
             })
         })
 
         if (!isFindTimeslotsResults(data)) {
             await conn.rollback()
-            return res
-                .status(500)
-                .json({
-                    message: "Internal server error (output rows incorrect)",
-                })
+            return res.status(500).json({
+                message: "Internal server error (output rows incorrect)",
+            })
         }
 
         res.json(data)
