@@ -70,16 +70,16 @@ function RequestsList(props: {
                             tutelage.tutor["student-id"] ===
                             user?.["student-id"]
 
-                        const subjectNamesUnique = new Set<[string, string]>()
+                        const subjectNamesUnique = new Map<string, [string, string]>()
                         tutelage.timeslots
                             .map((ts) => ts.subject)
                             .forEach((s) =>
-                                subjectNamesUnique.add([
+                                subjectNamesUnique.set(s["subject-code"], [
                                     s["subject-code"],
                                     s.name,
                                 ]),
                             )
-                        const subjects = Array.from(subjectNamesUnique)
+                        const subjects = Array.from(subjectNamesUnique.values())
 
                         return (
                             <motion.div

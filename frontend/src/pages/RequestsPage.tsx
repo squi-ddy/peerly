@@ -50,7 +50,7 @@ function RequestsPage() {
                                 " - " +
                                 Time.fromITime(ts["end-time"]).toHMString(),
                         ],
-                        styles: "bg-yellow-700",
+                        styles: "bg-yellow-700 text-center",
                     })),
                 )
             }
