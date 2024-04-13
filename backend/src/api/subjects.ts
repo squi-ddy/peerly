@@ -78,7 +78,7 @@ subjectRouter.post("/submitTutor", async (req, res) => {
 
             [result, _fields] = await conn.query(
                 `
-                INSERT INTO canTeach(\`tutor-sid\`, \`subject-code\`, \`subject-gpa\`, year) VALUES ?
+                INSERT INTO canTeach(\`tutor-sid\`, \`subject-code\`, \`subject-gpa\`, year) VALUES (?)
                 ON DUPLICATE KEY UPDATE \`subject-gpa\` = VALUES(\`subject-gpa\`), year = VALUES(year)
             `,
                 [
@@ -149,7 +149,7 @@ subjectRouter.post("/submitTutor", async (req, res) => {
 
             ;[result, _fields] = await conn.query(
                 `
-                INSERT INTO notificationInterests(\`notification-id\`, \`interest-id\`) VALUES ?
+                INSERT INTO notificationInterests(\`notification-id\`, \`interest-id\`) VALUES (?)
             `,
                 [
                     data.map((d: INotificationRecommendation) => [
@@ -293,7 +293,7 @@ subjectRouter.post("/submitLearner", async (req, res) => {
             // on duplicate key do a noop
             [result, _fields] = await conn.query(
                 `
-                INSERT INTO interest(\`learner-sid\`, \`subject-code\`) VALUES ?
+                INSERT INTO interest(\`learner-sid\`, \`subject-code\`) VALUES (?)
                 ON DUPLICATE KEY UPDATE \`learner-sid\` = \`learner-sid\`
             `,
                 [subjects.map((s) => [user["student-id"], s["subject-code"]])],

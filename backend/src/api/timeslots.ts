@@ -108,7 +108,7 @@ timeslotsRouter.post("/setEmpty", async (req, res) => {
             // insert; on duplicate key do nothing since all 4 columns make up the unique constraint
             [rows, _fields] = await conn.query(
                 `
-                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES ?
+                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES (?)
                 ON DUPLICATE KEY UPDATE \`tutor-sid\`=\`tutor-sid\`
             `,
                 [
@@ -184,7 +184,7 @@ timeslotsRouter.post("/findTutors", async (req, res) => {
 
         // insert into temporary tables
         await conn.query(
-            "INSERT INTO timeslotsIn(`day-of-week`, `start-time`, `end-time`) VALUES ?",
+            "INSERT INTO timeslotsIn(`day-of-week`, `start-time`, `end-time`) VALUES (?)",
             [
                 params.timeslots.map((ts) => [
                     ts["day-of-week"],
@@ -194,7 +194,7 @@ timeslotsRouter.post("/findTutors", async (req, res) => {
             ],
         )
         await conn.query(
-            "INSERT INTO interestedSubjects(`subject-code`) VALUES ?",
+            "INSERT INTO interestedSubjects(`subject-code`) VALUES (?)",
             [params.subjects.map((s) => [s["subject-code"]])],
         )
 

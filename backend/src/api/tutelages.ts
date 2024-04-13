@@ -94,7 +94,7 @@ tutelageRouter.post("/create", async (req, res) => {
             // insert; on duplicate key do nothing since all 4 columns make up the unique constraint
             ;[rows, _fields] = await conn.query(
                 `
-                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES ?
+                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES (?)
                 ON DUPLICATE KEY UPDATE \`tutor-sid\`=\`tutor-sid\`
             `,
                 [
@@ -171,7 +171,7 @@ tutelageRouter.post("/create", async (req, res) => {
             // create pending times
             [rows, _fields] = await conn.query(
                 `
-                INSERT INTO pendingTimes(\`tutelage-id\`, \`subject-code\`, \`timeslot-id\`) VALUES ?
+                INSERT INTO pendingTimes(\`tutelage-id\`, \`subject-code\`, \`timeslot-id\`) VALUES (?)
             `,
                 [
                     pendingTimes.map((pt) => [
