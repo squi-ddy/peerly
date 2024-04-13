@@ -1,9 +1,9 @@
-import { motion, AnimatePresence } from "framer-motion"
-import { useContext, ReactElement, cloneElement, useMemo, ReactNode } from "react"
 import { logout } from "@/api"
+import { UserContext } from "@/base/BasePage"
+import { AnimatePresence, motion } from "framer-motion"
+import { ReactElement, cloneElement, useContext, useMemo } from "react"
 import MotionButton from "./MotionButton"
 import MotionNavButton from "./MotionNavButton"
-import { UserContext } from "@/base/BasePage"
 
 const itemVariants = {
     visible: {
@@ -37,9 +37,25 @@ function NavBar() {
         }
 
         topBarItems = topBarItems.concat([
-            user && user["is-learner"] ? <MotionNavButton to="/options/learner" text="Find Tutor" key="find" /> : <></>,
+            user && user["is-learner"] ? (
+                <MotionNavButton
+                    to="/options/learner"
+                    text="Find Tutor"
+                    key="find"
+                />
+            ) : (
+                <></>
+            ),
 
-            user ? <MotionNavButton to="/requests" text="Requests" key="requests" /> : <></>,
+            user ? (
+                <MotionNavButton
+                    to="/requests"
+                    text="Requests"
+                    key="requests"
+                />
+            ) : (
+                <></>
+            ),
 
             user ? (
                 <MotionButton

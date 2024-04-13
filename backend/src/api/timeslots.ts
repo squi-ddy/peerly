@@ -106,26 +106,28 @@ timeslotsRouter.post("/setEmpty", async (req, res) => {
             }
 
             // insert; on duplicate key do nothing since all 4 columns make up the unique constraint
-            [rows, _fields] = await conn.query(
-                `
-                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES (?)
+            if (emptyTimeslots.length) {
+                [rows, _fields] = await conn.query(
+                    `
+                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES ?
                 ON DUPLICATE KEY UPDATE \`tutor-sid\`=\`tutor-sid\`
             `,
-                [
-                    emptyTimeslots.map((ts) => [
-                        user["student-id"],
-                        ts["day-of-week"],
-                        ts["start-time"].toString(),
-                        ts["end-time"].toString(),
-                    ]),
-                ],
-            )
+                    [
+                        emptyTimeslots.map((ts) => [
+                            user["student-id"],
+                            ts["day-of-week"],
+                            ts["start-time"].toString(),
+                            ts["end-time"].toString(),
+                        ]),
+                    ],
+                )
 
-            if (Array.isArray(rows)) {
-                await conn.rollback()
-                return res
-                    .status(500)
-                    .json({ message: "Internal server error (check SQL)" })
+                if (Array.isArray(rows)) {
+                    await conn.rollback()
+                    return res
+                        .status(500)
+                        .json({ message: "Internal server error (check SQL)" })
+                }
             }
 
             await conn.commit()
@@ -183,20 +185,23 @@ timeslotsRouter.post("/findTutors", async (req, res) => {
         )
 
         // insert into temporary tables
-        await conn.query(
-            "INSERT INTO timeslotsIn(`day-of-week`, `start-time`, `end-time`) VALUES (?)",
-            [
-                params.timeslots.map((ts) => [
-                    ts["day-of-week"],
-                    Time.fromITime(ts["start-time"]),
-                    Time.fromITime(ts["end-time"]),
-                ]),
-            ],
-        )
-        await conn.query(
-            "INSERT INTO interestedSubjects(`subject-code`) VALUES (?)",
-            [params.subjects.map((s) => [s["subject-code"]])],
-        )
+        if (params.timeslots.length)
+            await conn.query(
+                "INSERT INTO timeslotsIn(`day-of-week`, `start-time`, `end-time`) VALUES ?",
+                [
+                    params.timeslots.map((ts) => [
+                        ts["day-of-week"],
+                        Time.fromITime(ts["start-time"]),
+                        Time.fromITime(ts["end-time"]),
+                    ]),
+                ],
+            )
+
+        if (params.subjects.length)
+            await conn.query(
+                "INSERT INTO interestedSubjects(`subject-code`) VALUES ?",
+                [params.subjects.map((s) => [s["subject-code"]])],
+            )
 
         // call stored procedure
         const [rows, _fields] = await conn.execute("CALL find_timeslots(?)", [

@@ -69,7 +69,8 @@ function HomePage() {
                 Welcome <span className="font-semibold">{user.username}</span>!
             </motion.h1>
             <div className="flex flex-row gap-2">
-                {user["is-tutor"] && <motion.p
+                {user["is-tutor"] && (
+                    <motion.p
                         variants={itemVariants}
                         layout
                         key={"tutor"}
@@ -77,8 +78,9 @@ function HomePage() {
                     >
                         Tutor
                     </motion.p>
-                }
-                {user["is-learner"] && <motion.p
+                )}
+                {user["is-learner"] && (
+                    <motion.p
                         variants={itemVariants}
                         layout
                         key={"learner"}
@@ -86,97 +88,122 @@ function HomePage() {
                     >
                         Learner
                     </motion.p>
-                }
+                )}
             </div>
             <motion.div
-                    variants={itemVariants}
-                    className={`flex flex-row items-center w-2/3 gap-4`}
-                >
-                {user["is-tutor"] && calendarApiReturned && <div className="flex flex-col items-center w-1/2 gap-2">
-                    <motion.div variants={itemVariants} className="text-3xl">
-                        Your Free Slots
-                    </motion.div>
-                    <Calendar
-                        defaultSelected={defaultSelected}
-                        setGetContiguousSlots={() => {}}
-                        edit={false}
-                        additionalSlots={emptyArray}
-                        drawContiguousSlots={true}
-                    />
-                </div>}
-                {user["is-learner"] && <div className="flex flex-col items-center w-1/2 h-full gap-2">
-                    <motion.div variants={itemVariants} className="text-3xl">
-                        Notifications
-                    </motion.div>
-                    <div className="border-2 rounded-xl border-white w-full h-full overflow-y-scroll">
-                <AnimatePresence mode="popLayout">
-                    {notifications.map((notification, idx) => <motion.div
+                variants={itemVariants}
+                className={`flex flex-row items-center w-2/3 gap-4`}
+            >
+                {user["is-tutor"] && calendarApiReturned && (
+                    <div className="flex flex-col items-center w-1/2 gap-2">
+                        <motion.div
                             variants={itemVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            key={notification["notification-id"]}
-                            className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white`}
-                            layout
+                            className="text-3xl"
                         >
-                            <div className="flex flex-row gap-2 w-full items-center">
-                                <p className="text-lg flex items-end">
-                                    {notification.message}
-                                </p>
-                                <div className="grow" />
-                                <div
-                                    className="p-1 border-2 rounded-xl aspect-square w-auto h-full shrink-0 hover:cursor-pointer hover:bg-sky-900/50 transition-colors"
-                                    onClick={async () => {
-                                        // eagerly delete
-                                        setNotifications((prev) =>
-                                            prev.filter(
-                                                (n) =>
-                                                    n["notification-id"] !==
-                                                    notification["notification-id"],
-                                            ),
-                                        )
-                                        // call api
-                                        await deleteNotification(
-                                            {"notification-id": notification["notification-id"]}
-                                        )
-                                    }}
-                                >
-                                    <div className="h-full w-full">
-                                <BiCheck size={25}/></div>
-                                </div>
-                            </div>
-                            <div className="flex flex-row w-full gap-2">
-                                {notification.subjects?.map((subject) => (
-                                    <motion.p
-                                        layout
-                                        key={subject["subject-code"]}
-                                        className={`border-white border rounded-lg text-base px-2 transition-colors`}
-                                    >
-                                        {subject.name}
-                                    </motion.p>
-                                ))}
-                            </div>
+                            Your Free Slots
                         </motion.div>
-)}
-                </AnimatePresence>
-            </div>
-                </div>}
+                        <Calendar
+                            defaultSelected={defaultSelected}
+                            setGetContiguousSlots={() => {}}
+                            edit={false}
+                            additionalSlots={emptyArray}
+                            drawContiguousSlots={true}
+                        />
+                    </div>
+                )}
+                {user["is-learner"] && (
+                    <div className="flex flex-col items-center w-1/2 h-full gap-2">
+                        <motion.div
+                            variants={itemVariants}
+                            className="text-3xl"
+                        >
+                            Notifications
+                        </motion.div>
+                        <div className="border-2 rounded-xl border-white w-full h-full overflow-y-scroll">
+                            <AnimatePresence mode="popLayout">
+                                {notifications.map((notification) => (
+                                    <motion.div
+                                        variants={itemVariants}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        key={notification["notification-id"]}
+                                        className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white`}
+                                        layout
+                                    >
+                                        <div className="flex flex-row gap-2 w-full items-center">
+                                            <p className="text-lg flex items-end">
+                                                {notification.message}
+                                            </p>
+                                            <div className="grow" />
+                                            <div
+                                                className="p-1 border-2 rounded-xl aspect-square w-auto h-full shrink-0 hover:cursor-pointer hover:bg-sky-900/50 transition-colors"
+                                                onClick={async () => {
+                                                    // eagerly delete
+                                                    setNotifications((prev) =>
+                                                        prev.filter(
+                                                            (n) =>
+                                                                n[
+                                                                    "notification-id"
+                                                                ] !==
+                                                                notification[
+                                                                    "notification-id"
+                                                                ],
+                                                        ),
+                                                    )
+                                                    // call api
+                                                    await deleteNotification({
+                                                        "notification-id":
+                                                            notification[
+                                                                "notification-id"
+                                                            ],
+                                                    })
+                                                }}
+                                            >
+                                                <div className="h-full w-full">
+                                                    <BiCheck size={25} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-row w-full gap-2">
+                                            {notification.subjects?.map(
+                                                (subject) => (
+                                                    <motion.p
+                                                        layout
+                                                        key={
+                                                            subject[
+                                                                "subject-code"
+                                                            ]
+                                                        }
+                                                        className={`border-white border rounded-lg text-base px-2 transition-colors`}
+                                                    >
+                                                        {subject.name}
+                                                    </motion.p>
+                                                ),
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                )}
             </motion.div>
             <div className="flex flex-row gap-2">
-            {user["is-learner"] && (
-                <MotionButton
-                    variants={itemVariants}
-                    text="Find tutors?"
-                    onClick={() => navigate("/options/learner")}
-                />
-            )}
-            {user["is-tutor"] && (
-                <MotionButton
-                    variants={itemVariants}
-                    text="See requests"
-                    onClick={() => navigate("/requests")}
-                />
-            )}
+                {user["is-learner"] && (
+                    <MotionButton
+                        variants={itemVariants}
+                        text="Find tutors?"
+                        onClick={() => navigate("/options/learner")}
+                    />
+                )}
+                {user["is-tutor"] && (
+                    <MotionButton
+                        variants={itemVariants}
+                        text="See requests"
+                        onClick={() => navigate("/requests")}
+                    />
+                )}
             </div>
         </>
     )

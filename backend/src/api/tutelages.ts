@@ -92,22 +92,23 @@ tutelageRouter.post("/create", async (req, res) => {
 
             // create timeslots
             // insert; on duplicate key do nothing since all 4 columns make up the unique constraint
-            ;[rows, _fields] = await conn.query(
-                `
-                INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES (?)
-                ON DUPLICATE KEY UPDATE \`tutor-sid\`=\`tutor-sid\`
-            `,
-                [
-                    emptyTimeslots.map((ts) => [
-                        ts["tutor-sid"],
-                        ts["day-of-week"],
-                        ts["start-time"].toString(),
-                        ts["end-time"].toString(),
-                    ]),
-                ],
-            )
+            if (emptyTimeslots.length)
+                [rows, _fields] = await conn.query(
+                    `
+                    INSERT INTO emptyTimeslot(\`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\`) VALUES ?
+                    ON DUPLICATE KEY UPDATE \`tutor-sid\`=\`tutor-sid\`
+                `,
+                    [
+                        emptyTimeslots.map((ts) => [
+                            ts["tutor-sid"],
+                            ts["day-of-week"],
+                            ts["start-time"].toString(),
+                            ts["end-time"].toString(),
+                        ]),
+                    ],
+                )
 
-            // get the IDs of our inserted timeslots
+                // get the IDs of our inserted timeslots
             ;[rows, _fields] = await conn.query(
                 `
                 SELECT \`timeslot-id\`, \`tutor-sid\`, \`day-of-week\`, \`start-time\`, \`end-time\` FROM emptyTimeslot
@@ -169,18 +170,19 @@ tutelageRouter.post("/create", async (req, res) => {
             }
 
             // create pending times
-            [rows, _fields] = await conn.query(
-                `
-                INSERT INTO pendingTimes(\`tutelage-id\`, \`subject-code\`, \`timeslot-id\`) VALUES (?)
-            `,
-                [
-                    pendingTimes.map((pt) => [
-                        pt["tutelage-id"],
-                        pt["subject-code"],
-                        pt["timeslot-id"],
-                    ]),
-                ],
-            )
+            if (pendingTimes.length)
+                [rows, _fields] = await conn.query(
+                    `
+                    INSERT INTO pendingTimes(\`tutelage-id\`, \`subject-code\`, \`timeslot-id\`) VALUES ?
+                `,
+                    [
+                        pendingTimes.map((pt) => [
+                            pt["tutelage-id"],
+                            pt["subject-code"],
+                            pt["timeslot-id"],
+                        ]),
+                    ],
+                )
 
             await conn.commit()
             res.sendStatus(200)

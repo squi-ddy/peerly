@@ -179,7 +179,12 @@ function LearnerSetupPage() {
                     ...ts,
                     "has-pending": true,
                 }))
-                .concat(timeslotsNotIn(nonConflicting, conflicting).map((ts) => ({...ts, "has-pending": false})))
+                .concat(
+                    timeslotsNotIn(nonConflicting, conflicting).map((ts) => ({
+                        ...ts,
+                        "has-pending": false,
+                    })),
+                )
                 .sort((a, b) => {
                     if (a["day-of-week"] !== b["day-of-week"]) {
                         return a["day-of-week"] - b["day-of-week"]

@@ -204,7 +204,10 @@ function RequestTutelagePage() {
         })
         if (!resp.success) {
             if (resp.response?.status !== 500) {
-                setErrorText(resp.response?.data.message ?? "Internal Server Error: Unknown non-500 error!")
+                setErrorText(
+                    resp.response?.data.message ??
+                        "Internal Server Error: Unknown non-500 error!",
+                )
                 return false
             }
             setErrorText("Internal Server Error: Failed to create tutelage!")

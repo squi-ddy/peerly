@@ -76,26 +76,28 @@ subjectRouter.post("/submitTutor", async (req, res) => {
                     .json({ message: "Internal server error (check SQL)" })
             }
 
-            [result, _fields] = await conn.query(
-                `
-                INSERT INTO canTeach(\`tutor-sid\`, \`subject-code\`, \`subject-gpa\`, year) VALUES (?)
-                ON DUPLICATE KEY UPDATE \`subject-gpa\` = VALUES(\`subject-gpa\`), year = VALUES(year)
-            `,
-                [
-                    subjects.map((s) => [
-                        user["student-id"],
-                        s["subject-code"],
-                        s["subject-gpa"],
-                        s.year,
-                    ]),
-                ],
-            )
+            if (subjects) {
+                [result, _fields] = await conn.query(
+                    `
+                    INSERT INTO canTeach(\`tutor-sid\`, \`subject-code\`, \`subject-gpa\`, year) VALUES ?
+                    ON DUPLICATE KEY UPDATE \`subject-gpa\` = VALUES(\`subject-gpa\`), year = VALUES(year)
+                `,
+                    [
+                        subjects.map((s) => [
+                            user["student-id"],
+                            s["subject-code"],
+                            s["subject-gpa"],
+                            s.year,
+                        ]),
+                    ],
+                )
 
-            if (Array.isArray(result)) {
-                await conn.rollback()
-                return res
-                    .status(500)
-                    .json({ message: "Internal server error (check SQL)" })
+                if (Array.isArray(result)) {
+                    await conn.rollback()
+                    return res
+                        .status(500)
+                        .json({ message: "Internal server error (check SQL)" })
+                }
             }
 
             // find notification targets
@@ -147,17 +149,18 @@ subjectRouter.post("/submitTutor", async (req, res) => {
 
             const notificationId = result.insertId
 
-            ;[result, _fields] = await conn.query(
-                `
-                INSERT INTO notificationInterests(\`notification-id\`, \`interest-id\`) VALUES (?)
-            `,
-                [
-                    data.map((d: INotificationRecommendation) => [
-                        notificationId,
-                        d["interest-id"],
-                    ]),
-                ],
-            )
+            if (data.length)
+                [result, _fields] = await conn.query(
+                    `
+                    INSERT INTO notificationInterests(\`notification-id\`, \`interest-id\`) VALUES ?
+                `,
+                    [
+                        data.map((d: INotificationRecommendation) => [
+                            notificationId,
+                            d["interest-id"],
+                        ]),
+                    ],
+                )
 
             await conn.commit()
             res.sendStatus(200)
@@ -293,7 +296,7 @@ subjectRouter.post("/submitLearner", async (req, res) => {
             // on duplicate key do a noop
             [result, _fields] = await conn.query(
                 `
-                INSERT INTO interest(\`learner-sid\`, \`subject-code\`) VALUES (?)
+                INSERT INTO interest(\`learner-sid\`, \`subject-code\`) VALUES ?
                 ON DUPLICATE KEY UPDATE \`learner-sid\` = \`learner-sid\`
             `,
                 [subjects.map((s) => [user["student-id"], s["subject-code"]])],

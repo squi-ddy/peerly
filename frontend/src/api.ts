@@ -33,8 +33,11 @@ import {
     IFindTimeslots,
     IFindTimeslotsResult,
 } from "@backend/types/timeslot"
-import {INotification, INotificationDelete} from "@backend/types/notification"
-import { IPendingTutelage, IPendingTutelageCreate } from "@backend/types/tutelage"
+import { INotification, INotificationDelete } from "@backend/types/notification"
+import {
+    IPendingTutelage,
+    IPendingTutelageCreate,
+} from "@backend/types/tutelage"
 
 axios.defaults.withCredentials = true
 
@@ -316,7 +319,9 @@ export async function createPendingTutelage(data: IPendingTutelageCreate) {
     }
 }
 
-export async function getPendingTutelages(): Promise<IPendingTutelage[] | null> {
+export async function getPendingTutelages(): Promise<
+    IPendingTutelage[] | null
+> {
     try {
         const resp = await axios.get(`${settings.API_URL}/tutelages/pending`)
         const respData = resp.data
@@ -330,7 +335,6 @@ export async function getPendingTutelages(): Promise<IPendingTutelage[] | null> 
         }
         return null
     }
-    
 }
 
 export async function getNotifications(): Promise<INotification[] | null> {
@@ -353,7 +357,10 @@ export async function deleteNotification(data: INotificationDelete) {
     try {
         const resp = {
             success: true,
-            response: await axios.delete(`${settings.API_URL}/notifications/delete`, { data }),
+            response: await axios.delete(
+                `${settings.API_URL}/notifications/delete`,
+                { data },
+            ),
         }
         return resp
     } catch (error) {

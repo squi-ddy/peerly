@@ -1,28 +1,13 @@
-import {
-    getEmptyTimeslots,
-    getPendingTutelages,
-    getSubjects,
-    getTutorSubjects,
-    sendEmptyTimeslots,
-    sendTutorSubjects,
-} from "@/api"
+import { getPendingTutelages } from "@/api"
 import { UserContext } from "@/base/BasePage"
-import Calendar, {
-    IAdditionalSlot,
-    IContiguousSlot,
-    timestamps,
-} from "@/components/Calendar"
+import Calendar, { IAdditionalSlot, timestamps } from "@/components/Calendar"
 import MotionButton from "@/components/MotionButton"
 import RequestsList from "@/components/RequestsList"
 import SetTitle from "@/components/SetTitle"
-import TutorSubjectSelection, {
-    IInputSubject,
-} from "@/components/TutorSubjectSelection"
-import { ISubject } from "@backend/types/subject"
 import { Time } from "@backend/types/timeslot"
 import { IPendingTutelage } from "@backend/types/tutelage"
 import { motion } from "framer-motion"
-import { ReactElement, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 const itemVariants = {
@@ -30,8 +15,6 @@ const itemVariants = {
     visible: { transform: "translateY(0)", opacity: 1 },
     exit: { opacity: 0 },
 }
-
-const emptyArray: IAdditionalSlot[] = []
 
 function RequestsPage() {
     const { state, pathname } = useLocation()
@@ -61,8 +44,13 @@ function RequestsPage() {
                             timestamps.indexOf(
                                 Time.fromITime(ts["end-time"]).toHMString(),
                             ) - 1,
-                        text: [ts.subject.name, Time.fromITime(ts["start-time"]).toHMString() + " - " + Time.fromITime(ts["end-time"]).toHMString()],
-                        styles: "bg-yellow-700"
+                        text: [
+                            ts.subject.name,
+                            Time.fromITime(ts["start-time"]).toHMString() +
+                                " - " +
+                                Time.fromITime(ts["end-time"]).toHMString(),
+                        ],
+                        styles: "bg-yellow-700",
                     })),
                 )
             }
@@ -75,12 +63,9 @@ function RequestsPage() {
             navigate("/")
             return
         }
-        getPendingTutelages().then(
-            (tutelages) => {
-                if (tutelages)
-                    setTutelages(tutelages)
-            },
-        )
+        getPendingTutelages().then((tutelages) => {
+            if (tutelages) setTutelages(tutelages)
+        })
     }, [pathname, state, user, navigate])
 
     if (!user) return <></>

@@ -18,13 +18,16 @@ function RequestsList(props: {
 }) {
     const [filter, setFilter] = useState("")
 
-    
     const { user } = useContext(UserContext)
 
     const fuse = useMemo(
         () =>
             new Fuse(props.tutelages, {
-                keys: ["tutor.username", "learner.username", "timeslots.subject.name"],
+                keys: [
+                    "tutor.username",
+                    "learner.username",
+                    "timeslots.subject.name",
+                ],
                 threshold: 0.1,
             }),
         [props.tutelages],
@@ -60,82 +63,120 @@ function RequestsList(props: {
             <div className="border-2 rounded-xl border-white w-full h-full overflow-y-scroll">
                 <AnimatePresence mode="popLayout">
                     {visibleTutelages.map((tutelage, idx) => {
-                        const learnerIsUser = tutelage.learner["student-id"] === user?.["student-id"]
-                        const tutorIsUser = tutelage.tutor["student-id"] === user?.["student-id"]
+                        const learnerIsUser =
+                            tutelage.learner["student-id"] ===
+                            user?.["student-id"]
+                        const tutorIsUser =
+                            tutelage.tutor["student-id"] ===
+                            user?.["student-id"]
 
                         const subjectNamesUnique = new Set<[string, string]>()
-                        tutelage.timeslots.map((ts) => ts.subject).forEach((s) => subjectNamesUnique.add([s["subject-code"], s.name]))
+                        tutelage.timeslots
+                            .map((ts) => ts.subject)
+                            .forEach((s) =>
+                                subjectNamesUnique.add([
+                                    s["subject-code"],
+                                    s.name,
+                                ]),
+                            )
                         const subjects = Array.from(subjectNamesUnique)
 
-                        return <motion.div
-                            variants={itemVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                            key={tutelage["tutelage-id"]}
-                            className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white hover:bg-sky-900/50 transition-colors`}
-                            layout
-                            onMouseEnter={() => props.setHoverIndex(idx)}
-                            onMouseLeave={() => props.setHoverIndex(-1)}
-                        >
-                            <div className="flex flex-row gap-2 w-full">
-                            <p
-                        className={`${tutorIsUser ? "border-sky-500": "border-white"} border rounded-lg text-base px-2 transition-colors flex items-center justify-center`}
-                    >
-                        Tutor
-                    </p>
-                                {tutorIsUser ? <p className="text-2xl font-bold flex justify-center items-center">You</p> : <><p className="text-2xl font-bold flex justify-center items-center">
-                                    {tutelage.tutor.username}
-                                </p>
-                                <p className="text-lg flex items-end">
-                                    {tutelage.tutor["student-id"]}
-                                </p></>}
-                                <p className="text-2xl font-bold flex justify-center items-center">
-                                    &harr;
-                                </p>
-                                <p
-                        className={`${learnerIsUser ? "border-sky-500": "border-white"} border rounded-lg text-base px-2 transition-colors flex items-center justify-center`}
-                    >
-                        Learner
-                    </p>
-                                {learnerIsUser ? <p className="text-2xl font-bold flex justify-center items-center">You</p> : <><p className="text-2xl font-bold flex justify-center items-center">
-                                    {tutelage.learner.username}
-                                </p>
-                                <p className="text-lg flex items-end">
-                                    {tutelage.learner["student-id"]}
-                                </p></>}
-                                
-                            </div>
-                            <div className="flex flex-row w-full gap-2 flex-wrap">
-                                {tutelage["timeslots"].map((timeslot, idx) => (
+                        return (
+                            <motion.div
+                                variants={itemVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                key={tutelage["tutelage-id"]}
+                                className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white hover:bg-sky-900/50 transition-colors`}
+                                layout
+                                onMouseEnter={() => props.setHoverIndex(idx)}
+                                onMouseLeave={() => props.setHoverIndex(-1)}
+                            >
+                                <div className="flex flex-row gap-2 w-full">
                                     <p
-                                        key={idx}
-                                        className={`border-white border rounded-lg text-base px-2`}
+                                        className={`${
+                                            tutorIsUser
+                                                ? "border-sky-500"
+                                                : "border-white"
+                                        } border rounded-lg text-base px-2 transition-colors flex items-center justify-center`}
                                     >
-                                        {days[timeslot["day-of-week"]]}{" "}
-                                        {Time.fromITime(
-                                            timeslot["start-time"],
-                                        ).toHMString()}{" "}
-                                        -{" "}
-                                        {Time.fromITime(
-                                            timeslot["end-time"],
-                                        ).toHMString()}
+                                        Tutor
                                     </p>
-                                ))}
-                            </div>
-                            <div className="flex flex-row w-full gap-2">
-                                {subjects.map((subject) => (
-                                    <motion.p
-                                        layout
-                                        key={subject[0]}
-                                        className={`border-white border rounded-lg text-base px-2 transition-colors`}
+                                    {tutorIsUser ? (
+                                        <p className="text-2xl font-bold flex justify-center items-center">
+                                            You
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p className="text-2xl font-bold flex justify-center items-center">
+                                                {tutelage.tutor.username}
+                                            </p>
+                                            <p className="text-lg flex items-end">
+                                                {tutelage.tutor["student-id"]}
+                                            </p>
+                                        </>
+                                    )}
+                                    <p className="text-2xl font-bold flex justify-center items-center">
+                                        &harr;
+                                    </p>
+                                    <p
+                                        className={`${
+                                            learnerIsUser
+                                                ? "border-sky-500"
+                                                : "border-white"
+                                        } border rounded-lg text-base px-2 transition-colors flex items-center justify-center`}
                                     >
-                                        {subject[1]}
-                                    </motion.p>
-                                ))}
-                            </div>
-                        </motion.div>
-})}
+                                        Learner
+                                    </p>
+                                    {learnerIsUser ? (
+                                        <p className="text-2xl font-bold flex justify-center items-center">
+                                            You
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p className="text-2xl font-bold flex justify-center items-center">
+                                                {tutelage.learner.username}
+                                            </p>
+                                            <p className="text-lg flex items-end">
+                                                {tutelage.learner["student-id"]}
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="flex flex-row w-full gap-2 flex-wrap">
+                                    {tutelage["timeslots"].map(
+                                        (timeslot, idx) => (
+                                            <p
+                                                key={idx}
+                                                className={`border-white border rounded-lg text-base px-2`}
+                                            >
+                                                {days[timeslot["day-of-week"]]}{" "}
+                                                {Time.fromITime(
+                                                    timeslot["start-time"],
+                                                ).toHMString()}{" "}
+                                                -{" "}
+                                                {Time.fromITime(
+                                                    timeslot["end-time"],
+                                                ).toHMString()}
+                                            </p>
+                                        ),
+                                    )}
+                                </div>
+                                <div className="flex flex-row w-full gap-2">
+                                    {subjects.map((subject) => (
+                                        <motion.p
+                                            layout
+                                            key={subject[0]}
+                                            className={`border-white border rounded-lg text-base px-2 transition-colors`}
+                                        >
+                                            {subject[1]}
+                                        </motion.p>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )
+                    })}
                 </AnimatePresence>
             </div>
         </>

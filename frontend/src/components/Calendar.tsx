@@ -272,7 +272,9 @@ function Calendar(props: {
                   ).concat(
                       props.additionalSlots.map((slot, idx) => {
                           const numSlots = slot.endIndex - slot.beginIndex + 1
-                          const text = Array.isArray(slot.text) ? slot.text : [slot.text]
+                          const text = Array.isArray(slot.text)
+                              ? slot.text
+                              : [slot.text]
 
                           return (
                               <div
@@ -285,12 +287,11 @@ function Calendar(props: {
                                   <div
                                       className={`flex flex-col items-center justify-center ${slot.styles} border border-white rounded-md w-full h-full`}
                                   >
-                                    {
-                                        text.map((line) => 
-                                      <span className="text-xs">
-                                          {line}
-                                      </span>
-                      )}
+                                      {text.map((line) => (
+                                          <span key={line} className="text-xs">
+                                              {line}
+                                          </span>
+                                      ))}
                                   </div>
                               </div>
                           )
