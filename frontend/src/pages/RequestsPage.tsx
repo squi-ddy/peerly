@@ -104,7 +104,7 @@ function RequestsPage() {
                         setGetContiguousSlots={() => {}}
                         edit={false}
                         additionalSlots={calendarAdditionalSlots}
-                        drawContiguousSlots={true}
+                        drawContiguousSlots={false}
                     />
                 </div>
             </motion.div>
