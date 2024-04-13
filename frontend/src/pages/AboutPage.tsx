@@ -35,6 +35,28 @@ function AboutPage() {
                 </motion.li>
                 <motion.li variants={itemVariants}>
                     <a
+                        href="https://reactrouter.com/"
+                        target="_blank"
+                        className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
+                    >
+                        React Router
+                    </a>{" "}
+                    &ndash; Browser-based routing library
+                </motion.li>
+                <motion.li variants={itemVariants}>
+                    <a
+                        href="https://github.com/streamich/react-use"
+                        target="_blank"
+                        className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
+                    >
+                        react-use
+                    </a>{" "}
+                    &ndash; Extra React hooks
+                </motion.li>
+                <motion.li variants={itemVariants}>
+                    <a
                         href="https://vitejs.dev/"
                         target="_blank"
                         className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
@@ -54,17 +76,6 @@ function AboutPage() {
                         TypeScript
                     </a>{" "}
                     &ndash; Javascript but better
-                </motion.li>
-                <motion.li variants={itemVariants}>
-                    <a
-                        href="https://reactrouter.com/"
-                        target="_blank"
-                        className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
-                        rel="noreferrer"
-                    >
-                        React Router
-                    </a>{" "}
-                    &ndash; Browser-based routing library
                 </motion.li>
                 <motion.li variants={itemVariants}>
                     <a
@@ -121,6 +132,28 @@ function AboutPage() {
                     </a>{" "}
                     &ndash; Fuzzy search implementation
                 </motion.li>
+                <motion.li variants={itemVariants}>
+                    <a
+                        href="https://axios-http.com/"
+                        target="_blank"
+                        className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
+                    >
+                        Axios
+                    </a>{" "}
+                    &ndash; Frontend-backend requests
+                </motion.li>
+                <motion.li variants={itemVariants}>
+                    <a
+                        href="https://expressjs.com/"
+                        target="_blank"
+                        className="underline hover:text-orange-400 transition-color duration-300 font-semibold"
+                        rel="noreferrer"
+                    >
+                        Express
+                    </a>{" "}
+                    &ndash; Backend server
+                </motion.li>
             </ul>
             <motion.p className="text-xl" variants={itemVariants}>
                 Code formatted by{" "}
@@ -154,10 +187,10 @@ function AboutPage() {
                 </a>
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
-                15 React components, ~1600 lines of code
+                33 React components, ~8500 lines of code
             </motion.p>
             <motion.p className="text-xl" variants={itemVariants}>
-                Created in 2 days + some help (autocomplete) from{" "}
+                Created in like 10 days + some help (autocomplete) from{" "}
                 <a
                     href="https://github.com/features/copilot"
                     target="_blank"
