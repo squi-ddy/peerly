@@ -232,9 +232,9 @@ tutelageRouter.get("/pending", async (req, res) => {
                     )
                 ) timeslots
                 FROM pendingTutelage pt
-                JOIN emptyTimeslot et ON pt.\`timeslot-id\` = et.\`timeslot-id\`
-                LEFT JOIN pendingTimes pti ON pti.\`timeslot-id\` = et.\`timeslot-id\`
-                JOIN subject sub ON pti.\`subject-code\` = sub.\`subject-code\`
+                LEFT JOIN pendingTimes pti ON pti.\`tutelage-id\` = pt.\`tutelage-id\`
+                LEFT JOIN emptyTimeslot et ON pti.\`timeslot-id\` = et.\`timeslot-id\`
+                LEFT JOIN subject sub ON pti.\`subject-code\` = sub.\`subject-code\`
                 JOIN student l ON pt.\`learner-sid\` = l.\`student-id\`
                 JOIN student t ON pt.\`tutor-sid\` = t.\`student-id\`
                 WHERE pt.\`learner-sid\` = ? OR pt.\`tutor-sid\` = ?
