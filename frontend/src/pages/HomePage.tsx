@@ -92,7 +92,7 @@ function HomePage() {
             </div>
             <motion.div
                 variants={itemVariants}
-                className={`flex flex-row items-center w-2/3 gap-4`}
+                className={`flex flex-row items-center w-2/3 gap-4 justify-center`}
             >
                 {user["is-tutor"] && calendarApiReturned && (
                     <div className="flex flex-col items-center w-1/2 gap-2">

@@ -226,27 +226,23 @@ tutelageRouter.get("/pending", async (req, res) => {
                     FROM student s
                     WHERE s.\`student-id\` = pt.\`learner-sid\`
                 ) learner,
-                (
-                    SELECT JSON_ARRAYAGG(tmp.vals)
-                    FROM (
-                        SELECT JSON_OBJECT(
-                            'day-of-week', et.\`day-of-week\`,
-                            'start-time', et.\`start-time\`,
-                            'end-time', et.\`end-time\`,
-                            'timeslot-id', et.\`timeslot-id\`,
-                            'tutor-sid', et.\`tutor-sid\`,
-                            'subject', JSON_OBJECT(
-                                'subject-code', s.\`subject-code\`,
-                                'name', s.\`name\`
-                            )
-                        ) vals
-                        FROM pendingTimes pti 
-                        JOIN emptyTimeslot et ON pti.\`timeslot-id\` = et.\`timeslot-id\`
-                        JOIN subject s ON pti.\`subject-code\` = s.\`subject-code\`
-                        WHERE pti.\`tutelage-id\` = pt.\`tutelage-id\`
-                    ) tmp
-                ) timeslots
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'day-of-week', et.\`day-of-week\`,
+                        'start-time', et.\`start-time\`,
+                        'end-time', et.\`end-time\`,
+                        'timeslot-id', et.\`timeslot-id\`,
+                        'tutor-sid', et.\`tutor-sid\`,
+                        'subject', JSON_OBJECT(
+                            'subject-code', s.\`subject-code\`,
+                            'name', s.\`name\`
+                        )
+                    )
+                )
+                timeslots
                 FROM pendingTutelage pt
+                JOIN emptyTimeslot et ON pt.\`timeslot-id\` = et.\`timeslot-id\`
+                JOIN subject s ON pt.\`subject-code\` = s.\`subject-code\`
                 WHERE pt.\`learner-sid\` = ? OR pt.\`tutor-sid\` = ?
             `,
             [user["student-id"], user["student-id"]],

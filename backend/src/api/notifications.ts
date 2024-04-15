@@ -24,23 +24,17 @@ notificationRouter.get("/all", async (req, res) => {
                     'student-id', tut.\`student-id\`,
                     'username', tut.\`username\`
                 ) tutor,
-                (
-                    SELECT JSON_ARRAYAGG(tmp.vals)
-                    FROM (
-                        SELECT JSON_OBJECT(
-                            'subject-code', sub.\`subject-code\`,
-                            'name', sub.name
-                        ) vals
-                        FROM notificationInterests ni
-                        JOIN interest i2 on ni.\`interest-id\` = i2.\`interest-id\`
-                        JOIN subject sub on i2.\`subject-code\` = sub.\`subject-code\`
-                        WHERE ni.\`notification-id\` = n.\`notification-id\`
-                    ) tmp
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'subject-code', sub.\`subject-code\`, 
+                        'name', sub.name
+                    )
                 ) subjects
             FROM notificationInterests ni
             JOIN interest i on ni.\`interest-id\` = i.\`interest-id\` and i.\`learner-sid\` = ?
             JOIN notification n on ni.\`notification-id\` = n.\`notification-id\`
             JOIN student tut on n.\`tutor-sid\` = tut.\`student-id\`
+            JOIN subject sub on i.\`subject-code\` = sub.\`subject-code\`
             GROUP BY n.\`notification-id\`
         `,
             [user["student-id"]],
