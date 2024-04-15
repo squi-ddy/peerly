@@ -17,6 +17,7 @@ function RequestsList(props: {
     setHoverIndex: (index: number) => void
 }) {
     const [filter, setFilter] = useState("")
+    const [selected, setSelected] = useState(-1)
 
     const { user } = useContext(UserContext)
 
@@ -70,7 +71,10 @@ function RequestsList(props: {
                             tutelage.tutor["student-id"] ===
                             user?.["student-id"]
 
-                        const subjectNamesUnique = new Map<string, [string, string]>()
+                        const subjectNamesUnique = new Map<
+                            string,
+                            [string, string]
+                        >()
                         tutelage.timeslots
                             .map((ts) => ts.subject)
                             .forEach((s) =>
@@ -88,10 +92,27 @@ function RequestsList(props: {
                                 animate="visible"
                                 exit="exit"
                                 key={tutelage["tutelage-id"]}
-                                className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white hover:bg-sky-900/50 transition-colors`}
+                                className={`flex flex-col w-full gap-4 items-center p-4 border-b-2 border-white ${
+                                    selected === idx
+                                        ? "bg-sky-900"
+                                        : "hover:bg-sky-900/50"
+                                } transition-colors`}
                                 layout
-                                onMouseEnter={() => props.setHoverIndex(idx)}
-                                onMouseLeave={() => props.setHoverIndex(-1)}
+                                onMouseEnter={() => {
+                                    if (!selected) props.setHoverIndex(idx)
+                                }}
+                                onMouseLeave={() => {
+                                    if (!selected) props.setHoverIndex(-1)
+                                }}
+                                onClick={() => {
+                                    if (selected === idx) {
+                                        setSelected(-1)
+                                        props.setHoverIndex(idx)
+                                    } else {
+                                        setSelected(idx)
+                                        props.setHoverIndex(idx)
+                                    }
+                                }}
                             >
                                 <div className="flex flex-row gap-2 w-full">
                                     <p
