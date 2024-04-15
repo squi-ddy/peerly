@@ -238,6 +238,7 @@ tutelageRouter.get("/pending", async (req, res) => {
                 JOIN student l ON pt.\`learner-sid\` = l.\`student-id\`
                 JOIN student t ON pt.\`tutor-sid\` = t.\`student-id\`
                 WHERE pt.\`learner-sid\` = ? OR pt.\`tutor-sid\` = ?
+                GROUP BY pt.\`tutelage-id\`
             `,
             [user["student-id"], user["student-id"]],
         )
