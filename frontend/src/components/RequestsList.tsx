@@ -99,10 +99,11 @@ function RequestsList(props: {
                                 } transition-colors`}
                                 layout
                                 onMouseEnter={() => {
-                                    if (!selected) props.setHoverIndex(idx)
+                                    if (selected === -1)
+                                        props.setHoverIndex(idx)
                                 }}
                                 onMouseLeave={() => {
-                                    if (!selected) props.setHoverIndex(-1)
+                                    if (selected === -1) props.setHoverIndex(-1)
                                 }}
                                 onClick={() => {
                                     if (selected === idx) {
