@@ -210,21 +210,13 @@ tutelageRouter.get("/pending", async (req, res) => {
             `
                 SELECT pt.\`what-to-learn\`,
                 pt.\`tutelage-id\`,
-                (
-                    SELECT JSON_OBJECT(
-                        'student-id', s.\`student-id\`,
-                        'username', s.\`username\`
-                    )
-                    FROM student s
-                    WHERE s.\`student-id\` = pt.\`tutor-sid\`
+                JSON_OBJECT(
+                    'student-id', t.\`student-id\`,
+                    'username', t.\`username\`
                 ) tutor,
-                (
-                    SELECT JSON_OBJECT(
-                        'student-id', s.\`student-id\`,
-                        'username', s.\`username\`
-                    )
-                    FROM student s
-                    WHERE s.\`student-id\` = pt.\`learner-sid\`
+                JSON_OBJECT(
+                    'student-id', l.\`student-id\`,
+                    'username', l.\`username\`
                 ) learner,
                 JSON_ARRAYAGG(
                     JSON_OBJECT(
@@ -234,15 +226,16 @@ tutelageRouter.get("/pending", async (req, res) => {
                         'timeslot-id', et.\`timeslot-id\`,
                         'tutor-sid', et.\`tutor-sid\`,
                         'subject', JSON_OBJECT(
-                            'subject-code', s.\`subject-code\`,
-                            'name', s.\`name\`
+                            'subject-code', sub.\`subject-code\`,
+                            'name', sub.\`name\`
                         )
                     )
-                )
-                timeslots
+                ) timeslots
                 FROM pendingTutelage pt
                 JOIN emptyTimeslot et ON pt.\`timeslot-id\` = et.\`timeslot-id\`
-                JOIN subject s ON pt.\`subject-code\` = s.\`subject-code\`
+                JOIN subject sub ON et.\`subject-code\` = sub.\`subject-code\`
+                JOIN student l ON pt.\`learner-sid\` = l.\`student-id\`
+                JOIN student t ON pt.\`tutor-sid\` = t.\`student-id\`
                 WHERE pt.\`learner-sid\` = ? OR pt.\`tutor-sid\` = ?
             `,
             [user["student-id"], user["student-id"]],

@@ -276,49 +276,42 @@ begin
     select
         ct.`tutor-sid`, 
         s.username, 
-        (
-            select json_arrayagg(tmp.subj)
-            from (
-                select json_object(
-                    'subject-code', sub.`subject-code`, 
-                    'name', sub.name,
-                    'year', ct2.year,
-                    'subject-gpa', ct2.`subject-gpa`,
-                    'tutor-sid', ct2.`tutor-sid`
-                ) subj
-                from subject sub
-                join canTeach ct2 on 
-                    ct2.`subject-code` = sub.`subject-code` 
-                    and ct.`tutor-sid` = ct2.`tutor-sid`
-                where sub.`subject-code` in (
-                    select `subject-code` from interestedSubjects
-                )
-            ) tmp
+        json_arrayagg(
+            json_object(
+                'subject-code', sub.`subject-code`, 
+                'name', sub.name,
+                'year', ct.year,
+                'subject-gpa', ct.`subject-gpa`,
+                'tutor-sid', ct.`tutor-sid`
+            )
         ) `can-teach-subjects`, 
         (
-            select json_arrayagg(tmp.tslot)
-            from (
-                select json_object(
+            select json_arrayagg(
+                json_object(
                     'day-of-week', ts.`day-of-week`, 
                     'start-time', greatest(ts.`start-time`, tsIn.`start-time`), 
                     'end-time', least(ts.`end-time`, tsIn.`end-time`),
                     'has-pending', if(pt.`timeslot-id` is null, 0, 1)
-                ) tslot
-                from timeslotsIn tsIn
-                join emptyTimeslot ts on 
-                    ts.`day-of-week` = tsIn.`day-of-week` 
-                    and timeslots_overlap(
-                        ts.`start-time`, ts.`end-time`, 
-                        tsIn.`start-time`, tsIn.`end-time`
-                    )
-                    and ts.`tutor-sid` = ct.`tutor-sid`
-                left join pendingTimes pt on 
-                    pt.`timeslot-id` = ts.`timeslot-id`
-            ) tmp
+                )
+            )
+            from timeslotsIn tsIn
+            join emptyTimeslot ts on 
+                ts.`day-of-week` = tsIn.`day-of-week` 
+                and timeslots_overlap(
+                    ts.`start-time`, ts.`end-time`, 
+                    tsIn.`start-time`, tsIn.`end-time`
+                )
+                and ts.`tutor-sid` = ct.`tutor-sid`
+            left join pendingTimes pt on 
+                pt.`timeslot-id` = ts.`timeslot-id`
         ) timeslots
         from canTeach ct
         join student s on ct.`tutor-sid` = s.`student-id`
-        where not exists (
+        join subject sub on ct.`subject-code` = sub.`subject-code`
+        where sub.`subject-code` in (
+            select `subject-code` from interestedSubjects
+        )
+        and not exists (
             select 1
             from filledTutelage ft
             where ft.`tutor-sid` = ct.`tutor-sid`
