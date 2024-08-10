@@ -19,8 +19,10 @@ COPY ./backend/src/types ./src/backend/types
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN bun run build
 
-FROM nginx:alpine-slim AS deploy
+FROM busybox:musl AS deploy
 
-COPY ./frontend/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /data/www/peerly
+WORKDIR /app/
+COPY --from=build /app/dist .
+COPY ./frontend/httpd.conf /etc/httpd.conf
+CMD ["busybox", "httpd", "-f", "-v", "-p", "3000", "-c", "/etc/httpd.conf"]
 
