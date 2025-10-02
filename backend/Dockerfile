@@ -8,7 +8,7 @@ RUN bun i --frozen-lockfile
 COPY . .
 RUN bun run build
 
-FROM node:lts-alpine AS node
+FROM node:alpine AS node
 
 # bun is specifically missing "Stream" from "node:net"
 # from https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#smaller-images-without-npmyarn
