@@ -41,6 +41,6 @@
         "mysql2": "^3.9.2",
         "passport": "^0.7.0",
         "passport-local": "^1.0.0",
-        "typia": "^9.7.2"
+        "typia": "^10.1.0"
     }
 }
