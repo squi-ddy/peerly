@@ -25,8 +25,10 @@ services:
     extends:
       file: docker-compose.yml
       service: db
+    volumes:
+      - ./db-setup:/docker-entrypoint-initdb.d
+      - ./db-data:/var/lib/mysql
   memcached:
     extends:
       file: docker-compose.yml
       service: memcached
-

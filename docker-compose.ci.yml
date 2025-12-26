@@ -17,8 +17,10 @@ services:
     extends:
       file: docker-compose.yml
       service: db
+    volumes:
+      - ./db-setup:/docker-entrypoint-initdb.d
+      - /var/lib/peerly/db:/var/lib/mysql
   peerly-memcached:
     extends:
       file: docker-compose.yml
       service: memcached
-
