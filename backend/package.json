@@ -33,7 +33,7 @@
     },
     "dependencies": {
         "compression": "^1.7.4",
-        "connect-memcached": "^2.0.0",
+        "connect-memcached": "^3.0.0",
         "cors": "^2.8.5",
         "express": "^5.1.0",
         "express-session": "^1.18.0",
@@ -41,6 +41,6 @@
         "mysql2": "^3.9.2",
         "passport": "^0.7.0",
         "passport-local": "^1.0.0",
-        "typia": "^9.7.2"
+        "typia": "^11.0.0"
     }
 }
