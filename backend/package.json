@@ -6,11 +6,11 @@
     "type": "module",
     "scripts": {
         "start": "node dist/index.js",
-        "typia": "bunx typia generate --input src/ --output generated/ --project tsconfig.json",
+        "typia": "typia generate --input src/ --output generated/ --project tsconfig.json",
         "build-tsconfig": "mv tsconfig.json tsconfig.dev.json && mv tsconfig.build.json tsconfig.json",
         "dev-tsconfig": "mv tsconfig.json tsconfig.build.json && mv tsconfig.dev.json tsconfig.json",
-        "bun-build": "bun build --target node generated/index.ts --outdir dist",
-        "build": "bun run typia && bun run build-tsconfig && bun run bun-build && bun run dev-tsconfig",
+        "ncc-build": "ncc build src/index.ts -o dist -t -m",
+        "build": "npm run typia && npm run build-tsconfig && npm run ncc-build && npm run dev-tsconfig",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "typecheck": "tsc --noemit",
         "format": "prettier --write .",
@@ -28,6 +28,7 @@
         "@types/passport-local": "^1.0.38",
         "@typescript-eslint/eslint-plugin": "^8.44.1",
         "@typescript-eslint/parser": "^8.44.1",
+        "@vercel/ncc": "^0.44.0",
         "eslint": "^9.36.0",
         "typescript": "^5.0.4"
     },

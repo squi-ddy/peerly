@@ -1,12 +1,13 @@
-FROM oven/bun:alpine AS base
+FROM node:alpine AS base
 
 FROM base AS builder
 
+RUN apk --no-cache add --virtual build-deps build-base python3
 WORKDIR /app/
-COPY package.json bun.lock ./
-RUN bun i --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev
 COPY . .
-RUN bun run build
+RUN npm run build
 
 FROM node:alpine AS node
 
