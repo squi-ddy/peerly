@@ -1,20 +1,20 @@
-import { createPendingTutelage } from "@/api"
-import { UserContext } from "@/base/BasePage"
+import { createPendingTutelage } from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
 import Calendar, {
     IAdditionalSlot,
     IContiguousSlot,
     timestamps,
-} from "@/components/Calendar"
-import MotionButton from "@/components/MotionButton"
+} from "@/components/Calendar.js"
+import MotionButton from "@/components/MotionButton.js"
 import RequestSubjectSelection, {
     IInputSubject,
-} from "@/components/RequestSubjectSelection"
-import SetTitle from "@/components/SetTitle"
-import FormTextInput from "@/components/forms/FormTextInput"
-import { InputSubmitFunction } from "@/types/FormDefinition"
-import { timeslotsNotIn } from "@/util"
-import { ISubject } from "@backend/types/subject"
-import { IFindTimeslotsResult, Time } from "@backend/types/timeslot"
+} from "@/components/RequestSubjectSelection.js"
+import SetTitle from "@/components/SetTitle.js"
+import FormTextInput from "@/components/forms/FormTextInput.js"
+import { InputSubmitFunction } from "@/types/FormDefinition.js"
+import { timeslotsNotIn } from "@/util.js"
+import { ISubject } from "@backend/types/subject.js"
+import { IFindTimeslotsResult, Time } from "@backend/types/timeslot.js"
 import { motion } from "framer-motion"
 import {
     useCallback,

@@ -1,20 +1,20 @@
-import { register } from "@/api"
+import { register } from "@/api.js"
 import {
     InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
-} from "@/types/FormDefinition"
-import { IUserCreate } from "@backend/types/user"
+} from "@/types/FormDefinition.js"
+import { IUserCreate } from "@backend/types/user.js"
 import { useCallback, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { IValidation } from "typia"
-import MotionButton from "./MotionButton"
-import SetTitle from "./SetTitle"
-import FormCheckboxInput from "./forms/FormCheckboxInput"
-import FormNumberInput from "./forms/FormNumberInput"
-import FormPasswordInput from "./forms/FormPasswordInput"
-import FormTextInput from "./forms/FormTextInput"
-import { preciseFloor } from "@/util"
+import MotionButton from "./MotionButton.js"
+import SetTitle from "./SetTitle.js"
+import FormCheckboxInput from "./forms/FormCheckboxInput.js"
+import FormNumberInput from "./forms/FormNumberInput.js"
+import FormPasswordInput from "./forms/FormPasswordInput.js"
+import FormTextInput from "./forms/FormTextInput.js"
+import { preciseFloor } from "@/util.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

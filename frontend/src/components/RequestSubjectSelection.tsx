@@ -1,8 +1,8 @@
-import { InputSubmitFunction } from "@/types/FormDefinition"
-import { ILearnerSubject, ISubject } from "@backend/types/subject"
+import { InputSubmitFunction } from "@/types/FormDefinition.js"
+import { ILearnerSubject, ISubject } from "@backend/types/subject.js"
 import { AnimatePresence, motion } from "framer-motion"
 import { useCallback, useRef } from "react"
-import FormCheckboxInput from "./forms/FormCheckboxInput"
+import FormCheckboxInput from "./forms/FormCheckboxInput.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

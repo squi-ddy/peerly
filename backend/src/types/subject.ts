@@ -1,5 +1,5 @@
 import { tags } from "typia"
-import { IStudentID } from "./user"
+import { IStudentID } from "./user.js"
 
 export type ISubjectCode = string & tags.MinLength<2> & tags.MaxLength<2>
 export interface ISubject {

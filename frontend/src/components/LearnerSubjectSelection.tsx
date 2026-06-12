@@ -3,8 +3,8 @@ import {
     InputFunctionContainer,
     InputFunctionItems,
     InputSubmitFunction,
-} from "@/types/FormDefinition"
-import { ILearnerSubject, ISubject } from "@backend/types/subject"
+} from "@/types/FormDefinition.js"
+import { ILearnerSubject, ISubject } from "@backend/types/subject.js"
 import {
     FloatingFocusManager,
     FloatingOverlay,
@@ -12,9 +12,9 @@ import {
 } from "@floating-ui/react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react"
-import MotionButton from "./MotionButton"
-import FormSelectionInput from "./forms/FormSelectionInput"
-import FormCheckboxInput from "./forms/FormCheckboxInput"
+import MotionButton from "./MotionButton.js"
+import FormSelectionInput from "./forms/FormSelectionInput.js"
+import FormCheckboxInput from "./forms/FormCheckboxInput.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

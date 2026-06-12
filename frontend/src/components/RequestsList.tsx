@@ -1,10 +1,10 @@
-import { UserContext } from "@/base/BasePage"
-import { Time } from "@backend/types/timeslot"
-import { IPendingTutelage } from "@backend/types/tutelage"
+import { UserContext } from "@/base/BasePage.js"
+import { Time } from "@backend/types/timeslot.js"
+import { IPendingTutelage } from "@backend/types/tutelage.js"
 import { AnimatePresence, motion } from "framer-motion"
 import Fuse from "fuse.js"
 import { useContext, useMemo, useState } from "react"
-import { days } from "./Calendar"
+import { days } from "./Calendar.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

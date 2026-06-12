@@ -4,7 +4,7 @@ import {
     InputSubmitFunction,
     InputErrorFunction,
     InputCheckFunction,
-} from "@/types/FormDefinition"
+} from "@/types/FormDefinition.js"
 import { useFloating } from "@floating-ui/react"
 
 const errorVariants: Variants = {
@@ -102,8 +102,8 @@ function FormCheckboxInput(props: {
                                 ? "duration-0 bg-sky-400"
                                 : "bg-gray-500"
                             : edit
-                            ? "hover:bg-sky-900"
-                            : ""
+                              ? "hover:bg-sky-900"
+                              : ""
                     } ${error ? "border-red-500" : "border-white"}`}
                     onClick={() => {
                         if (edit) {

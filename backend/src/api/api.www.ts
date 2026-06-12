@@ -1,9 +1,9 @@
 import express from "express"
-import acctRouter from "./accounts"
-import subjectRouter from "./subjects"
-import timeslotsRouter from "./timeslots"
-import tutelageRouter from "./tutelages"
-import notificationRouter from "./notifications"
+import acctRouter from "./accounts.js"
+import subjectRouter from "./subjects.js"
+import timeslotsRouter from "./timeslots.js"
+import tutelageRouter from "./tutelages.js"
+import notificationRouter from "./notifications.js"
 
 const apiRouter = express.Router()
 

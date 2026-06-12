@@ -2,11 +2,11 @@ import {
     isEmptyTimeslots,
     isPendingTutelages,
     validateCreatePendingTutelage,
-} from "checkers"
-import { convertTime, pool } from "db"
+} from "../checkers.js"
+import { convertTime, pool } from "../db.js"
 import { Router } from "express"
-import { IEmptyTimeslot, IPendingTimes, Time } from "types/timeslot"
-import { IPendingTutelage } from "types/tutelage"
+import { IEmptyTimeslot, IPendingTimes, Time } from "../types/timeslot.js"
+import { IPendingTutelage } from "../types/tutelage.js"
 
 const tutelageRouter = Router()
 

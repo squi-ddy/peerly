@@ -1,5 +1,5 @@
-import { isNotifications, validateDeleteNotification } from "checkers"
-import { pool } from "db"
+import { isNotifications, validateDeleteNotification } from "../checkers.js"
+import { pool } from "../db.js"
 import { Router } from "express"
 
 const notificationRouter = Router()
@@ -18,7 +18,7 @@ notificationRouter.get("/all", async (req, res) => {
     try {
         const [rows, _fields] = await pool.execute(
             `
-            SELECT 
+            SELECT
                 n.message, n.\`time-sent\`, n.\`notification-id\`,
                 JSON_OBJECT(
                     'student-id', tut.\`student-id\`,
@@ -26,7 +26,7 @@ notificationRouter.get("/all", async (req, res) => {
                 ) tutor,
                 JSON_ARRAYAGG(
                     JSON_OBJECT(
-                        'subject-code', sub.\`subject-code\`, 
+                        'subject-code', sub.\`subject-code\`,
                         'name', sub.name
                     )
                 ) subjects

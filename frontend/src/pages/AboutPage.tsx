@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import SetTitle from "@/components/SetTitle"
+import SetTitle from "@/components/SetTitle.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

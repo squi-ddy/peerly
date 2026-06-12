@@ -1,7 +1,7 @@
-import FormCheckboxInput from "@/components/forms/FormCheckboxInput"
-import FormNumberInput from "@/components/forms/FormNumberInput"
-import FormPasswordInput from "@/components/forms/FormPasswordInput"
-import FormTextInput from "@/components/forms/FormTextInput"
+import FormCheckboxInput from "@/components/forms/FormCheckboxInput.js"
+import FormNumberInput from "@/components/forms/FormNumberInput.js"
+import FormPasswordInput from "@/components/forms/FormPasswordInput.js"
+import FormTextInput from "@/components/forms/FormTextInput.js"
 import { ReactElement } from "react"
 
 export type InputSubmitFunction<T> = () => T | null

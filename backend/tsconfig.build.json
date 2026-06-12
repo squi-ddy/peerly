@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-        "module": "es2022",
+        "module": "Node16",
         "esModuleInterop": true,
         "target": "es2017",
-        "moduleResolution": "node",
+        "moduleResolution": "Node16",
         "sourceMap": true,
         "outDir": "dist",
         "resolveJsonModule": true,
-        "baseUrl": "generated",
+        "rootDir": "generated",
         "strict": true
     },
     "include": ["generated/**/*.ts", "generated/**/*.d.ts"],

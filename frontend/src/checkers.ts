@@ -1,13 +1,16 @@
 import { createIs } from "typia"
-import { IUserMinimal, IUserFull } from "@backend/types/user"
+import { IUserMinimal, IUserFull } from "@backend/types/user.js"
 import {
     ILearnerSubject,
     ISubject,
     ITutorSubject,
-} from "@backend/types/subject"
-import { IEmptyTimeslot, IFindTimeslotsResult } from "@backend/types/timeslot"
-import { IPendingTutelage } from "@backend/types/tutelage"
-import { INotification } from "@backend/types/notification"
+} from "@backend/types/subject.js"
+import {
+    IEmptyTimeslot,
+    IFindTimeslotsResult,
+} from "@backend/types/timeslot.js"
+import { IPendingTutelage } from "@backend/types/tutelage.js"
+import { INotification } from "@backend/types/notification.js"
 
 export const isMinimalUser = createIs<IUserMinimal>()
 export const isFullUser = createIs<IUserFull>()

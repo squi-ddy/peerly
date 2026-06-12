@@ -3,22 +3,22 @@ import {
     getLearnerSubjects,
     getSubjects,
     sendLearnerSubjects,
-} from "@/api"
-import { UserContext } from "@/base/BasePage"
+} from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
 import Calendar, {
     IAdditionalSlot,
     IContiguousSlot,
     timestamps,
-} from "@/components/Calendar"
-import LearnerFindTimeslot from "@/components/LearnerFindTimeslot"
+} from "@/components/Calendar.js"
+import LearnerFindTimeslot from "@/components/LearnerFindTimeslot.js"
 import LearnerSubjectSelection, {
     IInputSubject,
-} from "@/components/LearnerSubjectSelection"
-import MotionButton from "@/components/MotionButton"
-import SetTitle from "@/components/SetTitle"
-import { mergeTimeslots, timeslotsNotIn } from "@/util"
-import { ISubject } from "@backend/types/subject"
-import { IFindTimeslotsResult, Time } from "@backend/types/timeslot"
+} from "@/components/LearnerSubjectSelection.js"
+import MotionButton from "@/components/MotionButton.js"
+import SetTitle from "@/components/SetTitle.js"
+import { mergeTimeslots, timeslotsNotIn } from "@/util.js"
+import { ISubject } from "@backend/types/subject.js"
+import { IFindTimeslotsResult, Time } from "@backend/types/timeslot.js"
 import { motion } from "framer-motion"
 import {
     ReactElement,

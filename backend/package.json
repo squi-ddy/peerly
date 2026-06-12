@@ -9,12 +9,12 @@
         "typia": "typia generate --input src/ --output generated/ --project tsconfig.json",
         "build-tsconfig": "mv tsconfig.json tsconfig.dev.json && mv tsconfig.build.json tsconfig.json",
         "dev-tsconfig": "mv tsconfig.json tsconfig.build.json && mv tsconfig.dev.json tsconfig.json",
-        "ncc-build": "ncc build src/index.ts -o dist -t -m",
+        "ncc-build": "ncc build generated/index.ts -o dist -t -m",
         "build": "npm run typia && npm run build-tsconfig && npm run ncc-build && npm run dev-tsconfig",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "typecheck": "tsc --noemit",
         "format": "prettier --write .",
-        "precommit": "npm run format && npm run lint && npm run typecheck"
+        "precommit": "npm run format && npm run typecheck && npm run lint"
     },
     "keywords": [],
     "author": "",
@@ -29,7 +29,7 @@
         "@typescript-eslint/eslint-plugin": "^8.44.1",
         "@typescript-eslint/parser": "^8.44.1",
         "@vercel/ncc": "^0.44.0",
-        "eslint": "^10.4.1",
+        "eslint": "~8",
         "typescript": "^6.0.3"
     },
     "dependencies": {

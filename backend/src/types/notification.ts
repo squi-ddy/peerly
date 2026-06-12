@@ -1,6 +1,6 @@
 import { tags } from "typia"
-import { ISubject } from "./subject"
-import { IStudentID, IUserMinimalInfo } from "./user"
+import { ISubject } from "./subject.js"
+import { IStudentID, IUserMinimalInfo } from "./user.js"
 
 export interface INotificationRecommendation {
     "interest-id": number & tags.Type<"uint32">

@@ -4,20 +4,20 @@ import {
     getTutorSubjects,
     sendEmptyTimeslots,
     sendTutorSubjects,
-} from "@/api"
-import { UserContext } from "@/base/BasePage"
+} from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
 import Calendar, {
     IAdditionalSlot,
     IContiguousSlot,
     timestamps,
-} from "@/components/Calendar"
-import MotionButton from "@/components/MotionButton"
-import SetTitle from "@/components/SetTitle"
+} from "@/components/Calendar.js"
+import MotionButton from "@/components/MotionButton.js"
+import SetTitle from "@/components/SetTitle.js"
 import TutorSubjectSelection, {
     IInputSubject,
-} from "@/components/TutorSubjectSelection"
-import { ISubject } from "@backend/types/subject"
-import { Time } from "@backend/types/timeslot"
+} from "@/components/TutorSubjectSelection.js"
+import { ISubject } from "@backend/types/subject.js"
+import { Time } from "@backend/types/timeslot.js"
 import { motion } from "framer-motion"
 import { ReactElement, useContext, useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"

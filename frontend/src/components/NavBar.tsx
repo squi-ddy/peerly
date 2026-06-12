@@ -1,9 +1,9 @@
-import { logout } from "@/api"
-import { UserContext } from "@/base/BasePage"
-import { AnimatePresence, motion } from "framer-motion"
+import { logout } from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
+import { AnimatePresence, motion, MotionProps } from "framer-motion"
 import { ReactElement, cloneElement, useContext, useMemo } from "react"
-import MotionButton from "./MotionButton"
-import MotionNavButton from "./MotionNavButton"
+import MotionButton from "./MotionButton.js"
+import MotionNavButton from "./MotionNavButton.js"
 
 const itemVariants = {
     visible: {
@@ -24,7 +24,7 @@ function NavBar() {
     const { user, updateUser } = useContext(UserContext)
 
     const children = useMemo(() => {
-        let topBarItems: ReactElement[] = []
+        let topBarItems: ReactElement<MotionProps>[] = []
 
         if (user) {
             topBarItems = [

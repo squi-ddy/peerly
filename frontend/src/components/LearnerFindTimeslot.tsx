@@ -1,9 +1,9 @@
-import { IFindTimeslotsResult, Time } from "@backend/types/timeslot"
+import { IFindTimeslotsResult, Time } from "@backend/types/timeslot.js"
 import { AnimatePresence, motion } from "framer-motion"
 import Fuse from "fuse.js"
 import { useMemo, useState } from "react"
-import { days } from "./Calendar"
-import MotionButton from "./MotionButton"
+import { days } from "./Calendar.js"
+import MotionButton from "./MotionButton.js"
 import { useNavigate } from "react-router-dom"
 
 const itemVariants = {

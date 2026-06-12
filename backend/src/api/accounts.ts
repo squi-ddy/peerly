@@ -1,14 +1,14 @@
 import { Router } from "express"
 import passport from "passport"
-import { convertBoolean, getConnection, pool } from "db"
-import { hash } from "passwords"
+import { convertBoolean, getConnection, pool } from "../db.js"
+import { hash } from "../passwords.js"
 import {
     isFullUser,
     isMinimalUser,
     validateCreateUser,
     validatePatchUser,
-} from "checkers"
-import { IUserMinimal } from "types/user"
+} from "../checkers.js"
+import { IUserMinimal } from "../types/user.js"
 
 const acctRouter = Router()
 
@@ -83,9 +83,9 @@ acctRouter.post("/signup", async (req, res) => {
         }
 
         [rows, _fields] = await conn.execute(
-            `INSERT INTO student 
-            (\`student-id\`, uuid, username, password, class, email, \`year-offset\`, \`is-learner\`, \`is-tutor\`) 
-            VALUES 
+            `INSERT INTO student
+            (\`student-id\`, uuid, username, password, class, email, \`year-offset\`, \`is-learner\`, \`is-tutor\`)
+            VALUES
             (?, uuid(), ?, ?, ?, ?, compute_year_offset(year(now()), ?, ?), ?, ?)
         `,
             [
@@ -166,9 +166,9 @@ acctRouter.get("/me", async (req, res) => {
     if (req.isAuthenticated()) {
         const [result, _fields] = await pool.execute(
             `
-            SELECT 
+            SELECT
                 \`student-id\`, class, year, email, \`is-learner\`, \`is-tutor\`, uuid, username
-            FROM student 
+            FROM student
             WHERE uuid = ?
             `,
             [req.user.uuid],
@@ -215,8 +215,8 @@ acctRouter.patch("/me", async (req, res) => {
         try {
             let [rows, _fields] = await conn.execute(
                 `
-                UPDATE student 
-                SET 
+                UPDATE student
+                SET
                     username = IFNULL(?, username),
                     class = IFNULL(?, class),
                     \`year-offset\` = IF(? IS NULL, \`year-offset\`, compute_year_offset(year(now()), ?, ?)),

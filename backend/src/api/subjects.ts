@@ -7,10 +7,10 @@ import {
     validateCreateTutorSubjects,
     validateGetLearnerSubjects,
     validateGetTutorSubjects,
-} from "checkers"
-import { pool } from "db"
+} from "../checkers.js"
+import { pool } from "../db.js"
 import { Router } from "express"
-import { INotificationRecommendation } from "types/notification"
+import { INotificationRecommendation } from "../types/notification.js"
 
 const subjectRouter = Router()
 

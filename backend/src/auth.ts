@@ -1,9 +1,10 @@
 import passport from "passport"
-import { convertBoolean, pool } from "db"
+import { convertBoolean, pool } from "./db.js"
 import { Strategy as LocalStrategy } from "passport-local"
-import { verify } from "passwords"
-import { isMinimalUser } from "checkers"
-import { IUserMinimal } from "types/user"
+import { verify } from "./passwords.js"
+import { isMinimalUser } from "./checkers.js"
+import { IUserMinimal } from "./types/user.js"
+import { RowDataPacket } from "mysql2"
 
 passport.use(
     "local",
@@ -27,7 +28,7 @@ passport.use(
                 return callback(null, false, { message: "Invalid student id" })
             }
 
-            const row = res[0]
+            const row = res[0] as RowDataPacket
 
             convertBoolean(row, "is-learner")
             convertBoolean(row, "is-tutor")

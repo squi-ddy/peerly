@@ -1,18 +1,18 @@
-import { getCurrentProfile, patchCurrentUser } from "@/api"
-import { UserContext } from "@/base/BasePage"
-import MotionButton from "@/components/MotionButton"
-import SetTitle from "@/components/SetTitle"
-import FormCheckboxInput from "@/components/forms/FormCheckboxInput"
-import FormNumberInput from "@/components/forms/FormNumberInput"
-import FormPasswordInput from "@/components/forms/FormPasswordInput"
-import FormTextInput from "@/components/forms/FormTextInput"
+import { getCurrentProfile, patchCurrentUser } from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
+import MotionButton from "@/components/MotionButton.js"
+import SetTitle from "@/components/SetTitle.js"
+import FormCheckboxInput from "@/components/forms/FormCheckboxInput.js"
+import FormNumberInput from "@/components/forms/FormNumberInput.js"
+import FormPasswordInput from "@/components/forms/FormPasswordInput.js"
+import FormTextInput from "@/components/forms/FormTextInput.js"
 import {
     InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
-} from "@/types/FormDefinition"
-import { preciseFloor } from "@/util"
-import { IUserFull, IUserPatch } from "@backend/types/user"
+} from "@/types/FormDefinition.js"
+import { preciseFloor } from "@/util.js"
+import { IUserFull, IUserPatch } from "@backend/types/user.js"
 import { LayoutGroup, motion } from "framer-motion"
 import {
     ReactNode,

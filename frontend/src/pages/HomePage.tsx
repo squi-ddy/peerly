@@ -1,14 +1,18 @@
-import { deleteNotification, getEmptyTimeslots, getNotifications } from "@/api"
-import { UserContext } from "@/base/BasePage"
+import {
+    deleteNotification,
+    getEmptyTimeslots,
+    getNotifications,
+} from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
 import Calendar, {
     IAdditionalSlot,
     IContiguousSlot,
     timestamps,
-} from "@/components/Calendar"
-import MotionButton from "@/components/MotionButton"
-import SetTitle from "@/components/SetTitle"
-import { INotification } from "@backend/types/notification"
-import { Time } from "@backend/types/timeslot"
+} from "@/components/Calendar.js"
+import MotionButton from "@/components/MotionButton.js"
+import SetTitle from "@/components/SetTitle.js"
+import { INotification } from "@backend/types/notification.js"
+import { Time } from "@backend/types/timeslot.js"
 import { AnimatePresence, motion } from "framer-motion"
 import { useContext, useEffect, useState } from "react"
 import { BiCheck } from "react-icons/bi"

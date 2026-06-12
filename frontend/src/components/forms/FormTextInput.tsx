@@ -4,7 +4,7 @@ import {
     InputSubmitFunction,
     InputErrorFunction,
     InputCheckFunction,
-} from "@/types/FormDefinition"
+} from "@/types/FormDefinition.js"
 import { useFloating } from "@floating-ui/react"
 
 const errorVariants: Variants = {

@@ -1,19 +1,19 @@
 import { motion, AnimatePresence } from "framer-motion"
-import MotionButton from "./MotionButton"
+import MotionButton from "./MotionButton.js"
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react"
 import {
     FloatingFocusManager,
     FloatingOverlay,
     useFloating,
 } from "@floating-ui/react"
-import { ISubject, ITutorSubject } from "@backend/types/subject"
-import FormNumberInput from "./forms/FormNumberInput"
-import FormSelectionInput from "./forms/FormSelectionInput"
+import { ISubject, ITutorSubject } from "@backend/types/subject.js"
+import FormNumberInput from "./forms/FormNumberInput.js"
+import FormSelectionInput from "./forms/FormSelectionInput.js"
 import {
     InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
-} from "@/types/FormDefinition"
+} from "@/types/FormDefinition.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

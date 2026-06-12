@@ -1,9 +1,9 @@
 import { motion } from "framer-motion"
-import MotionLink from "@/components/MotionLink"
-import { getCurrentSession } from "@/api"
+import MotionLink from "@/components/MotionLink.js"
+import { getCurrentSession } from "@/api.js"
 import { createContext, useCallback, useEffect, useMemo, useState } from "react"
-import { IUserMinimal } from "@backend/types/user"
-import NavBar from "@/components/NavBar"
+import { IUserMinimal } from "@backend/types/user.js"
+import NavBar from "@/components/NavBar.js"
 
 type UserOrNull = IUserMinimal | null
 export const UserContext = createContext<{

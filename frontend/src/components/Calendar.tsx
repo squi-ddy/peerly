@@ -1,4 +1,4 @@
-import { preciseFloor } from "@/util"
+import { preciseFloor } from "@/util.js"
 import { motion } from "framer-motion"
 import { useCallback, useMemo, useRef, useState } from "react"
 

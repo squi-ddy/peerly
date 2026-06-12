@@ -1,6 +1,6 @@
 import mysql from "mysql2/promise"
-import { settings } from "settings"
-import { ITime } from "types/timeslot"
+import { settings } from "./settings.js"
+import { ITime } from "./types/timeslot.js"
 
 export const pool = mysql.createPool({
     host: settings.DB_HOST,

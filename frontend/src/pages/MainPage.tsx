@@ -1,13 +1,13 @@
 import { motion } from "framer-motion"
 import { FaChalkboardTeacher, FaPeopleCarry } from "react-icons/fa"
 import { FaPerson } from "react-icons/fa6"
-import MotionButton from "@/components/MotionButton"
-import SetTitle from "@/components/SetTitle"
+import MotionButton from "@/components/MotionButton.js"
+import SetTitle from "@/components/SetTitle.js"
 import { useNavigate } from "react-router-dom"
-import SlidingText from "@/components/SlidingText"
+import SlidingText from "@/components/SlidingText.js"
 import { useContext } from "react"
-import { UserContext } from "@/base/BasePage"
-import HomePage from "./HomePage"
+import { UserContext } from "@/base/BasePage.js"
+import HomePage from "./HomePage.js"
 
 const itemVariants = {
     hidden: { transform: "translateY(-20px)", opacity: 0 },

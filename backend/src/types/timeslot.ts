@@ -1,11 +1,11 @@
 import { tags } from "typia"
-import { IStudentID, IUserMinimal } from "./user"
+import { IStudentID, IUserMinimal } from "./user.js"
 import {
     ISubject,
     ISubjectCode,
     ISubjectOnlyCode,
     ITutorSubject,
-} from "./subject"
+} from "./subject.js"
 
 export class Time {
     public readonly hour: number & tags.Minimum<0> & tags.ExclusiveMaximum<24>
@@ -74,8 +74,10 @@ export interface IEmptyTimeslot extends ITimeslot {
     "tutor-sid": IStudentID
 }
 
-export interface IEmptyTimeslotCreate
-    extends Omit<IEmptyTimeslot, "timeslot-id" | "tutor-sid"> {}
+export interface IEmptyTimeslotCreate extends Omit<
+    IEmptyTimeslot,
+    "timeslot-id" | "tutor-sid"
+> {}
 
 export interface IEmptyTimeslotGet {
     "tutor-sid": IStudentID

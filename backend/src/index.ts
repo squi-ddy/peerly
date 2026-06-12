@@ -1,5 +1,5 @@
-import { settings } from "./settings"
-import apiRouter from "./api/api.www"
+import { settings } from "./settings.js"
+import apiRouter from "./api/api.www.js"
 import http from "http"
 import express from "express"
 import compression from "compression"
@@ -8,7 +8,7 @@ import cors from "cors"
 import session from "express-session"
 import ConnectMemcachedSession from "connect-memcached"
 import passport from "passport"
-import "auth" // set up 'local' strategy for passport
+import "./auth.js" // set up 'local' strategy for passport
 
 const app = express()
 const port = settings.PORT

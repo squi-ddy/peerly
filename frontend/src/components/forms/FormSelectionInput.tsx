@@ -2,7 +2,7 @@ import {
     InputCheckFunction,
     InputErrorFunction,
     InputSubmitFunction,
-} from "@/types/FormDefinition"
+} from "@/types/FormDefinition.js"
 import { useFloating } from "@floating-ui/react"
 import { AnimatePresence, Variants, motion } from "framer-motion"
 import { useCallback, useState } from "react"
@@ -124,7 +124,7 @@ function FormSelectionInput(props: {
                 className={`border-2 rounded-xl bg-transparent ${innerTextSize} w-full h-full min-w-0
                     transition-colors flex items-center justify-center ${
                         error ? "border-red-500" : ""
-                    } 
+                    }
                     ${fieldValue === -1 ? "text-gray-400 italic" : ""} ${
                         edit ? "cursor-pointer" : ""
                     } ${dropdownOpen ? "border-sky-400" : ""}`}
@@ -174,12 +174,12 @@ function FormSelectionInput(props: {
                                             setFieldValue(index)
                                             setDropdownOpen(false)
                                         }}
-                                        className={`${innerTextSize} w-full ${h} cursor-pointer flex justify-center items-center hover:bg-sky-800/50 transition-colors 
+                                        className={`${innerTextSize} w-full ${h} cursor-pointer flex justify-center items-center hover:bg-sky-800/50 transition-colors
                                 ${index === 0 ? "rounded-t-xl " : ""} ${
                                     index === props.options.length - 1
                                         ? "rounded-b-xl"
                                         : "border-b-2 border-white"
-                                } 
+                                }
                                 ${
                                     index === fieldValue ? " bg-sky-800/70" : ""
                                 }`}

@@ -1,16 +1,16 @@
-import { login } from "@/api"
-import { UserContext } from "@/base/BasePage"
+import { login } from "@/api.js"
+import { UserContext } from "@/base/BasePage.js"
 import {
     InputErrorFunction,
     InputFunctionContainer,
     InputFunctionItems,
-} from "@/types/FormDefinition"
+} from "@/types/FormDefinition.js"
 import { useCallback, useContext, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import MotionButton from "./MotionButton"
-import SetTitle from "./SetTitle"
-import FormPasswordInput from "./forms/FormPasswordInput"
-import FormTextInput from "./forms/FormTextInput"
+import MotionButton from "./MotionButton.js"
+import SetTitle from "./SetTitle.js"
+import FormPasswordInput from "./forms/FormPasswordInput.js"
+import FormTextInput from "./forms/FormTextInput.js"
 import { IValidation } from "typia"
 
 const itemVariants = {

@@ -6,13 +6,13 @@ import {
     ITutorSubject,
     ITutorSubjectCreate,
     ITutorSubjectGet,
-} from "@backend/types/subject"
+} from "@backend/types/subject.js"
 import {
     IUserCreate,
     IUserFull,
     IUserMinimal,
     IUserPatch,
-} from "@backend/types/user"
+} from "@backend/types/user.js"
 import axios from "axios"
 import {
     isEmptyTimeslotArray,
@@ -24,20 +24,23 @@ import {
     isPendingTutelageArray,
     isSubjectArray,
     isTutorSubjectArray,
-} from "./checkers"
-import { settings } from "./settings"
+} from "./checkers.js"
+import { settings } from "./settings.js"
 import {
     IEmptyTimeslot,
     IEmptyTimeslotCreate,
     IEmptyTimeslotGet,
     IFindTimeslots,
     IFindTimeslotsResult,
-} from "@backend/types/timeslot"
-import { INotification, INotificationDelete } from "@backend/types/notification"
+} from "@backend/types/timeslot.js"
+import {
+    INotification,
+    INotificationDelete,
+} from "@backend/types/notification.js"
 import {
     IPendingTutelage,
     IPendingTutelageCreate,
-} from "@backend/types/tutelage"
+} from "@backend/types/tutelage.js"
 
 axios.defaults.withCredentials = true
 

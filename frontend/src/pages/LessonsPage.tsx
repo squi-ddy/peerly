@@ -1,6 +1,6 @@
 import { LayoutGroup, motion } from "framer-motion"
-import SetTitle from "@/components/SetTitle"
-import { lessons } from "@/data"
+import SetTitle from "@/components/SetTitle.js"
+import { lessons } from "@/data.js"
 import { useState } from "react"
 import Fuse from "fuse.js"
 

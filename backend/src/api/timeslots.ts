@@ -4,10 +4,10 @@ import {
     validateCreateEmptyTimeslots,
     validateFindTimeslots,
     validateGetEmptyTimeslots,
-} from "checkers"
-import { convertBoolean, convertTime, pool } from "db"
+} from "../checkers.js"
+import { convertBoolean, convertTime, pool } from "../db.js"
 import { Router } from "express"
-import { IFindTimeslotsResult, Time } from "types/timeslot"
+import { IFindTimeslotsResult, Time } from "../types/timeslot.js"
 
 const timeslotsRouter = Router()
 

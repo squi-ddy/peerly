@@ -1,5 +1,5 @@
-import { ITimeslot, Time } from "@backend/types/timeslot"
-import { columns, rows, timestamps } from "./components/Calendar"
+import { ITimeslot, Time } from "@backend/types/timeslot.js"
+import { columns, rows, timestamps } from "./components/Calendar.js"
 
 export function preciseFloor(x: number, div: number) {
     return Math.round((x - (x % div)) / div)

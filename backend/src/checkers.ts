@@ -1,5 +1,10 @@
 import { createIs, createValidate } from "typia"
-import { IUserMinimal, IUserFull, IUserCreate, IUserPatch } from "types/user"
+import {
+    IUserMinimal,
+    IUserFull,
+    IUserCreate,
+    IUserPatch,
+} from "./types/user.js"
 import {
     ILearnerSubject,
     ILearnerSubjectCreate,
@@ -8,20 +13,20 @@ import {
     ITutorSubject,
     ITutorSubjectCreate,
     ITutorSubjectGet,
-} from "types/subject"
+} from "./types/subject.js"
 import {
     IEmptyTimeslot,
     IEmptyTimeslotCreate,
     IEmptyTimeslotGet,
     IFindTimeslots,
     IFindTimeslotsResult,
-} from "types/timeslot"
-import { IPendingTutelage, IPendingTutelageCreate } from "types/tutelage"
+} from "./types/timeslot.js"
+import { IPendingTutelage, IPendingTutelageCreate } from "./types/tutelage.js"
 import {
     INotification,
     INotificationDelete,
     INotificationRecommendation,
-} from "types/notification"
+} from "./types/notification.js"
 
 export const isMinimalUser = createIs<IUserMinimal>()
 export const isFullUser = createIs<IUserFull>()
