@@ -28,13 +28,13 @@
         "@types/passport-local": "^1.0.38",
         "@typescript-eslint/eslint-plugin": "^8.44.1",
         "@typescript-eslint/parser": "^8.44.1",
-        "@vercel/ncc": "^0.44.0",
+        "@vercel/ncc": "^0.45.0",
         "eslint": "~8",
-        "typescript": "^6.0.3"
+        "typescript": "^7.0.2"
     },
     "dependencies": {
         "compression": "^1.7.4",
-        "connect-memcached": "^3.0.0",
+        "connect-memcached": "^4.0.0",
         "cors": "^2.8.5",
         "express": "^5.1.0",
         "express-session": "^1.18.0",
@@ -42,6 +42,6 @@
         "mysql2": "^3.9.2",
         "passport": "^0.7.0",
         "passport-local": "^1.0.0",
-        "typia": "^12.1.1"
+        "typia": "^14.0.4"
     }
 }
